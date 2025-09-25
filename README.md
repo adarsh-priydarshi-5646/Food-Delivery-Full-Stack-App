@@ -56,6 +56,7 @@ MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 
 # Folder Structure
+```
 Food-Delivery-Full-Stack-App/
 │
 ├─ backend/             # Node.js & Express backend
@@ -76,8 +77,7 @@ Food-Delivery-Full-Stack-App/
 ├─ .env
 ├─ package.json
 └─ README.md
-
-
+```
 
 # Contributing
 

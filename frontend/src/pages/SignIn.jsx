@@ -49,13 +49,17 @@ function SignIn() {
       const { data } = await axios.post(
         `${serverUrl}/api/auth/google-auth`,
         {
+          fullName: result.user.displayName || result.user.email.split('@')[0],
           email: result.user.email,
+          mobile: result.user.phoneNumber || "0000000000",
+          role: "user",
         },
         { withCredentials: true }
       );
       dispatch(setUserData(data));
     } catch (error) {
       console.log(error);
+      setErr(error?.response?.data?.message || "Google sign in failed");
     }
   };
   return (

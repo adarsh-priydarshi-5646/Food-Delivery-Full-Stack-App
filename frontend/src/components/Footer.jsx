@@ -7,11 +7,9 @@ function Footer() {
 
   return (
     <footer className="bg-gray-900 text-gray-300 mt-auto">
-      {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           
-          {/* Company Info */}
           <div>
             <h3 className="text-white text-xl font-bold mb-4">Vingo</h3>
             <p className="text-sm mb-4">
@@ -33,7 +31,6 @@ function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
@@ -60,7 +57,6 @@ function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">Support</h3>
             <ul className="space-y-2">
@@ -87,7 +83,6 @@ function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">Contact Us</h3>
             <ul className="space-y-3">
@@ -108,7 +103,6 @@ function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">

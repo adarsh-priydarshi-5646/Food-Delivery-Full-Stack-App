@@ -21,7 +21,7 @@ function OwnerDashboard() {
   const totalItems = myShopData?.items?.length || 0;
 
   return (
-    <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center">
+    <div className="w-full flex flex-col items-center">
       <Nav />
       {!myShopData && (
         <div className="flex justify-center items-center p-4 sm:p-6">
@@ -48,7 +48,6 @@ function OwnerDashboard() {
 
       {myShopData && (
         <div className="w-full flex flex-col items-center gap-6 px-4 sm:px-6 pb-8">
-          {/* Enhanced Profile Header */}
           <div className="bg-gradient-to-r from-[#ff4d2d] to-[#ff6b4d] rounded-2xl shadow-lg p-6 w-full max-w-3xl text-white mt-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-[#ff4d2d] text-3xl font-bold shadow-md">
@@ -71,7 +70,6 @@ function OwnerDashboard() {
               </button>
             </div>
             
-            {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-3 mt-4">
               <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
                 <MdDeliveryDining className="mx-auto text-2xl mb-1" />
@@ -90,7 +88,6 @@ function OwnerDashboard() {
               </div>
             </div>
 
-            {/* Bank Details Button */}
             <button
               onClick={() => navigate("/bank-details")}
               className="w-full mt-4 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
@@ -99,7 +96,6 @@ function OwnerDashboard() {
             </button>
           </div>
 
-          {/* Restaurant Image Card */}
           <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-orange-100 w-full max-w-3xl">
             <img
               src={myShopData.image}

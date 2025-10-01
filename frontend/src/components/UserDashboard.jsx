@@ -103,14 +103,12 @@ function UserDashboard() {
   }, [categories]);
 
   return (
-    <div className="w-screen min-h-screen flex flex-col gap-5 items-center bg-[#fff9f6] overflow-y-auto">
+    <div className="w-full flex flex-col gap-5 items-center">
       <Nav />
 
-      {/* Hero Section */}
       {(!searchItems || searchItems.length === 0) && (
         <div className="w-full max-w-6xl mt-6 px-4">
           <div className="bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
-            {/* Decorative circles */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
             

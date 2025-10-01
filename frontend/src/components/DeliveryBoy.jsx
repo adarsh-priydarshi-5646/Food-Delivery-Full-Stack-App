@@ -240,10 +240,9 @@ function DeliveryBoy() {
     }
   }, [resendTimer]);
   return (
-    <div className="w-screen min-h-screen flex flex-col gap-5 items-center bg-[#fff9f6] overflow-y-auto">
+    <div className="w-full flex flex-col gap-5 items-center">
       <Nav />
       <div className="w-full max-w-[800px] flex flex-col gap-5 items-center">
-        {/* Enhanced Profile Card */}
         <div className="bg-gradient-to-r from-[#ff4d2d] to-[#ff6b4d] rounded-2xl shadow-lg p-6 w-[90%] text-white">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-[#ff4d2d] text-3xl font-bold shadow-md">
@@ -261,7 +260,6 @@ function DeliveryBoy() {
             </div>
           </div>
           
-          {/* Quick Stats */}
           <div className="grid grid-cols-3 gap-3 mt-4">
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
               <FaBox className="mx-auto text-2xl mb-1" />

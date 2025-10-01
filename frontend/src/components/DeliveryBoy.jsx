@@ -23,13 +23,32 @@ function DeliveryBoy() {
   const { userData, socket } = useSelector((state) => state.user);
   const [currentOrder, setCurrentOrder] = useState();
   const [showOtpBox, setShowOtpBox] = useState(false);
-  const [availableAssignments, setAvailableAssignments] = useState(null);
+  const [availableAssignments, setAvailableAssignments] = useState([]);
   const [otp, setOtp] = useState("");
   const [todayDeliveries, setTodayDeliveries] = useState([]);
   const [deliveryBoyLocation, setDeliveryBoyLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
+
+  // Request notification permission
+  useEffect(() => {
+    if (userData?.role === "deliveryBoy" && Notification.permission === "default") {
+      Notification.requestPermission().then(permission => {
+        console.log("Notification permission:", permission);
+      });
+    }
+  }, [userData]);
+
+  // Load initial data
+  useEffect(() => {
+    if (userData?.role === "deliveryBoy") {
+      console.log("📱 Loading delivery boy data...");
+      getAssignments();
+      getCurrentOrder();
+    }
+  }, [userData]);
+
   useEffect(() => {
     if (!socket || userData.role !== "deliveryBoy") return;
     let watchId;
@@ -101,10 +120,31 @@ function DeliveryBoy() {
   };
 
   useEffect(() => {
+    if (!socket) {
+      console.log("❌ Socket not available for delivery boy");
+      return;
+    }
+
+    console.log("✅ Setting up newAssignment listener for delivery boy");
+    
     socket.on("newAssignment", (data) => {
-      setAvailableAssignments((prev) => [...prev, data]);
+      console.log("🔔 New assignment received:", data);
+      setAvailableAssignments((prev) => {
+        const updated = [...prev, data];
+        console.log("Updated assignments:", updated);
+        return updated;
+      });
+      // Show browser notification if permission granted
+      if (Notification.permission === "granted") {
+        new Notification("New Delivery Order!", {
+          body: `New order from ${data.shopName}`,
+          icon: "/vite.svg"
+        });
+      }
     });
+
     return () => {
+      console.log("🔌 Removing newAssignment listener");
       socket.off("newAssignment");
     };
   }, [socket]);

@@ -388,14 +388,18 @@ export const getDeliveryBoyAssignment = async (req, res) => {
 
     console.log(`📦 Found ${assignments.length} assignments for delivery boy ${deliveryBoyId}`);
 
-    const formated = assignments.map((a) => ({
+    // Filter out assignments with null/deleted orders
+    const validAssignments = assignments.filter(a => a.order && a.shop);
+    console.log(`✅ Valid assignments: ${validAssignments.length}`);
+
+    const formated = validAssignments.map((a) => ({
       assignmentId: a._id,
       orderId: a.order._id,
       shopName: a.shop.name,
       deliveryAddress: a.order.deliveryAddress,
       items:
         a.order.shopOrders.find((so) => so._id.equals(a.shopOrderId))
-          .shopOrderItems || [],
+          ?.shopOrderItems || [],
       subtotal: a.order.shopOrders.find((so) => so._id.equals(a.shopOrderId))
         ?.subtotal,
     }));

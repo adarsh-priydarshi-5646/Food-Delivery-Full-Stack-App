@@ -559,14 +559,21 @@ export const sendDeliveryOtp = async (req, res) => {
     console.log("🔐 DELIVERY OTP GENERATED");
     console.log("Order ID:", orderId);
     console.log("Customer:", order.user.fullName);
+    console.log("Customer Email:", order.user.email);
     console.log("OTP:", otp);
     console.log("Expires in: 5 minutes");
     console.log("=".repeat(50));
     
-    // Send email (async, don't wait)
-    sendDeliveryOtpMail(order.user, otp).catch(err => 
-      console.error("Email send error:", err)
-    );
+    // Send email with better error handling
+    try {
+      console.log(`📧 Attempting to send delivery OTP email to ${order.user.email}`);
+      await sendDeliveryOtpMail(order.user, otp);
+      console.log(`✅ Delivery OTP email sent successfully to ${order.user.email}`);
+    } catch (emailError) {
+      console.error("❌ Failed to send delivery OTP email:", emailError.message);
+      console.error("Full error:", emailError);
+      // Don't fail the request, OTP is saved in DB
+    }
     
     return res
       .status(200)

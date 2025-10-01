@@ -67,7 +67,6 @@ function SignIn() {
       className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden"
       style={{ backgroundColor: bgColor }}
     >
-      {/* Animated Background Elements */}
       <div className="absolute top-10 left-10 w-72 h-72 bg-orange-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
       <div className="absolute top-0 right-10 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
       <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
@@ -78,7 +77,6 @@ function SignIn() {
           border: `1px solid ${borderColor}`,
         }}
       >
-        {/* Logo/Header */}
         <div className="text-center mb-8">
           <div className="inline-block p-3 bg-gradient-to-r from-orange-400 to-red-500 rounded-full mb-4">
             <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,8 +90,6 @@ function SignIn() {
             Welcome back! Sign in to continue
           </p>
         </div>
-
-        {/* email */}
 
         <div className="mb-4">
           <label
@@ -112,7 +108,6 @@ function SignIn() {
             required
           />
         </div>
-        {/* password*/}
 
         <div className="mb-4">
           <label

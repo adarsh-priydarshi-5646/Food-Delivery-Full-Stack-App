@@ -77,7 +77,6 @@ function BankDetails() {
   return (
     <div className="min-h-screen bg-[#fff9f6] p-6">
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => navigate(-1)}
@@ -91,7 +90,6 @@ function BankDetails() {
           </h1>
         </div>
 
-        {/* Earnings Card */}
         <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white mb-6">
           <div className="flex items-center justify-between">
             <div>
@@ -110,7 +108,6 @@ function BankDetails() {
           </div>
         </div>
 
-        {/* Bank Details Form */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-orange-100">
           <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <FaUniversity className="text-[#ff4d2d]" />
@@ -118,7 +115,6 @@ function BankDetails() {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Account Holder Name */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Account Holder Name
@@ -134,7 +130,6 @@ function BankDetails() {
               />
             </div>
 
-            {/* Account Number */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <FaCreditCard className="text-[#ff4d2d]" />
@@ -151,7 +146,6 @@ function BankDetails() {
               />
             </div>
 
-            {/* IFSC Code */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 IFSC Code
@@ -167,7 +161,6 @@ function BankDetails() {
               />
             </div>
 
-            {/* Bank Name */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <FaUniversity className="text-[#ff4d2d]" />
@@ -184,7 +177,6 @@ function BankDetails() {
               />
             </div>
 
-            {/* UPI ID */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <FaMobileAlt className="text-[#ff4d2d]" />
@@ -200,7 +192,6 @@ function BankDetails() {
               />
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -217,7 +208,6 @@ function BankDetails() {
             </button>
           </form>
 
-          {/* Info Box */}
           <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-800">
               <strong>Note:</strong> Your bank details are securely stored and will be used for

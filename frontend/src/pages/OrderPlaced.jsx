@@ -118,7 +118,6 @@ function OrderPlaced() {
             your order status in the "My Orders" section.
           </p>
           
-          {/* Debug Info */}
           {searchParams.get("session_id") && (
             <div className="mb-4 p-4 bg-blue-50 rounded-lg max-w-md">
               <p className="text-sm text-gray-600 mb-2">

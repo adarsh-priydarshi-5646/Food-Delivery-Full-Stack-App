@@ -53,12 +53,12 @@ function SignUp() {
     }
     const provider = new GoogleAuthProvider();
     const { auth } = await import("../../firebase");
-    const result = await signInWithPopup(auth, provider);
     try {
+      const result = await signInWithPopup(auth, provider);
       const { data } = await axios.post(
         `${serverUrl}/api/auth/google-auth`,
         {
-          fullName: result.user.displayName,
+          fullName: result.user.displayName || result.user.email.split('@')[0],
           email: result.user.email,
           role,
           mobile,
@@ -66,8 +66,10 @@ function SignUp() {
         { withCredentials: true }
       );
       dispatch(setUserData(data));
+      setErr("");
     } catch (error) {
       console.log(error);
+      setErr(error?.response?.data?.message || "Google sign up failed");
     }
   };
   return (

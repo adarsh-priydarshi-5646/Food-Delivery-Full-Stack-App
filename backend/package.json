@@ -9,6 +9,9 @@
     "start": "node index.js",
     "seed:default": "node seedDefaultRestaurant.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "author": "Adarsh Priyadarshi",
   "license": "ISC",
   "dependencies": {

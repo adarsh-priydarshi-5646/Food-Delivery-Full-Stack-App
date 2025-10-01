@@ -71,8 +71,10 @@ const assignDeliveryBoys = async (order, io) => {
       await deliveryAssignment.populate("shop");
 
       // Notify delivery boys
+      console.log(`📢 Broadcasting to ${availableBoys.length} delivery boys`);
       availableBoys.forEach((boy) => {
         const boySocketId = boy.socketId;
+        console.log(`📱 Delivery boy ${boy._id} socketId: ${boySocketId}, isOnline: ${boy.isOnline}`);
         if (boySocketId && io) {
           io.to(boySocketId).emit("newAssignment", {
             sentTo: boy._id,
@@ -87,6 +89,9 @@ const assignDeliveryBoys = async (order, io) => {
             })),
             subtotal: shopOrder.subtotal,
           });
+          console.log(`✅ Notification sent to delivery boy ${boy._id}`);
+        } else {
+          console.log(`❌ Cannot send to delivery boy ${boy._id} - No socket connection`);
         }
       });
     }
@@ -166,6 +171,7 @@ export const placeOrder = async (req, res) => {
 
     // Notify owners and assign delivery boys for COD orders immediately
     if (paymentMethod === "cod" && io) {
+      console.log("🛵 COD Order - Assigning delivery boys...");
       // Notify owners
       newOrder.shopOrders.forEach((shopOrder) => {
         const ownerSocketId = shopOrder.owner.socketId;
@@ -179,11 +185,14 @@ export const placeOrder = async (req, res) => {
             deliveryAddress: newOrder.deliveryAddress,
             payment: newOrder.payment,
           });
+          console.log(`✅ Owner ${shopOrder.owner._id} notified`);
         }
       });
 
       // Assign delivery boys
       await assignDeliveryBoys(newOrder, io);
+    } else {
+      console.log("⏳ Online payment - Delivery assignment will happen after payment verification");
     }
 
     return res.status(201).json(newOrder);

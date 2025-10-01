@@ -6,6 +6,7 @@ import { IoLocationSharp } from "react-icons/io5";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { useDispatch, useSelector } from "react-redux";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import { setAddress, setLocation } from "../redux/mapSlice";
 import { MdDeliveryDining } from "react-icons/md";
 import { FaCreditCard } from "react-icons/fa";
@@ -15,6 +16,14 @@ import { useNavigate } from "react-router-dom";
 import { serverUrl } from "../App";
 import { addMyOrder, setTotalAmount, clearCart } from "../redux/userSlice";
 import { loadStripe } from "@stripe/stripe-js";
+
+// Fix Leaflet default marker icon issue
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 function RecenterMap({ location }) {
@@ -76,7 +85,32 @@ function CheckOut() {
   };
 
   const handlePlaceOrder = async () => {
+    // Validation
+    if (!addressInput || addressInput.trim() === "") {
+      alert("Please enter a delivery address");
+      return;
+    }
+    if (!location.lat || !location.lon) {
+      alert("Please select a location on the map");
+      return;
+    }
+    if (cartItems.length === 0) {
+      alert("Your cart is empty");
+      return;
+    }
+
     try {
+      console.log("Placing order with:", {
+        paymentMethod,
+        deliveryAddress: {
+          text: addressInput,
+          latitude: location.lat,
+          longitude: location.lon,
+        },
+        totalAmount: AmountWithDeliveryFee,
+        cartItems,
+      });
+
       const result = await axios.post(
         `${serverUrl}/api/order/place-order`,
         {
@@ -92,6 +126,8 @@ function CheckOut() {
         { withCredentials: true }
       );
 
+      console.log("Order placed successfully:", result.data);
+
       if (paymentMethod == "cod") {
         dispatch(addMyOrder(result.data));
         dispatch(clearCart());
@@ -102,8 +138,9 @@ function CheckOut() {
         handleStripePayment(orderId, AmountWithDeliveryFee);
       }
     } catch (error) {
-      console.log(error);
-      alert("Failed to place order. Please try again.");
+      console.error("Order placement error:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Failed to place order. Please try again.";
+      alert(errorMessage);
     }
   };
 

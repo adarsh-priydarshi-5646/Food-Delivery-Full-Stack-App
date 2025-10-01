@@ -3,6 +3,7 @@ import Order from "../models/order.model.js";
 import Shop from "../models/shop.model.js";
 import User from "../models/user.model.js";
 import { sendDeliveryOtpMail } from "../utils/mail.js";
+import { sendDeliveryOtpMailResend } from "../utils/resendMail.js";
 import stripe from "../config/stripe.js";
 import dotenv from "dotenv";
 
@@ -564,15 +565,14 @@ export const sendDeliveryOtp = async (req, res) => {
     console.log("Expires in: 5 minutes");
     console.log("=".repeat(50));
     
-    // Send email with better error handling
+    // Send email via Resend (HTTP-based, works on Render)
     try {
-      console.log(`📧 Attempting to send delivery OTP email to ${order.user.email}`);
-      await sendDeliveryOtpMail(order.user, otp);
-      console.log(`✅ Delivery OTP email sent successfully to ${order.user.email}`);
+      await sendDeliveryOtpMailResend(order.user, otp);
+      console.log(`✅ Delivery OTP email sent successfully to ${order.user.email} via Resend`);
     } catch (emailError) {
-      console.error("❌ Failed to send delivery OTP email:", emailError.message);
-      console.error("Full error:", emailError);
-      // Don't fail the request, OTP is saved in DB
+      console.error("❌ Resend failed:", emailError.message);
+      // Fallback: OTP still available in logs
+      console.log(`💡 OTP available in logs above for manual sharing`);
     }
     
     return res

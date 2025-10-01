@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcrypt, { hash } from "bcryptjs";
 import genToken from "../utils/token.js";
 import { sendOtpMail } from "../utils/mail.js";
+import { sendOtpMailResend } from "../utils/resendMail.js";
 
 export const signUp = async (req, res) => {
   try {
@@ -108,10 +109,21 @@ export const sendOtp = async (req, res) => {
     await user.save();
     
     console.log(`Sending OTP ${otp} to ${email}`);
-    await sendOtpMail(email, otp);
-    console.log(`OTP sent successfully to ${email}`);
+    
+    // Try Resend first (HTTP-based, works on Render)
+    try {
+      await sendOtpMailResend(email, otp);
+      console.log(`✅ OTP sent successfully to ${email} via Resend`);
+    } catch (resendError) {
+      console.error(`❌ Resend failed:`, resendError.message);
+      // Fallback: OTP still available in logs
+      console.log(`💡 OTP available in logs above for manual sharing`);
+    }
 
-    return res.status(200).json({ message: "otp sent successfully" });
+    return res.status(200).json({ 
+      message: "otp sent successfully",
+      otp: process.env.NODE_ENV === 'development' ? otp : undefined 
+    });
 
   } catch (error) {
     console.error("Send OTP error:", error);

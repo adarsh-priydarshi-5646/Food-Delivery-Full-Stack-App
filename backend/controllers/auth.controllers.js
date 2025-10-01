@@ -1,8 +1,6 @@
 import User from "../models/user.model.js";
 import bcrypt, { hash } from "bcryptjs";
 import genToken from "../utils/token.js";
-import { sendOtpMail } from "../utils/mail.js";
-import { sendOtpMailResend } from "../utils/resendMail.js";
 import { sendOtpMailSendGrid } from "../utils/sendgridMail.js";
 
 export const signUp = async (req, res) => {
@@ -109,7 +107,7 @@ export const sendOtp = async (req, res) => {
     user.isOtpVerified = false;
     await user.save();
     
-    console.log(`Sending OTP ${otp} to ${email}`);
+    console.log(`🔐 Password reset OTP generated for ${email}`);
     
     // Try SendGrid (can send to any email)
     try {
@@ -121,8 +119,7 @@ export const sendOtp = async (req, res) => {
     }
 
     return res.status(200).json({ 
-      message: "otp sent successfully",
-      otp: process.env.NODE_ENV === 'development' ? otp : undefined 
+      message: "OTP sent successfully to your email"
     });
 
   } catch (error) {

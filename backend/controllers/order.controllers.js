@@ -2,8 +2,6 @@ import DeliveryAssignment from "../models/deliveryAssignment.model.js";
 import Order from "../models/order.model.js";
 import Shop from "../models/shop.model.js";
 import User from "../models/user.model.js";
-import { sendDeliveryOtpMail } from "../utils/mail.js";
-import { sendDeliveryOtpMailResend } from "../utils/resendMail.js";
 import { sendDeliveryOtpMailSendGrid } from "../utils/sendgridMail.js";
 import stripe from "../config/stripe.js";
 import dotenv from "dotenv";
@@ -26,7 +24,7 @@ const assignDeliveryBoys = async (order, io) => {
         console.log(`  - ${boy._id}: location=${JSON.stringify(boy.location.coordinates)}, online=${boy.isOnline}, socketId=${boy.socketId}`);
       });
       
-      // Find nearby delivery boys (increased to 50km for testing)
+      // Find nearby delivery boys
       const nearByDeliveryBoys = await User.find({
         role: "deliveryBoy",
         location: {
@@ -35,12 +33,12 @@ const assignDeliveryBoys = async (order, io) => {
               type: "Point",
               coordinates: [Number(longitude), Number(latitude)],
             },
-            $maxDistance: 50000, // 50km radius (increased for testing)
+            $maxDistance: 10000, // 10km radius (production setting)
           },
         },
       });
 
-      console.log(`📍 Delivery boys within 50km: ${nearByDeliveryBoys.length}`);
+      console.log(`📍 Delivery boys within 10km: ${nearByDeliveryBoys.length}`);
       
       if (nearByDeliveryBoys.length === 0) {
         console.log("❌ No delivery boys found nearby");
@@ -556,15 +554,8 @@ export const sendDeliveryOtp = async (req, res) => {
     shopOrder.otpExpires = Date.now() + 5 * 60 * 1000;
     await order.save();
     
-    // Print OTP in console for testing
-    console.log("=".repeat(50));
-    console.log("🔐 DELIVERY OTP GENERATED");
-    console.log("Order ID:", orderId);
-    console.log("Customer:", order.user.fullName);
-    console.log("Customer Email:", order.user.email);
-    console.log("OTP:", otp);
-    console.log("Expires in: 5 minutes");
-    console.log("=".repeat(50));
+    // Log OTP generation (production-safe)
+    console.log(`🔐 Delivery OTP generated for order ${orderId} - Customer: ${order.user.fullName}`);
     
     // Send email via SendGrid (can send to any email)
     try {
@@ -578,8 +569,7 @@ export const sendDeliveryOtp = async (req, res) => {
     return res
       .status(200)
       .json({ 
-        message: `OTP sent successfully to ${order?.user?.fullName}`,
-        otp: process.env.NODE_ENV === 'development' ? otp : undefined // Only in dev mode
+        message: `OTP sent successfully to ${order?.user?.email}`
       });
   } catch (error) {
     return res.status(500).json({ message: `delivery otp error ${error}` });

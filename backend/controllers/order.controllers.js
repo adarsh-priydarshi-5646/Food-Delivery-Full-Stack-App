@@ -410,11 +410,17 @@ export const getDeliveryBoyAssignment = async (req, res) => {
 export const acceptOrder = async (req, res) => {
   try {
     const { assignmentId } = req.params;
+    console.log(`🤝 Delivery boy ${req.userId} attempting to accept assignment ${assignmentId}`);
+    
     const assignment = await DeliveryAssignment.findById(assignmentId);
     if (!assignment) {
+      console.log(`❌ Assignment ${assignmentId} not found`);
       return res.status(400).json({ message: "assignment not found" });
     }
+    
+    console.log(`📋 Assignment status: ${assignment.status}`);
     if (assignment.status !== "brodcasted") {
+      console.log(`❌ Assignment is not brodcasted, current status: ${assignment.status}`);
       return res.status(400).json({ message: "assignment is expired" });
     }
 
@@ -424,6 +430,7 @@ export const acceptOrder = async (req, res) => {
     });
 
     if (alreadyAssigned) {
+      console.log(`❌ Delivery boy ${req.userId} already assigned to order ${alreadyAssigned.order}`);
       return res
         .status(400)
         .json({ message: "You are already assigned to another order" });
@@ -433,21 +440,25 @@ export const acceptOrder = async (req, res) => {
     assignment.status = "assigned";
     assignment.acceptedAt = new Date();
     await assignment.save();
+    console.log(`✅ Assignment ${assignmentId} accepted by delivery boy ${req.userId}`);
 
     const order = await Order.findById(assignment.order);
     if (!order) {
+      console.log(`❌ Order ${assignment.order} not found`);
       return res.status(400).json({ message: "order not found" });
     }
 
     let shopOrder = order.shopOrders.id(assignment.shopOrderId);
     shopOrder.assignedDeliveryBoy = req.userId;
     await order.save();
+    console.log(`✅ Order ${order._id} updated with delivery boy ${req.userId}`);
 
     return res.status(200).json({
       message: "order accepted",
     });
   } catch (error) {
-    return res.status(500).json({ message: `accept order error ${error}` });
+    console.error(`❌ Accept order error:`, error);
+    return res.status(500).json({ message: `accept order error ${error.message}` });
   }
 };
 

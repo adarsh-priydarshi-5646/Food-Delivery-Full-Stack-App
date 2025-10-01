@@ -11,10 +11,20 @@ dotenv.config();
 // Helper function to assign delivery boys
 const assignDeliveryBoys = async (order, io) => {
   try {
+    console.log("🚀 Starting delivery boy assignment for order:", order._id);
+    
     for (const shopOrder of order.shopOrders) {
       const { longitude, latitude } = order.deliveryAddress;
+      console.log(`📍 Order location: lat=${latitude}, lon=${longitude}`);
       
-      // Find nearby delivery boys
+      // First, check all delivery boys
+      const allDeliveryBoys = await User.find({ role: "deliveryBoy" });
+      console.log(`👥 Total delivery boys in database: ${allDeliveryBoys.length}`);
+      allDeliveryBoys.forEach(boy => {
+        console.log(`  - ${boy._id}: location=${JSON.stringify(boy.location.coordinates)}, online=${boy.isOnline}, socketId=${boy.socketId}`);
+      });
+      
+      // Find nearby delivery boys (increased to 50km for testing)
       const nearByDeliveryBoys = await User.find({
         role: "deliveryBoy",
         location: {
@@ -23,13 +33,15 @@ const assignDeliveryBoys = async (order, io) => {
               type: "Point",
               coordinates: [Number(longitude), Number(latitude)],
             },
-            $maxDistance: 5000, // 5km radius
+            $maxDistance: 50000, // 50km radius (increased for testing)
           },
         },
       });
 
+      console.log(`📍 Delivery boys within 50km: ${nearByDeliveryBoys.length}`);
+      
       if (nearByDeliveryBoys.length === 0) {
-        console.log("No delivery boys found nearby");
+        console.log("❌ No delivery boys found nearby");
         continue;
       }
 
@@ -365,12 +377,16 @@ export const updateOrderStatus = async (req, res) => {
 export const getDeliveryBoyAssignment = async (req, res) => {
   try {
     const deliveryBoyId = req.userId;
+    console.log(`📋 Fetching assignments for delivery boy: ${deliveryBoyId}`);
+    
     const assignments = await DeliveryAssignment.find({
       brodcastedTo: deliveryBoyId,
       status: "brodcasted",
     })
       .populate("order")
       .populate("shop");
+
+    console.log(`📦 Found ${assignments.length} assignments for delivery boy ${deliveryBoyId}`);
 
     const formated = assignments.map((a) => ({
       assignmentId: a._id,
@@ -386,6 +402,7 @@ export const getDeliveryBoyAssignment = async (req, res) => {
 
     return res.status(200).json(formated);
   } catch (error) {
+    console.error("❌ Get Assignment error:", error);
     return res.status(500).json({ message: `get Assignment error ${error}` });
   }
 };

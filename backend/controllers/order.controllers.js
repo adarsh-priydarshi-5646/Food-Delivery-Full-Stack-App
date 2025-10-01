@@ -4,6 +4,7 @@ import Shop from "../models/shop.model.js";
 import User from "../models/user.model.js";
 import { sendDeliveryOtpMail } from "../utils/mail.js";
 import { sendDeliveryOtpMailResend } from "../utils/resendMail.js";
+import { sendDeliveryOtpMailSendGrid } from "../utils/sendgridMail.js";
 import stripe from "../config/stripe.js";
 import dotenv from "dotenv";
 
@@ -565,13 +566,12 @@ export const sendDeliveryOtp = async (req, res) => {
     console.log("Expires in: 5 minutes");
     console.log("=".repeat(50));
     
-    // Send email via Resend (HTTP-based, works on Render)
+    // Send email via SendGrid (can send to any email)
     try {
-      await sendDeliveryOtpMailResend(order.user, otp);
-      console.log(`✅ Delivery OTP email sent successfully to ${order.user.email} via Resend`);
+      await sendDeliveryOtpMailSendGrid(order.user, otp);
+      console.log(`✅ Delivery OTP email sent successfully to ${order.user.email} via SendGrid`);
     } catch (emailError) {
-      console.error("❌ Resend failed:", emailError.message);
-      // Fallback: OTP still available in logs
+      console.error("❌ SendGrid failed:", emailError.message);
       console.log(`💡 OTP available in logs above for manual sharing`);
     }
     

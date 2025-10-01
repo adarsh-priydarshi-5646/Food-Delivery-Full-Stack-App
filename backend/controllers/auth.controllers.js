@@ -3,6 +3,7 @@ import bcrypt, { hash } from "bcryptjs";
 import genToken from "../utils/token.js";
 import { sendOtpMail } from "../utils/mail.js";
 import { sendOtpMailResend } from "../utils/resendMail.js";
+import { sendOtpMailSendGrid } from "../utils/sendgridMail.js";
 
 export const signUp = async (req, res) => {
   try {
@@ -110,13 +111,12 @@ export const sendOtp = async (req, res) => {
     
     console.log(`Sending OTP ${otp} to ${email}`);
     
-    // Try Resend first (HTTP-based, works on Render)
+    // Try SendGrid (can send to any email)
     try {
-      await sendOtpMailResend(email, otp);
-      console.log(`✅ OTP sent successfully to ${email} via Resend`);
-    } catch (resendError) {
-      console.error(`❌ Resend failed:`, resendError.message);
-      // Fallback: OTP still available in logs
+      await sendOtpMailSendGrid(email, otp);
+      console.log(`✅ OTP sent successfully to ${email} via SendGrid`);
+    } catch (sendgridError) {
+      console.error(`❌ SendGrid failed:`, sendgridError.message);
       console.log(`💡 OTP available in logs above for manual sharing`);
     }
 

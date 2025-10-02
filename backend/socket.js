@@ -2,7 +2,7 @@ import User from "./models/user.model.js";
 
 export const socketHandler = (io) => {
   io.on("connection", (socket) => {
-    console.log("🔌 New socket connection:", socket.id);
+    console.log("New socket connection:", socket.id);
     socket.on("identity", async ({ userId }) => {
       try {
         const user = await User.findByIdAndUpdate(
@@ -13,9 +13,9 @@ export const socketHandler = (io) => {
           },
           { new: true }
         );
-        console.log(`✅ User ${userId} connected with socket ${socket.id}, role: ${user?.role}`);
+        console.log(`User ${userId} connected with socket ${socket.id}, role: ${user?.role}`);
       } catch (error) {
-        console.error("❌ Identity error:", error);
+        console.error("Identity error:", error);
       }
     });
 

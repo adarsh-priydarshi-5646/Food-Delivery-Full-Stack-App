@@ -43,7 +43,7 @@ function DeliveryBoy() {
   // Load initial data
   useEffect(() => {
     if (userData?.role === "deliveryBoy") {
-      console.log("📱 Loading delivery boy data...");
+      console.log("Loading delivery boy data...");
       getAssignments();
       getCurrentOrder();
     }
@@ -121,14 +121,14 @@ function DeliveryBoy() {
 
   useEffect(() => {
     if (!socket) {
-      console.log("❌ Socket not available for delivery boy");
+      console.log("Socket not available for delivery boy");
       return;
     }
 
-    console.log("✅ Setting up newAssignment listener for delivery boy");
+    console.log("Setting up newAssignment listener for delivery boy");
     
     socket.on("newAssignment", (data) => {
-      console.log("🔔 New assignment received:", data);
+      console.log("New assignment received:", data);
       setAvailableAssignments((prev) => {
         const updated = [...prev, data];
         console.log("Updated assignments:", updated);
@@ -144,7 +144,7 @@ function DeliveryBoy() {
     });
 
     return () => {
-      console.log("🔌 Removing newAssignment listener");
+      console.log("Removing newAssignment listener");
       socket.off("newAssignment");
     };
   }, [socket]);
@@ -167,7 +167,7 @@ function DeliveryBoy() {
       
       // Show OTP in alert for testing (development mode)
       if (result.data.otp) {
-        alert(`🔐 OTP ${isResend ? 'Resent' : 'Sent'}: ${result.data.otp}\n\nThis is shown only in development mode.`);
+        alert(`OTP ${isResend ? 'Resent' : 'Sent'}: ${result.data.otp}\n\nThis is shown only in development mode.`);
       } else if (isResend) {
         alert("OTP resent successfully! Check your email.");
       }

@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOtpMailResend = async (to, otp) => {
   try {
-    console.log(`📧 Sending OTP email via Resend to ${to}`);
+    console.log(`Sending OTP email via Resend to ${to}`);
     
     // Resend free tier only allows sending to verified email
     // For testing, always send to your own email
@@ -30,21 +30,21 @@ export const sendOtpMailResend = async (to, otp) => {
     });
 
     if (error) {
-      console.error('❌ Resend email error:', error);
+      console.error('Resend email error:', error);
       throw error;
     }
 
-    console.log('✅ OTP email sent successfully via Resend:', data.id);
+    console.log('OTP email sent successfully via Resend:', data.id);
     return data;
   } catch (error) {
-    console.error('❌ Failed to send OTP email:', error);
+    console.error('Failed to send OTP email:', error);
     throw error;
   }
 };
 
 export const sendDeliveryOtpMailResend = async (user, otp) => {
   try {
-    console.log(`📧 Sending delivery OTP email via Resend to ${user.email}`);
+    console.log(`Sending delivery OTP email via Resend to ${user.email}`);
     
     // Resend free tier only allows sending to verified email
     const recipientEmail = process.env.EMAIL || 'adarshpriydarshi5646@gmail.com';
@@ -68,14 +68,14 @@ export const sendDeliveryOtpMailResend = async (user, otp) => {
     });
 
     if (error) {
-      console.error('❌ Resend email error:', error);
+      console.error('Resend email error:', error);
       throw error;
     }
 
-    console.log('✅ Delivery OTP email sent successfully via Resend:', data.id);
+    console.log('Delivery OTP email sent successfully via Resend:', data.id);
     return data;
   } catch (error) {
-    console.error('❌ Failed to send delivery OTP email:', error);
+    console.error('Failed to send delivery OTP email:', error);
     throw error;
   }
 };

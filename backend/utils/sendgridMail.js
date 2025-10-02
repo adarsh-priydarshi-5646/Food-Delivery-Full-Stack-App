@@ -6,7 +6,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const sendOtpMailSendGrid = async (to, otp) => {
   try {
-    console.log(`📧 Sending OTP email via SendGrid to ${to}`);
+    console.log(`Sending OTP email via SendGrid to ${to}`);
     
     const msg = {
       to: to, // Can send to any email!
@@ -26,17 +26,17 @@ export const sendOtpMailSendGrid = async (to, otp) => {
     };
 
     const response = await sgMail.send(msg);
-    console.log('✅ OTP email sent successfully via SendGrid:', response[0].statusCode);
+    console.log('OTP email sent successfully via SendGrid:', response[0].statusCode);
     return response;
   } catch (error) {
-    console.error('❌ SendGrid error:', error.response?.body || error.message);
+    console.error('SendGrid error:', error.response?.body || error.message);
     throw error;
   }
 };
 
 export const sendDeliveryOtpMailSendGrid = async (user, otp) => {
   try {
-    console.log(`📧 Sending delivery OTP email via SendGrid to ${user.email}`);
+    console.log(`Sending delivery OTP email via SendGrid to ${user.email}`);
     
     const msg = {
       to: user.email, // Can send to any email!
@@ -57,10 +57,10 @@ export const sendDeliveryOtpMailSendGrid = async (user, otp) => {
     };
 
     const response = await sgMail.send(msg);
-    console.log('✅ Delivery OTP email sent successfully via SendGrid:', response[0].statusCode);
+    console.log('Delivery OTP email sent successfully via SendGrid:', response[0].statusCode);
     return response;
   } catch (error) {
-    console.error('❌ SendGrid error:', error.response?.body || error.message);
+    console.error('SendGrid error:', error.response?.body || error.message);
     throw error;
   }
 };

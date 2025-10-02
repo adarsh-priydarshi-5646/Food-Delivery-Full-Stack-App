@@ -21,7 +21,7 @@ const updateDefaultImages = async () => {
     // Update restaurant image
     defaultShop.image = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80";
     await defaultShop.save();
-    console.log("✅ Restaurant image updated");
+    console.log("Restaurant image updated");
 
     // Update food items images
     const imageMap = {
@@ -44,10 +44,10 @@ const updateDefaultImages = async () => {
         { name: itemName, shop: defaultShop._id },
         { $set: { image: imageUrl } }
       );
-      console.log(`✅ Updated: ${itemName}`);
+      console.log(`Updated: ${itemName}`);
     }
 
-    console.log("\n🎉 All images updated successfully!");
+    console.log("\n All images updated successfully!");
     process.exit(0);
   } catch (error) {
     console.error("Error:", error);

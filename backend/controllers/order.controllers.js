@@ -11,11 +11,11 @@ dotenv.config();
 // Helper function to assign delivery boys
 const assignDeliveryBoys = async (order, io) => {
   try {
-    console.log("🚀 Starting delivery boy assignment for order:", order._id);
+    console.log("Starting delivery boy assignment for order:", order._id);
     
     for (const shopOrder of order.shopOrders) {
       const { longitude, latitude } = order.deliveryAddress;
-      console.log(`📍 Order location: lat=${latitude}, lon=${longitude}`);
+      console.log(`Order location: lat=${latitude}, lon=${longitude}`);
       
       // First, check all delivery boys
       const allDeliveryBoys = await User.find({ role: "deliveryBoy" });
@@ -38,10 +38,10 @@ const assignDeliveryBoys = async (order, io) => {
         },
       });
 
-      console.log(`📍 Delivery boys within 10km: ${nearByDeliveryBoys.length}`);
+      console.log(`Delivery boys within 10km: ${nearByDeliveryBoys.length}`);
       
       if (nearByDeliveryBoys.length === 0) {
-        console.log("❌ No delivery boys found nearby");
+        console.log("No delivery boys found nearby");
         continue;
       }
 
@@ -83,10 +83,10 @@ const assignDeliveryBoys = async (order, io) => {
       await deliveryAssignment.populate("shop");
 
       // Notify delivery boys
-      console.log(`📢 Broadcasting to ${availableBoys.length} delivery boys`);
+      console.log(`Broadcasting to ${availableBoys.length} delivery boys`);
       availableBoys.forEach((boy) => {
         const boySocketId = boy.socketId;
-        console.log(`📱 Delivery boy ${boy._id} socketId: ${boySocketId}, isOnline: ${boy.isOnline}`);
+        console.log(`Delivery boy ${boy._id} socketId: ${boySocketId}, isOnline: ${boy.isOnline}`);
         if (boySocketId && io) {
           io.to(boySocketId).emit("newAssignment", {
             sentTo: boy._id,
@@ -101,9 +101,9 @@ const assignDeliveryBoys = async (order, io) => {
             })),
             subtotal: shopOrder.subtotal,
           });
-          console.log(`✅ Notification sent to delivery boy ${boy._id}`);
+          console.log(`Notification sent to delivery boy ${boy._id}`);
         } else {
-          console.log(`❌ Cannot send to delivery boy ${boy._id} - No socket connection`);
+          console.log(`Cannot send to delivery boy ${boy._id} - No socket connection`);
         }
       });
     }
@@ -183,7 +183,7 @@ export const placeOrder = async (req, res) => {
 
     // Notify owners and assign delivery boys for COD orders immediately
     if (paymentMethod === "cod" && io) {
-      console.log("🛵 COD Order - Assigning delivery boys...");
+      console.log("COD Order - Assigning delivery boys...");
       // Notify owners
       newOrder.shopOrders.forEach((shopOrder) => {
         const ownerSocketId = shopOrder.owner.socketId;
@@ -197,14 +197,14 @@ export const placeOrder = async (req, res) => {
             deliveryAddress: newOrder.deliveryAddress,
             payment: newOrder.payment,
           });
-          console.log(`✅ Owner ${shopOrder.owner._id} notified`);
+          console.log(`Owner ${shopOrder.owner._id} notified`);
         }
       });
 
       // Assign delivery boys
       await assignDeliveryBoys(newOrder, io);
     } else {
-      console.log("⏳ Online payment - Delivery assignment will happen after payment verification");
+      console.log("Online payment - Delivery assignment will happen after payment verification");
     }
 
     return res.status(201).json(newOrder);
@@ -377,7 +377,7 @@ export const updateOrderStatus = async (req, res) => {
 export const getDeliveryBoyAssignment = async (req, res) => {
   try {
     const deliveryBoyId = req.userId;
-    console.log(`📋 Fetching assignments for delivery boy: ${deliveryBoyId}`);
+    console.log(`Fetching assignments for delivery boy: ${deliveryBoyId}`);
     
     const assignments = await DeliveryAssignment.find({
       brodcastedTo: deliveryBoyId,
@@ -386,11 +386,11 @@ export const getDeliveryBoyAssignment = async (req, res) => {
       .populate("order")
       .populate("shop");
 
-    console.log(`📦 Found ${assignments.length} assignments for delivery boy ${deliveryBoyId}`);
+    console.log(`Found ${assignments.length} assignments for delivery boy ${deliveryBoyId}`);
 
     // Filter out assignments with null/deleted orders
     const validAssignments = assignments.filter(a => a.order && a.shop);
-    console.log(`✅ Valid assignments: ${validAssignments.length}`);
+    console.log(`Valid assignments: ${validAssignments.length}`);
 
     const formated = validAssignments.map((a) => ({
       assignmentId: a._id,
@@ -406,7 +406,7 @@ export const getDeliveryBoyAssignment = async (req, res) => {
 
     return res.status(200).json(formated);
   } catch (error) {
-    console.error("❌ Get Assignment error:", error);
+    console.error("Get Assignment error:", error);
     return res.status(500).json({ message: `get Assignment error ${error}` });
   }
 };
@@ -414,17 +414,17 @@ export const getDeliveryBoyAssignment = async (req, res) => {
 export const acceptOrder = async (req, res) => {
   try {
     const { assignmentId } = req.params;
-    console.log(`🤝 Delivery boy ${req.userId} attempting to accept assignment ${assignmentId}`);
+    console.log(`Delivery boy ${req.userId} attempting to accept assignment ${assignmentId}`);
     
     const assignment = await DeliveryAssignment.findById(assignmentId);
     if (!assignment) {
-      console.log(`❌ Assignment ${assignmentId} not found`);
+      console.log(`Assignment ${assignmentId} not found`);
       return res.status(400).json({ message: "assignment not found" });
     }
     
     console.log(`📋 Assignment status: ${assignment.status}`);
     if (assignment.status !== "brodcasted") {
-      console.log(`❌ Assignment is not brodcasted, current status: ${assignment.status}`);
+      console.log(`Assignment is not brodcasted, current status: ${assignment.status}`);
       return res.status(400).json({ message: "assignment is expired" });
     }
 
@@ -434,7 +434,7 @@ export const acceptOrder = async (req, res) => {
     });
 
     if (alreadyAssigned) {
-      console.log(`❌ Delivery boy ${req.userId} already assigned to order ${alreadyAssigned.order}`);
+      console.log(`Delivery boy ${req.userId} already assigned to order ${alreadyAssigned.order}`);
       return res
         .status(400)
         .json({ message: "You are already assigned to another order" });
@@ -444,24 +444,24 @@ export const acceptOrder = async (req, res) => {
     assignment.status = "assigned";
     assignment.acceptedAt = new Date();
     await assignment.save();
-    console.log(`✅ Assignment ${assignmentId} accepted by delivery boy ${req.userId}`);
+    console.log(`Assignment ${assignmentId} accepted by delivery boy ${req.userId}`);
 
     const order = await Order.findById(assignment.order);
     if (!order) {
-      console.log(`❌ Order ${assignment.order} not found`);
+      console.log(`Order ${assignment.order} not found`);
       return res.status(400).json({ message: "order not found" });
     }
 
     let shopOrder = order.shopOrders.id(assignment.shopOrderId);
     shopOrder.assignedDeliveryBoy = req.userId;
     await order.save();
-    console.log(`✅ Order ${order._id} updated with delivery boy ${req.userId}`);
+    console.log(`Order ${order._id} updated with delivery boy ${req.userId}`);
 
     return res.status(200).json({
       message: "order accepted",
     });
   } catch (error) {
-    console.error(`❌ Accept order error:`, error);
+    console.error(`Accept order error:`, error);
     return res.status(500).json({ message: `accept order error ${error.message}` });
   }
 };
@@ -559,15 +559,15 @@ export const sendDeliveryOtp = async (req, res) => {
     await order.save();
     
     // Log OTP generation (production-safe)
-    console.log(`🔐 Delivery OTP generated for order ${orderId} - Customer: ${order.user.fullName}`);
+    console.log(`Delivery OTP generated for order ${orderId} - Customer: ${order.user.fullName}`);
     
     // Send email via SendGrid (can send to any email)
     try {
       await sendDeliveryOtpMailSendGrid(order.user, otp);
-      console.log(`✅ Delivery OTP email sent successfully to ${order.user.email} via SendGrid`);
+      console.log(`Delivery OTP email sent successfully to ${order.user.email} via SendGrid`);
     } catch (emailError) {
-      console.error("❌ SendGrid failed:", emailError.message);
-      console.log(`💡 OTP available in logs above for manual sharing`);
+      console.error("SendGrid failed:", emailError.message);
+      console.log(`OTP available in logs above for manual sharing`);
     }
     
     return res
@@ -611,7 +611,7 @@ export const verifyDeliveryOtp = async (req, res) => {
       assignedTo: shopOrder.assignedDeliveryBoy,
     });
 
-    console.log("✅ Order Delivered:", orderId);
+    console.log("Order Delivered:", orderId);
 
     // Send real-time notifications via Socket.IO
     const io = req.app.get("io");
@@ -624,7 +624,7 @@ export const verifyDeliveryOtp = async (req, res) => {
           shopOrderId: shopOrder._id,
           message: "Order has been delivered successfully!",
         });
-        console.log("📢 Owner notified:", owner.socketId);
+        console.log("Owner notified:", owner.socketId);
       }
 
       // Notify user
@@ -635,7 +635,7 @@ export const verifyDeliveryOtp = async (req, res) => {
           shopOrderId: shopOrder._id,
           message: "Your order has been delivered!",
         });
-        console.log("📢 User notified:", userSocketId);
+        console.log("User notified:", userSocketId);
       }
     }
 
@@ -858,7 +858,7 @@ export const verifyStripePayment = async (req, res) => {
     await order.populate("shopOrders.owner", "name socketId");
     await order.populate("user", "name email mobile");
 
-    console.log("💳 Stripe Payment Verified for Order:", orderId);
+    console.log("Stripe Payment Verified for Order:", orderId);
 
     // Update owner earnings
     for (const shopOrder of order.shopOrders) {
@@ -866,7 +866,7 @@ export const verifyStripePayment = async (req, res) => {
       if (owner) {
         owner.totalEarnings = (owner.totalEarnings || 0) + shopOrder.subtotal;
         await owner.save();
-        console.log(`💰 Owner earnings updated: ${owner.fullName} +₹${shopOrder.subtotal}`);
+        console.log(`Owner earnings updated: ${owner.fullName} +₹${shopOrder.subtotal}`);
       }
     }
 
@@ -874,7 +874,7 @@ export const verifyStripePayment = async (req, res) => {
 
     // Notify restaurant owners and assign delivery boys
     if (io) {
-      console.log("📢 Sending notifications...");
+      console.log("Sending notifications...");
       
       // Notify owners
       order.shopOrders.forEach((shopOrder) => {
@@ -889,16 +889,16 @@ export const verifyStripePayment = async (req, res) => {
             deliveryAddress: order.deliveryAddress,
             payment: order.payment,
           });
-          console.log(`✅ Owner notified: ${shopOrder.owner.name}`);
+          console.log(`Owner notified: ${shopOrder.owner.name}`);
         }
       });
 
       // Assign delivery boys after successful payment
       console.log("🏍️ Assigning delivery boys...");
       await assignDeliveryBoys(order, io);
-      console.log("✅ Delivery boy assignment complete");
+      console.log("Delivery boy assignment complete");
     } else {
-      console.error("❌ Socket.IO not available!");
+      console.error("Socket.IO not available!");
     }
 
     return res.status(200).json(order);

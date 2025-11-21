@@ -36,6 +36,7 @@ function SignIn() {
       dispatch(setUserData(result.data));
       setErr("");
       setLoading(false);
+      navigate("/");
     } catch (error) {
       setErr(error?.response?.data?.message);
       setLoading(false);
@@ -57,6 +58,7 @@ function SignIn() {
         { withCredentials: true }
       );
       dispatch(setUserData(data));
+      navigate("/");
     } catch (error) {
       console.log(error);
       setErr(error?.response?.data?.message || "Google sign in failed");

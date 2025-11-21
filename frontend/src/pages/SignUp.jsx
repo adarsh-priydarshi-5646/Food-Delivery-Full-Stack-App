@@ -41,6 +41,7 @@ function SignUp() {
       dispatch(setUserData(result.data));
       setErr("");
       setLoading(false);
+      navigate("/");
     } catch (error) {
       setErr(error?.response?.data?.message);
       setLoading(false);
@@ -67,6 +68,7 @@ function SignUp() {
       );
       dispatch(setUserData(data));
       setErr("");
+      navigate("/");
     } catch (error) {
       console.log(error);
       setErr(error?.response?.data?.message || "Google sign up failed");

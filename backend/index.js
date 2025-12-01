@@ -24,6 +24,7 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:5174",
   "https://food-delivery-full-stack-app-me1o.vercel.app"
 ];
 
@@ -58,13 +59,6 @@ app.use("/api/user", userRouter);
 app.use("/api/shop", shopRouter);
 app.use("/api/item", itemRouter);
 app.use("/api/order", orderRouter);
-
-// Catch-all route to serve index.html for all non-API routes (SPA routing)
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-  });
-}
 
 socketHandler(io);
 server.listen(port, () => {

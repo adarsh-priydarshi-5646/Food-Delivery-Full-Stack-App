@@ -8,15 +8,27 @@ function useGetCurrentUser() {
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchUser = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       try {
         dispatch(setAuthLoading(true));
         const result = await axios.get(`${serverUrl}/api/user/current`, {
           withCredentials: true,
+          signal: controller.signal,
         });
         dispatch(setUserData(result.data));
+        clearTimeout(timeoutId);
       } catch (error) {
-        console.log(error);
+        if (error.name === 'CanceledError' || error.code === 'ECONNABORTED') {
+          console.log('Authentication request timed out - backend may be unavailable');
+        } else if (error.response?.status === 401) {
+          console.log('User not authenticated');
+        } else {
+          console.log('Error fetching current user:', error.message);
+        }
       } finally {
+        clearTimeout(timeoutId);
         dispatch(setAuthLoading(false));
       }
     };

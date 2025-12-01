@@ -30,7 +30,7 @@ export const serverUrl = import.meta.env.PROD
   ? "https://food-delivery-full-stack-app-3.onrender.com"
   : "http://localhost:8000";
 function App() {
-  const { userData } = useSelector((state) => state.user);
+  const { userData, authLoading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   useGetCurrentUser();
   useUpdateLocation();
@@ -52,6 +52,18 @@ function App() {
       socketInstance.disconnect();
     };
   }, [userData?._id]);
+
+  // Show loading screen while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-orange-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+          <p className="mt-4 text-lg text-gray-700">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Routes>
@@ -116,3 +128,4 @@ function App() {
 }
 
 export default App;
+

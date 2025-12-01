@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.routes.js";
 import cors from "cors";
 import userRouter from "./routes/user.routes.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import itemRouter from "./routes/item.routes.js";
 import shopRouter from "./routes/shop.routes.js";
@@ -13,6 +15,9 @@ import orderRouter from "./routes/order.routes.js";
 import http from "http";
 import { Server } from "socket.io";
 import { socketHandler } from "./socket.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
@@ -43,11 +48,23 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// Serve static files from frontend build in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+}
+
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/shop", shopRouter);
 app.use("/api/item", itemRouter);
 app.use("/api/order", orderRouter);
+
+// Catch-all route to serve index.html for all non-API routes (SPA routing)
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  });
+}
 
 socketHandler(io);
 server.listen(port, () => {

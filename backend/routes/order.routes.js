@@ -15,12 +15,14 @@ import {
   rateOrder,
   createStripePaymentIntent,
   verifyStripePayment,
+  cancelOrder, // Added cancelOrder
 } from "../controllers/order.controllers.js";
 
 const orderRouter = express.Router();
 
 orderRouter.post("/place-order", isAuth, placeOrder);
 orderRouter.get("/my-orders", isAuth, getMyOrders);
+orderRouter.post("/cancel-order", isAuth, cancelOrder); // New route added here
 orderRouter.get("/get-assignments", isAuth, getDeliveryBoyAssignment);
 orderRouter.get("/get-current-order", isAuth, getCurrentOrder);
 orderRouter.post("/send-delivery-otp", isAuth, sendDeliveryOtp);

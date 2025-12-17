@@ -395,9 +395,9 @@ function DeliveryBoy() {
                <span className="w-2 h-2 rounded-full bg-green-500"></span> Active Delivery
             </h2>
             
-            <div className="bg-white rounded-2xl shadow-lg border border-green-100 overflow-hidden">
-               {/* Map/Tracking Placeholder or Component */}
-               <div className="h-[200px] w-full bg-gray-100 relative">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col">
+               {/* Map Section - Top */}
+               <div className="h-[300px] w-full bg-gray-100 relative z-0">
                   <DeliveryBoyTracking
                     data={{
                       deliveryBoyLocation: deliveryBoyLocation || {
@@ -412,77 +412,87 @@ function DeliveryBoy() {
                   />
                </div>
                
-               <div className="p-5 relative z-20 bg-white -mt-4 rounded-t-2xl shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                  <div className="flex justify-between items-start mb-6">
-                     <div>
-                        <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Pickup From</p>
-                        <h3 className="text-lg font-bold text-gray-900">{currentOrder?.shopOrder.shop.name}</h3>
+               {/* Details Section - Bottom */}
+               <div className="p-6 flex flex-col gap-6 bg-white relative z-10">
+                  {/* Order Info */}
+                  <div className="flex flex-col md:flex-row gap-6 justify-between items-start border-b border-gray-100 pb-6">
+                     <div className="flex-1">
+                        <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-2 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Pickup From</p>
+                        <h3 className="text-xl font-bold text-gray-900 leading-tight">{currentOrder?.shopOrder.shop.name}</h3>
+                        <p className="text-sm text-gray-500 mt-1">{currentOrder?.shopOrder.shop.address}</p>
                      </div>
-                     <div className="text-right">
-                        <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Deliver To</p>
-                        <h3 className="text-lg font-bold text-gray-900">{currentOrder.user.fullName}</h3>
+                     <div className="flex-1 md:text-right">
+                        <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-2 flex items-center gap-1 md:justify-end"><span className="w-2 h-2 rounded-full bg-green-500"></span> Deliver To</p>
+                        <h3 className="text-xl font-bold text-gray-900 leading-tight">{currentOrder.user.fullName}</h3>
+                        <div className="flex md:justify-end mt-1">
+                           <p className="text-sm text-gray-600 flex items-start gap-2 max-w-[250px] text-left md:text-right">
+                              <FaMapMarkerAlt className="text-[#E23744] mt-1 shrink-0" />
+                              {currentOrder.deliveryAddress.text}
+                           </p>
+                        </div>
                      </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
-                     <p className="text-sm text-gray-600 flex gap-2">
-                        <FaMapMarkerAlt className="text-[#E23744] mt-0.5" />
-                        {currentOrder.deliveryAddress.text}
-                     </p>
-                  </div>
-                  
-                  {!showOtpBox ? (
-                    <button
-                      className="w-full bg-green-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-green-200 hover:bg-green-700 active:scale-95 transition-all"
-                      onClick={sendOtp}
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <ClipLoader size={20} color="white" />
-                      ) : (
-                        "Arrived & Verify OTP"
-                      )}
-                    </button>
-                  ) : (
-                    <div className="bg-white border-2 border-orange-100 rounded-xl p-5">
-                      <p className="text-sm font-semibold text-gray-700 mb-3 text-center">
-                        Ask <span className="text-[#E23744]">{currentOrder.user.fullName}</span> for the OTP
-                      </p>
-                      
-                      <div className="flex gap-2 mb-4">
-                        <input
-                          type="text"
-                          maxLength="4"
-                          className="flex-1 border-2 border-gray-200 rounded-lg px-4 py-3 text-center text-lg font-bold tracking-widest focus:border-[#E23744] outline-none transition"
-                          placeholder="••••"
-                          onChange={(e) => setOtp(e.target.value)}
-                          value={otp}
-                        />
-                      </div>
-                      
-                      {message && (
-                        <p className="text-center text-green-600 font-medium mb-3">
-                          ✨ {message}
-                        </p>
-                      )}
-
+                  {/* Actions */}
+                  <div className="w-full">
+                    {!showOtpBox ? (
                       <button
-                        className="w-full bg-[#E23744] text-white py-3 rounded-lg font-bold hover:bg-[#c02a35] transition-all shadow-md disabled:opacity-70 mb-3"
-                        onClick={verifyOtp}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-green-100 active:scale-95 transition-all flex items-center justify-center gap-2"
+                        onClick={sendOtp}
                         disabled={loading}
                       >
-                        {loading ? "Verifying..." : "Complete Delivery"}
+                        {loading ? (
+                          <ClipLoader size={20} color="white" />
+                        ) : (
+                          <>
+                           <FaMotorcycle /> Arrived & Verify OTP
+                          </>
+                        )}
                       </button>
-                      
-                      <button
-                         className="w-full text-xs text-gray-400 font-medium hover:text-gray-600"
-                         onClick={() => sendOtp(true)}
-                         disabled={resendTimer > 0 || loading}
-                       >
-                         {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
-                       </button>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="bg-gray-50 border border-gray-100 rounded-xl p-6">
+                        <p className="text-sm font-semibold text-gray-700 mb-4 text-center">
+                          Ask <span className="text-[#E23744] font-bold">{currentOrder.user.fullName}</span> for the OTP
+                        </p>
+                        
+                        <div className="flex justify-center mb-6">
+                          <input
+                            type="text"
+                            maxLength="4"
+                            className="w-48 border-2 border-gray-200 rounded-lg px-4 py-3 text-center text-2xl font-bold tracking-[0.5em] focus:border-[#E23744] outline-none transition bg-white"
+                            placeholder="••••"
+                            onChange={(e) => setOtp(e.target.value)}
+                            value={otp}
+                            autoFocus
+                          />
+                        </div>
+                        
+                        {message && (
+                          <p className="text-center text-green-600 font-medium mb-4 bg-green-50 p-2 rounded-lg">
+                            ✨ {message}
+                          </p>
+                        )}
+
+                        <div className="flex flex-col gap-3">
+                           <button
+                             className="w-full bg-[#E23744] text-white py-4 rounded-xl font-bold hover:bg-[#c02a35] transition-all shadow-md active:scale-95 disabled:opacity-70 disabled:active:scale-100"
+                             onClick={verifyOtp}
+                             disabled={loading}
+                           >
+                             {loading ? <ClipLoader size={20} color="white" /> : "Complete Delivery"}
+                           </button>
+                           
+                           <button
+                              className="w-full text-xs text-gray-500 font-medium hover:text-gray-800 py-2"
+                              onClick={() => sendOtp(true)}
+                              disabled={resendTimer > 0 || loading}
+                            >
+                              {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
+                            </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                </div>
             </div>
           </div>

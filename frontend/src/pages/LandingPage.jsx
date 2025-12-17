@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
-// import homeImage from "../assets/home.png"; // Using home.png as background
+// import homeImage from "../assets/home.png";
 
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentCity } from "../redux/userSlice";
@@ -22,7 +22,6 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-gray-800">
-      {/* Hero Section */}
       <div className="relative h-[60vh] lg:h-[70vh] w-full bg-black">
         <img
           src="https://t4.ftcdn.net/jpg/02/92/20/37/360_F_292203735_CSsyqyS6A4Z9Czd4Msf7qZEhoxjpzZl1.jpg"
@@ -30,7 +29,6 @@ const LandingPage = () => {
           className="absolute inset-0 w-full h-full object-cover opacity-60"
         />
         
-        {/* Navbar Overlay */}
         <nav className="absolute top-0 w-full p-4 lg:p-6 flex justify-between items-center z-50 text-white max-w-7xl mx-auto left-0 right-0">
            <div className="hidden md:flex gap-6 text-lg font-light">
              <button className="hover:text-gray-200 transition cursor-pointer">Add Restaurant</button>
@@ -52,7 +50,6 @@ const LandingPage = () => {
            </div>
         </nav>
 
-        {/* Hero Content */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 text-center">
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-white mb-4 tracking-tighter italic font-serif">
             Vingo
@@ -61,7 +58,6 @@ const LandingPage = () => {
             Discover the best food & drinks in your city
           </p>
           
-          {/* Search Bar */}
           <div className="w-full max-w-3xl bg-white rounded-lg flex items-center p-3 shadow-lg">
              <div className="relative md:flex items-center text-gray-500 px-3 gap-2 border-r border-gray-300 w-1/3 cursor-pointer hover:bg-gray-50 transition p-2 rounded-l-lg hidden" onClick={() => setShowCityDropdown(!showCityDropdown)}>
                 <div className="text-[#ff7e8b]">
@@ -103,12 +99,9 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Main Content Container */}
       <div className="max-w-7xl mx-auto w-full px-4 lg:px-8">
         
-        {/* Category Cards */}
         <div className="py-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-           {/* Order Online */}
            <div className="group rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => navigate("/signup")}>
               <div className="h-40 overflow-hidden">
                  <img src="https://b.zmtcdn.com/webFrontend/e5b8785c257af2a7f354f1addaf37e4e1647364814.jpeg" alt="Order Online" className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
@@ -119,7 +112,6 @@ const LandingPage = () => {
               </div>
            </div>
 
-           {/* Dining */}
            <div className="group rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => navigate("/signup")}>
               <div className="h-40 overflow-hidden">
                  <img src="https://b.zmtcdn.com/webFrontend/d026b357feb0d63c997549f6398da8cc1647364915.jpeg" alt="Dining" className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
@@ -130,7 +122,6 @@ const LandingPage = () => {
               </div>
            </div>
 
-           {/* Nightlife */}
            <div className="group rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => navigate("/signup")}>
               <div className="h-40 overflow-hidden">
                 <img src="https://b.zmtcdn.com/webFrontend/d9d80ef91cb552e3fdfadb3d4f4379761647365057.jpeg" alt="Nightlife" className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
@@ -142,7 +133,6 @@ const LandingPage = () => {
            </div>
         </div>
 
-        {/* Popular Localities */}
         <div className="py-12">
            <h2 className="text-3xl md:text-4xl text-gray-800 mb-8 font-normal">
               Popular localities in and around <span className="font-semibold">Delhi NCR</span>
@@ -161,7 +151,6 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Get the App Section */}
       <div className="bg-[#fffbf7] py-20 px-4">
          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10">
             <div className="w-full md:w-1/2 flex justify-center">
@@ -199,7 +188,6 @@ const LandingPage = () => {
          </div>
       </div>
 
-       {/* Footer */}
        <footer className="bg-gray-100 pt-16 pb-8 border-t border-gray-200">
          <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-10">

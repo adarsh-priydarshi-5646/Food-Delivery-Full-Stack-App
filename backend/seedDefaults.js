@@ -61,7 +61,7 @@ const seedDefaults = async () => {
         if (!shop) {
           await Shop.create({
             name: "Vingo HQ Eats",
-            image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop", // Stock food image
+            image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
             owner: user._id,
             city: "New Delhi",
             state: "Delhi",

@@ -65,107 +65,111 @@ function SignIn() {
     }
   };
   return (
-    <div
-      className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden"
-      style={{ backgroundColor: bgColor }}
-    >
-      <div className="absolute top-10 left-10 w-72 h-72 bg-orange-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div className="absolute top-0 right-10 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-      <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-[#fff9f6]">
+      {/* Animated Blobs */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+        <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-32 left-20 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
+      </div>
       
-      <div
-        className={`bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border-[1px] relative z-10 transform transition-all hover:scale-[1.02] duration-300`}
-        style={{
-          border: `1px solid ${borderColor}`,
-        }}
-      >
+      {/* Glass Card */}
+      <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-md p-8 md:p-10 border border-white/50 relative z-10 transition-all hover:shadow-3xl">
         <div className="text-center mb-8">
-          <div className="inline-block p-3 bg-gradient-to-r from-orange-400 to-red-500 rounded-full mb-4">
-            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-          </div>
-          <h1 className={`text-4xl font-bold mb-2 bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent`}>
+          <h1 className="text-4xl font-extrabold mb-2 text-[#E23744] tracking-tight">
             Vingo
           </h1>
-          <p className="text-gray-600">
-            Welcome back! Sign in to continue
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
+          <p className="text-gray-500 text-sm">
+            Sign in to continue your delicious journey
           </p>
         </div>
 
-        <div className="mb-4">
-          <label
-            htmlFor="email"
-            className="block text-gray-700 font-medium mb-1"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none "
-            placeholder="Enter your Email"
-            style={{ border: `1px solid ${borderColor}` }}
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="password"
-            className="block text-gray-700 font-medium mb-1"
-          >
-            Password
-          </label>
-          <div className="relative">
+        <div className="space-y-5">
+          <div>
+            <label className="block text-gray-700 text-sm font-semibold mb-2 ml-1" htmlFor="email">
+              Email Address
+            </label>
             <input
-              type={`${showPassword ? "text" : "password"}`}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none pr-10"
-              placeholder="Enter your password"
-              style={{ border: `1px solid ${borderColor}` }}
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
+              type="email"
+              className="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E23744]/20 focus:border-[#E23744] transition-all"
+              placeholder="name@example.com"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
               required
             />
-
-            <button
-              className="absolute right-3 cursor-pointer top-[14px] text-gray-500"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {!showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
-            </button>
           </div>
-        </div>
-        <div
-          className="text-right mb-4 cursor-pointer text-[#ff4d2d] font-medium"
-          onClick={() => navigate("/forgot-password")}
-        >
-          Forgot Password
+
+          <div>
+            <label className="block text-gray-700 text-sm font-semibold mb-2 ml-1" htmlFor="password">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E23744]/20 focus:border-[#E23744] transition-all pr-12"
+                placeholder="Enter your password"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                required
+              />
+              <button
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {!showPassword ? <FaRegEye size={18} /> : <FaRegEyeSlash size={18} />}
+              </button>
+            </div>
+            <div className="text-right mt-2">
+              <span
+                className="text-sm text-[#E23744] hover:text-[#c02a35] font-medium cursor-pointer transition-colors"
+                onClick={() => navigate("/forgot-password")}
+              >
+                Forgot Password?
+              </span>
+            </div>
+          </div>
+
+          <button
+            className="w-full bg-[#E23744] hover:bg-[#c02a35] text-white font-bold py-3.5 rounded-xl shadow-lg shadow-orange-500/30 transform transition-all active:scale-[0.98] flex justify-center items-center gap-2"
+            onClick={handleSignIn}
+            disabled={loading}
+          >
+            {loading ? <ClipLoader size={20} color="white" /> : "Sign In"}
+          </button>
+
+          {err && (
+            <div className="bg-red-50 text-red-500 text-sm text-center py-2 rounded-lg border border-red-100">
+              {err}
+            </div>
+          )}
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-[#fff9f6] text-gray-500 rounded">Or continue with</span>
+            </div>
+          </div>
+
+          <button
+            className="w-full bg-white border border-gray-300 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-3"
+            onClick={handleGoogleAuth}
+          >
+            <FcGoogle size={22} />
+            <span>Sign in with Google</span>
+          </button>
         </div>
 
-        <button
-          className={`w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
-          onClick={handleSignIn}
-          disabled={loading}
-        >
-          {loading ? <ClipLoader size={20} color="white" /> : "Sign In"}
-        </button>
-        {err && <p className="text-red-500 text-center my-[10px]">*{err}</p>}
-
-        <button
-          className="w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition cursor-pointer duration-200 border-gray-400 hover:bg-gray-100"
-          onClick={handleGoogleAuth}
-        >
-          <FcGoogle size={20} />
-          <span>Sign In with Google</span>
-        </button>
-        <p
-          className="text-center mt-6 cursor-pointer"
-          onClick={() => navigate("/signup")}
-        >
-          Want to create a new account ?{" "}
-          <span className="text-[#ff4d2d]">Sign Up</span>
+        <p className="text-center mt-8 text-gray-600">
+          Don't have an account?{" "}
+          <span
+            className="text-[#E23744] font-bold cursor-pointer hover:underline"
+            onClick={() => navigate("/signup")}
+          >
+            Sign Up
+          </span>
         </p>
       </div>
     </div>

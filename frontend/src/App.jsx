@@ -5,6 +5,7 @@ import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import { useDispatch, useSelector } from "react-redux";
+import LandingPage from "./pages/LandingPage";
 import Home from "./pages/Home";
 import useGetCity from "./hooks/useGetCity";
 import useGetMyshop from "./hooks/useGetMyShop";
@@ -87,7 +88,7 @@ function App() {
       />
       <Route
         path="/"
-        element={userData ? <Home /> : <Navigate to={"/signin"} />}
+        element={userData ? <Home /> : <LandingPage />}
       />
       <Route
         path="/create-edit-shop"

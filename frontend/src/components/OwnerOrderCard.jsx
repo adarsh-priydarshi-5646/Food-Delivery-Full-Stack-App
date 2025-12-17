@@ -25,106 +25,81 @@ function OwnerOrderCard({ data }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 space-y-4">
-      <div>
-        <h2 className="text-lg font-semibold text-gray-800">
-          {data.user.fullName}
-        </h2>
-        <p className="text-sm text-gray-500">{data.user.email}</p>
-        <p className="flex items-center gap-2 text-sm text-gray-600 mt-1">
-          <MdPhone />
-          <span>{data.user.mobile}</span>
-        </p>
-        {data.paymentMethod == "online" ? (
-          <p className="gap-2 text-sm text-gray-600">
-            payment: {data.payment ? "true" : "false"}
-          </p>
-        ) : (
-          <p className="gap-2 text-sm text-gray-600">
-            Payment Method: {data.paymentMethod}
-          </p>
-        )}
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 transition-all hover:shadow-md">
+      <div className="flex justify-between items-start mb-4 border-b border-gray-50 pb-3">
+        <div>
+           <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-gray-900">{data.user.fullName}</h2>
+              <span className="text-xs text-gray-400">#{data._id.slice(-6)}</span>
+           </div>
+           <p className="text-sm text-gray-500 font-medium">{data.paymentMethod === "cod" ? "Cash on Delivery" : "Paid Online"}</p>
+        </div>
+        <div className="text-right">
+           <p className="text-lg font-bold text-[#ff4d2d]">₹{data.shopOrders.subtotal}</p>
+           <p className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded inline-block mt-1">
+              {new Date(data.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+           </p>
+        </div>
       </div>
 
-      <div className="flex items-start flex-col gap-2 text-gray-600 text-sm">
-        <p>{data?.deliveryAddress?.text}</p>
-        <p className="text-xs text-gray-500">
-          Lat: {data?.deliveryAddress.latitude} , Lon{" "}
-          {data?.deliveryAddress.longitude}
-        </p>
-      </div>
-
-      <div className="flex space-x-4 overflow-x-auto pb-2">
+      <div className="space-y-3 mb-4">
         {data.shopOrders.shopOrderItems.map((item, index) => (
-          <div
-            key={index}
-            className='flex-shrink-0 w-40 border rounded-lg p-2 bg-white"'
-          >
-            <img
-              src={item.item.image}
-              alt=""
-              className="w-full h-24 object-cover rounded"
-            />
-            <p className="text-sm font-semibold mt-1">{item.name}</p>
-            <p className="text-xs text-gray-500">
-              Qty: {item.quantity} x ₹{item.price}
-            </p>
-          </div>
+           <div key={index} className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-3">
+                 <div className="bg-orange-50 text-orange-600 font-bold w-6 h-6 flex items-center justify-center rounded text-xs">
+                    {item.quantity}x
+                 </div>
+                 <span className="text-gray-700 font-medium">{item.name}</span>
+              </div>
+              <span className="text-gray-500">₹{item.price * item.quantity}</span>
+           </div>
         ))}
       </div>
+      
+      {/* Status Control */}
+      <div className="bg-gray-50 p-3 rounded-lg flex items-center justify-between gap-3">
+         <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${
+               data.shopOrders.status === 'delivered' ? 'bg-green-500' : 
+               data.shopOrders.status === 'cancelled' ? 'bg-red-500' :
+               data.shopOrders.status === 'preparing' ? 'bg-orange-500' : 'bg-blue-500'
+            }`}></div>
+            <span className="text-sm font-bold uppercase text-gray-700">{data.shopOrders.status}</span>
+         </div>
 
-      <div className="flex justify-between items-center mt-auto pt-3 border-t border-gray-100">
-        <span className="text-sm">
-          status:{" "}
-          <span className="font-semibold capitalize text-[#ff4d2d]">
-            {data.shopOrders.status}
-          </span>
-        </span>
-
-        <select
-          className="rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2 border-[#ff4d2d] text-[#ff4d2d]"
-          onChange={(e) =>
-            handleUpdateStatus(
-              data._id,
-              data.shopOrders.shop._id,
-              e.target.value
-            )
-          }
-        >
-          <option value="">Change</option>
-          <option value="pending">Pending</option>
-          <option value="preparing">Preparing</option>
-          <option value="out of delivery">Out Of Delivery</option>
-        </select>
+         {data.shopOrders.status !== 'delivered' && data.shopOrders.status !== 'cancelled' && (
+            <select
+              className="bg-white border border-gray-200 text-gray-700 text-sm font-semibold py-1.5 px-3 rounded-lg focus:border-[#ff4d2d] focus:ring-1 focus:ring-[#ff4d2d] outline-none cursor-pointer"
+              value={data.shopOrders.status}
+              onChange={(e) =>
+                handleUpdateStatus(
+                  data._id,
+                  data.shopOrders.shop._id,
+                  e.target.value
+                )
+              }
+            >
+              <option value="pending">Pending</option>
+              <option value="preparing">Accept (Preparing)</option>
+              <option value="ready">Ready to Pickup</option>
+              <option value="out of delivery">Out for Delivery</option>
+            </select>
+         )}
       </div>
 
-      {data.shopOrders.status == "out of delivery" && (
-        <div className="mt-3 p-2 border rounded-lg text-sm bg-orange-50 gap-4">
-          {data.shopOrders.assignedDeliveryBoy ? (
-            <p>Assigned Delivery Boy:</p>
-          ) : (
-            <p>Available Delivery Boys:</p>
-          )}
-          {availableBoys?.length > 0 ? (
-            availableBoys.map((b, index) => (
-              <div className="text-gray-800">
-                {b.fullName}-{b.mobile}
-              </div>
-            ))
-          ) : data.shopOrders.assignedDeliveryBoy ? (
-            <div>
-              {data.shopOrders.assignedDeliveryBoy.fullName}-
-              {data.shopOrders.assignedDeliveryBoy.mobile}
-            </div>
-          ) : (
-            <div>Waiting for delivery boy to accept</div>
-          )}
-        </div>
+      {/* Delivery Info */}
+      {(data.shopOrders.status === "preparing" || data.shopOrders.status === "ready" || data.shopOrders.status === "out of delivery") && (
+         <div className="mt-3 text-xs text-gray-500 flex items-center justify-between bg-blue-50 p-2 rounded border border-blue-100">
+            <span>Delivery Partner:</span>
+            {data.shopOrders.assignedDeliveryBoy ? (
+               <span className="font-bold text-blue-700 flex items-center gap-1">
+                  <MdDeliveryDining /> {data.shopOrders.assignedDeliveryBoy.fullName}
+               </span>
+            ) : (
+               <span className="text-orange-600 italic">Assigning...</span>
+            )}
+         </div>
       )}
-
-      <div className="text-right font-bold text-gray-800 text-sm">
-        Total: ₹{data.shopOrders.subtotal}
-      </div>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { FaClipboardList } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import UserOrderCard from "../components/UserOrderCard";
 import OwnerOrderCard from "../components/OwnerOrderCard";
+import DeliveryHistoryCard from "../components/DeliveryHistoryCard"; // Import new card
 import {
   setMyOrders,
   updateOrderStatus,
@@ -26,6 +27,25 @@ function MyOrders() {
     socket?.on("update-status", ({ orderId, shopId, status, userId }) => {
       if (userId == userData._id) {
         dispatch(updateRealtimeOrderStatus({ orderId, shopId, status }));
+      }
+    });
+
+    socket?.on("orderDelivered", ({ orderId, shopOrderId, message }) => {
+      // Find the shopId from the structure if possible, or iterate
+      // But updateRealtimeOrderStatus needs shopId.
+      // The backend emits { orderId, shopOrderId, message }
+      // We need to find the shopId corresponding to shopOrderId in our Redux state or backend needs to send it.
+      // Let's look at backend: it sends shopOrderId.
+      // We can iterate myOrders to find the order and then the shopOrder to get the shopId.
+      
+      const order = myOrders.find((o) => o._id === orderId);
+      if (order) {
+        const shopOrder = order.shopOrders.find((so) => so._id === shopOrderId);
+        if (shopOrder) {
+             dispatch(updateRealtimeOrderStatus({ orderId, shopId: shopOrder.shop._id, status: "delivered" }));
+             // Optionally show a toast/alert
+             // alert(message);
+        }
       }
     });
 
@@ -69,6 +89,8 @@ function MyOrders() {
                 <UserOrderCard data={order} allOrders={myOrders} key={index} />
               ) : userData.role == "owner" ? (
                 <OwnerOrderCard data={order} key={index} />
+              ) : userData.role == "deliveryBoy" ? (
+                <DeliveryHistoryCard data={order} key={index} />
               ) : null
             )
           ) : (

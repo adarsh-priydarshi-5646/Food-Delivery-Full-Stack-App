@@ -58,7 +58,7 @@ function DeliveryBoyTracking({ data }) {
           <Popup>Delivery Boy</Popup>
         </Marker>
         <Marker position={[customerLat, customerlon]} icon={customerIcon}>
-          <Popup>Delivery Boy</Popup>
+          <Popup>Customer Location</Popup>
         </Marker>
 
         <Polyline positions={path} color="blue" weight={4} />

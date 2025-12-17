@@ -18,6 +18,7 @@ import {
 } from "recharts";
 import { FaMotorcycle, FaMapMarkerAlt, FaRupeeSign, FaBox, FaStar, FaClock } from "react-icons/fa";
 import { MdDeliveryDining } from "react-icons/md";
+import { IoMdClose, IoMdWarning } from "react-icons/io";
 
 function DeliveryBoy() {
   const { userData, socket } = useSelector((state) => state.user);
@@ -30,6 +31,19 @@ function DeliveryBoy() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
+  
+  // Cancellation State
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
+
+  const cancelReasons = [
+    "Customer unreachable",
+    "Address not found",
+    "Customer refused delivery",
+    "Accident/Vehicle Issue",
+    "Other"
+  ];
 
   // Request notification permission
   useEffect(() => {
@@ -210,6 +224,39 @@ function DeliveryBoy() {
       // Use alert for critical error feedback as requested, but message state is also set
       setMessage("Wrong OTP ❌");
       alert(errorMessage);
+      setLoading(false);
+    }
+  };
+
+  const handleCancelOrder = async () => {
+    if (!cancelReason) {
+      alert("Please select a reason");
+      return;
+    }
+    const finalReason = cancelReason === "Other" ? customReason : cancelReason;
+    if (!finalReason) {
+       alert("Please specify the reason");
+       return;
+    }
+
+    if(!window.confirm("Are you sure you want to cancel this order? This action cannot be undone.")){
+        return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`${serverUrl}/api/order/cancel-order`, {
+        orderId: currentOrder._id,
+        shopOrderId: currentOrder.shopOrder._id,
+        reason: finalReason
+      }, { withCredentials: true });
+      
+      alert("Order cancelled successfully");
+      window.location.reload();
+      
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "Failed to cancel order");
       setLoading(false);
     }
   };
@@ -489,6 +536,14 @@ function DeliveryBoy() {
                            </button>
                            
                            <button
+                             className="w-full bg-white border border-red-200 text-red-500 py-3 rounded-xl font-bold hover:bg-red-50 transition-all active:scale-95 disabled:opacity-70"
+                             onClick={() => setShowCancelModal(true)}
+                             disabled={loading}
+                           >
+                              Cancel Order
+                           </button>
+
+                           <button
                               className="w-full text-xs text-gray-500 font-medium hover:text-gray-800 py-2"
                               onClick={() => sendOtp(true)}
                               disabled={resendTimer > 0 || loading}
@@ -504,6 +559,62 @@ function DeliveryBoy() {
           </div>
         )}
       </div>
+
+      {/* Cancel Order Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden scale-100 animate-in fade-in zoom-in duration-200">
+             <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-red-50">
+                <h3 className="text-lg font-bold text-red-600 flex items-center gap-2">
+                   <IoMdWarning /> Cancel Order
+                </h3>
+                <button onClick={() => setShowCancelModal(false)} className="text-gray-500 hover:text-gray-800 p-1 rounded-full hover:bg-gray-200 transition">
+                   <IoMdClose size={20} />
+                </button>
+             </div>
+             
+             <div className="p-6">
+                <p className="text-sm text-gray-600 mb-4">Please select a reason for cancellation. This will be logged.</p>
+                
+                <div className="space-y-3 mb-4">
+                   {cancelReasons.map((reason) => (
+                      <label key={reason} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${cancelReason === reason ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-red-200'}`}>
+                         <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${cancelReason === reason ? 'border-red-500' : 'border-gray-300'}`}>
+                            {cancelReason === reason && <div className="w-2 h-2 rounded-full bg-red-500"></div>}
+                         </div>
+                         <input 
+                            type="radio" 
+                            name="cancelReason" 
+                            className="hidden" 
+                            value={reason} 
+                            onChange={(e) => setCancelReason(e.target.value)} 
+                         />
+                         <span className={`text-sm font-medium ${cancelReason === reason ? 'text-red-700' : 'text-gray-700'}`}>{reason}</span>
+                      </label>
+                   ))}
+                </div>
+                
+                {cancelReason === "Other" && (
+                   <textarea
+                     className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none mb-4"
+                     placeholder="Please specify the reason..."
+                     rows="2"
+                     value={customReason}
+                     onChange={(e) => setCustomReason(e.target.value)}
+                   ></textarea>
+                )}
+
+                <button
+                  className="w-full bg-red-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleCancelOrder}
+                  disabled={loading || !cancelReason || (cancelReason === "Other" && !customReason)}
+                >
+                   {loading ? <ClipLoader size={20} color="white" /> : "Confirm Cancellation"}
+                </button>
+             </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

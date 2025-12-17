@@ -152,7 +152,7 @@ function DeliveryBoy() {
   const sendOtp = async (isResend = false) => {
     // Optimistic UI: Show input immediately, don't block
     setShowOtpBox(true);
-    setResendTimer(30);
+    setResendTimer(300); // 5 minutes cooldown
 
     try {
       const result = await axios.post(
@@ -198,14 +198,17 @@ function DeliveryBoy() {
       console.log("OTP Verification Success:", result.data);
       setMessage(result.data.message);
       
-      // Wait 2 seconds to show success message
+      
+      // Wait shortly to show success message then reload
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 100);
       
     } catch (error) {
       console.error("OTP Verification Error:", error);
-      const errorMessage = error.response?.data?.message || "Invalid OTP. Please try again.";
+      const errorMessage = error.response?.data?.message || "Wrong OTP. Please try again.";
+      // Use alert for critical error feedback as requested, but message state is also set
+      setMessage("Wrong OTP ❌");
       alert(errorMessage);
       setLoading(false);
     }

@@ -45,7 +45,7 @@ function DeliveryBoyTracking({ data }) {
   const center = [deliveryBoyLat, deliveryBoylon];
 
   return (
-    <div className="w-full h-[400px] mt-3 rounded-xl overflow-hidden shadow-md">
+    <div className="w-full h-full rounded-xl overflow-hidden shadow-md">
       <MapContainer className={"w-full h-full"} center={center} zoom={16}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

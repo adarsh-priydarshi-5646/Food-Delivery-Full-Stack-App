@@ -150,7 +150,10 @@ function DeliveryBoy() {
   }, [socket]);
 
   const sendOtp = async (isResend = false) => {
-    setLoading(true);
+    // Optimistic UI: Show input immediately, don't block
+    setShowOtpBox(true);
+    setResendTimer(30);
+
     try {
       const result = await axios.post(
         `${serverUrl}/api/order/send-delivery-otp`,
@@ -160,21 +163,16 @@ function DeliveryBoy() {
         },
         { withCredentials: true }
       );
-      setLoading(false);
-      setShowOtpBox(true);
-      setResendTimer(30); // 30 seconds cooldown
+      
       console.log("OTP Response:", result.data);
       
-      // Show OTP in alert for testing (development mode)
+      // Development aid only - doesn't block the user flow generally
       if (result.data.otp) {
-        alert(`OTP ${isResend ? 'Resent' : 'Sent'}: ${result.data.otp}\n\nThis is shown only in development mode.`);
-      } else if (isResend) {
-        alert("OTP resent successfully! Check your email.");
+        console.log(`DEV ONLY OTP: ${result.data.otp}`);
       }
     } catch (error) {
-      console.log(error);
-      alert(error.response?.data?.message || "Failed to send OTP");
-      setLoading(false);
+      console.error("Background OTP send failed:", error);
+      // User can use "Resend OTP" button effectively if this fails
     }
   };
   const verifyOtp = async () => {
@@ -419,7 +417,12 @@ function DeliveryBoy() {
                      <div className="flex-1">
                         <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-2 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Pickup From</p>
                         <h3 className="text-xl font-bold text-gray-900 leading-tight">{currentOrder?.shopOrder.shop.name}</h3>
-                        <p className="text-sm text-gray-500 mt-1">{currentOrder?.shopOrder.shop.address}</p>
+                        <div className="flex mt-1">
+                           <p className="text-sm text-gray-600 flex items-start gap-2 max-w-[250px] text-left">
+                              <FaMapMarkerAlt className="text-blue-500 mt-1 shrink-0" />
+                              {currentOrder?.shopOrder.shop.address}
+                           </p>
+                        </div>
                      </div>
                      <div className="flex-1 md:text-right">
                         <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-2 flex items-center gap-1 md:justify-end"><span className="w-2 h-2 rounded-full bg-green-500"></span> Deliver To</p>

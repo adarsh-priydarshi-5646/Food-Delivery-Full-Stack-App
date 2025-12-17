@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
+import { FaBox } from "react-icons/fa";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { serverUrl } from "../App";
@@ -17,16 +18,8 @@ function OrderPlaced() {
       const orderId = searchParams.get("orderId");
       const sessionId = searchParams.get("session_id");
 
-      console.log("=".repeat(50));
-      console.log("📍 OrderPlaced Page Loaded");
-      console.log("Full URL:", window.location.href);
-      console.log("URL Params:", { orderId, sessionId });
-      console.log("=".repeat(50));
-
       if (orderId && sessionId) {
         setVerifying(true);
-        console.log("🔄 Starting Stripe payment verification...");
-        console.log("API URL:", `${serverUrl}/api/order/verify-stripe-payment`);
         
         try {
           const result = await axios.post(
@@ -35,37 +28,17 @@ function OrderPlaced() {
             { withCredentials: true }
           );
           
-          console.log("✅ Payment verified successfully!");
-          console.log("Order Data:", result.data);
-          console.log("Payment Status:", result.data.payment);
-          console.log("Owner Earnings Should Be Updated");
-          console.log("Delivery Boy Should Be Notified");
-          
           dispatch(addMyOrder(result.data));
           dispatch(clearCart());
-          
-          console.log("✅ Redux updated, cart cleared");
-          console.log("=".repeat(50));
         } catch (error) {
-          console.error("=".repeat(50));
-          console.error("❌ PAYMENT VERIFICATION FAILED");
-          console.error("Error:", error.message);
-          console.error("Response:", error.response?.data);
-          console.error("Status:", error.response?.status);
-          console.error("=".repeat(50));
+          console.error("Payment verification failed:", error);
           alert(`Payment verification failed: ${error.response?.data?.message || error.message}\n\nPlease contact support with Order ID: ${orderId}`);
         } finally {
           setVerifying(false);
         }
-      } else {
-        console.error("⚠️ MISSING PARAMETERS!");
-        console.error("orderId:", orderId || "MISSING");
-        console.error("sessionId:", sessionId || "MISSING");
-        console.error("This means Stripe redirect URL is incorrect");
       }
     };
 
-    // Small delay to ensure URL params are loaded
     const timer = setTimeout(() => {
       verifyStripePayment();
     }, 100);
@@ -89,62 +62,100 @@ function OrderPlaced() {
         { orderId, sessionId },
         { withCredentials: true }
       );
-      alert("✅ Payment verified successfully!\nCheck owner dashboard and delivery boy notifications.");
-      console.log("Manual verification result:", result.data);
+      alert("✅ Payment verified successfully!");
       dispatch(addMyOrder(result.data));
       dispatch(clearCart());
     } catch (error) {
       alert(`❌ Verification failed: ${error.response?.data?.message || error.message}`);
-      console.error(error);
     } finally {
       setVerifying(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#fff9f6] flex flex-col justify-center items-center px-4 text-center relative overflow-hidden">
+    <div className="min-h-screen bg-[#F8F8F8] flex flex-col justify-center items-center px-4 text-center">
       {verifying ? (
-        <>
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#ff4d2d] mb-4"></div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Verifying Payment...</h1>
-          <p className="text-gray-600">Please wait</p>
-        </>
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-[#E23744] mb-6"></div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Verifying Payment...</h1>
+          <p className="text-gray-600">Please wait while we confirm your payment</p>
+        </div>
       ) : (
-        <>
-          <FaCircleCheck className="text-green-500 text-6xl mb-4" />
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Order Placed!</h1>
-          <p className="text-gray-600 max-w-md mb-6">
-            Thank you for your purchase. Your order is being prepared. You can track
-            your order status in the "My Orders" section.
+        <div className="max-w-lg">
+          {/* Success Animation */}
+          <div className="mb-8 relative">
+            <div className="absolute inset-0 bg-green-100 rounded-full blur-3xl opacity-50"></div>
+            <div className="relative bg-white rounded-full p-8 shadow-lg inline-block">
+              <FaCircleCheck className="text-green-500 text-7xl" />
+            </div>
+          </div>
+
+          {/* Success Message */}
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Order Placed Successfully!
+          </h1>
+          <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+            Thank you for your order! Your food is being prepared and will be delivered soon. 
+            Track your order status in "My Orders".
           </p>
-          
+
+          {/* Order Info Card */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <FaBox className="text-[#E23744] text-2xl" />
+              <h3 className="text-xl font-bold text-gray-900">What's Next?</h3>
+            </div>
+            <ul className="text-left space-y-3 text-gray-700">
+              <li className="flex items-start gap-2">
+                <span className="text-[#E23744] mt-1">✓</span>
+                <span>Restaurant is preparing your order</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#E23744] mt-1">✓</span>
+                <span>You'll receive updates via notifications</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#E23744] mt-1">✓</span>
+                <span>Delivery partner will be assigned soon</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Debug Info (if payment session exists) */}
           {searchParams.get("session_id") && (
-            <div className="mb-4 p-4 bg-blue-50 rounded-lg max-w-md">
-              <p className="text-sm text-gray-600 mb-2">
-                <strong>Debug Info:</strong>
+            <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+              <p className="text-sm text-gray-700 mb-2 font-semibold">
+                Payment Information
               </p>
-              <p className="text-xs text-gray-500 break-all">
-                Order ID: {searchParams.get("orderId") || "Missing"}
-              </p>
-              <p className="text-xs text-gray-500 break-all">
-                Session ID: {searchParams.get("session_id") || "Missing"}
+              <p className="text-xs text-gray-600 break-all mb-1">
+                Order ID: {searchParams.get("orderId") || "Processing..."}
               </p>
               <button
-                className="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm"
+                className="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
                 onClick={manualVerify}
+                disabled={verifying}
               >
-                🔄 Retry Verification
+                {verifying ? "Verifying..." : "🔄 Retry Verification"}
               </button>
             </div>
           )}
-          
-          <button
-            className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-6 py-3 rounded-lg text-lg font-medium transition"
-            onClick={() => navigate("/my-orders")}
-          >
-            Back to my orders
-          </button>
-        </>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              className="px-8 py-3.5 bg-[#E23744] text-white font-bold rounded-lg hover:bg-[#c02a35] transition-all duration-300 shadow-md hover:shadow-lg"
+              onClick={() => navigate("/my-orders")}
+            >
+              View My Orders
+            </button>
+            <button
+              className="px-8 py-3.5 bg-white border-2 border-[#E23744] text-[#E23744] font-bold rounded-lg hover:bg-red-50 transition-colors"
+              onClick={() => navigate("/")}
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -22,9 +22,10 @@ import useUpdateLocation from "./hooks/useUpdateLocation";
 import TrackOrderPage from "./pages/TrackOrderPage";
 import Shop from "./pages/Shop";
 import BankDetails from "./pages/BankDetails";
+import CategoryPage from "./pages/CategoryPage";
 import { useEffect } from "react";
 import { io } from "socket.io-client";
-import { setSocket } from "./redux/userSlice";
+import { setSocket, hydrateCart } from "./redux/userSlice";
 
 export const serverUrl = import.meta.env.PROD 
   ? "https://food-delivery-full-stack-app-3.onrender.com"
@@ -39,6 +40,11 @@ function App() {
   useGetShopByCity();
   useGetItemsByCity();
   useGetMyOrders();
+
+  // Hydrate cart from localStorage on app initialization
+  useEffect(() => {
+    dispatch(hydrateCart());
+  }, [dispatch]);
 
   useEffect(() => {
     const socketInstance = io(serverUrl, { withCredentials: true });
@@ -118,6 +124,10 @@ function App() {
       <Route
         path="/shop/:shopId"
         element={userData ? <Shop /> : <Navigate to={"/signin"} />}
+      />
+      <Route
+        path="/category/:categoryName"
+        element={userData ? <CategoryPage /> : <Navigate to={"/signin"} />}
       />
       <Route
         path="/bank-details"

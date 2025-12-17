@@ -186,23 +186,23 @@ export const placeOrder = async (req, res) => {
       console.log("COD Order - Assigning delivery boys...");
       // Notify owners
       newOrder.shopOrders.forEach((shopOrder) => {
-        const ownerSocketId = shopOrder.owner.socketId;
-        if (ownerSocketId) {
-          io.to(ownerSocketId).emit("newOrder", {
-            _id: newOrder._id,
-            paymentMethod: newOrder.paymentMethod,
-            user: newOrder.user,
-            shopOrders: shopOrder,
-            createdAt: newOrder.createdAt,
-            deliveryAddress: newOrder.deliveryAddress,
-            payment: newOrder.payment,
-          });
-          console.log(`Owner ${shopOrder.owner._id} notified`);
-        }
+        const ownerId = shopOrder.owner._id.toString();
+        // Emit to the room "ownerId" which uses the stable user ID
+        io.to(ownerId).emit("newOrder", {
+          _id: newOrder._id,
+          paymentMethod: newOrder.paymentMethod,
+          user: newOrder.user,
+          shopOrders: shopOrder,
+          createdAt: newOrder.createdAt,
+          deliveryAddress: newOrder.deliveryAddress,
+          payment: newOrder.payment,
+        });
+        console.log(`Owner ${ownerId} notified via room`);
       });
 
       // Assign delivery boys
-      await assignDeliveryBoys(newOrder, io);
+      // await assignDeliveryBoys(newOrder, io); // Delayed until Owner accepts
+      console.log("Delivery assignment delayed until owner acceptance");
     } else {
       console.log("Online payment - Delivery assignment will happen after payment verification");
     }
@@ -243,6 +243,27 @@ export const getMyOrders = async (req, res) => {
       }));
 
       return res.status(200).json(filteredOrders);
+    } else if (user.role == "deliveryBoy") {
+      // Fetch orders assigned to this delivery boy
+      const orders = await Order.find({ "shopOrders.assignedDeliveryBoy": req.userId })
+        .sort({ createdAt: -1 })
+        .populate("shopOrders.shop", "name address")
+        .populate("user", "fullName mobile location") // Customer details
+        .populate("shopOrders.shopOrderItems.item", "name image price");
+
+      // Filter and format for delivery boy view
+      const formatedOrders = orders.map((order) => ({
+        _id: order._id,
+        paymentMethod: order.paymentMethod,
+        user: order.user,
+        // Find the specific shopOrder assigned to this boy
+        shopOrders: order.shopOrders.find((o) => o.assignedDeliveryBoy == req.userId), 
+        createdAt: order.createdAt,
+        deliveryAddress: order.deliveryAddress,
+        payment: order.payment,
+      })).filter(o => o.shopOrders); // Ensure only valid assignments
+
+      return res.status(200).json(formatedOrders);
     }
   } catch (error) {
     return res.status(500).json({ message: `get User order error ${error}` });
@@ -261,7 +282,24 @@ export const updateOrderStatus = async (req, res) => {
     }
     shopOrder.status = status;
     let deliveryBoysPayload = [];
+    
+    // Check if we need to assign delivery boys (When Owner Accepts)
+    // Assigned on 'accepted', 'preparing', or if jumped straight to 'ready'
+    if ((status === "accepted" || status === "preparing" || status === "ready") && !shopOrder.assignment) {
+       console.log(`Order accepted/preparing. Triggering delivery assignment for shopOrder: ${shopOrder._id}`);
+       const io = req.app.get("io");
+       if(io){
+          // We need to pass the FULL order object to assignDeliveryBoys
+          // order is already fetched but might need population if assignDeliveryBoys expects it
+          // assignDeliveryBoys helper expects 'order' with 'shopOrders'
+          // and 'deliveryAddress' populated/available.
+          await assignDeliveryBoys(order, io);
+       }
+    }
+
     if (status == "out of delivery" && !shopOrder.assignment) {
+       // Fallback/Legacy: If not assigned yet and marked out for delivery
+       // (Though ideally it should be assigned on accept)
       const { longitude, latitude } = order.deliveryAddress;
       const nearByDeliveryBoys = await User.find({
         role: "deliveryBoy",
@@ -388,8 +426,18 @@ export const getDeliveryBoyAssignment = async (req, res) => {
 
     console.log(`Found ${assignments.length} assignments for delivery boy ${deliveryBoyId}`);
 
-    // Filter out assignments with null/deleted orders
-    const validAssignments = assignments.filter(a => a.order && a.shop);
+    // Filter out assignments with null/deleted orders AND cancelled shopOrders
+    const validAssignments = assignments.filter(a => {
+        if (!a.order || !a.shop) return false;
+        
+        const shopOrder = a.order.shopOrders.find(so => String(so._id) === String(a.shopOrderId));
+        if (!shopOrder) return false;
+        
+        // Key fix: Hide if cancelled
+        if (shopOrder.status === "cancelled") return false;
+        
+        return true;
+    });
     console.log(`Valid assignments: ${validAssignments.length}`);
 
     const formated = validAssignments.map((a) => ({
@@ -962,9 +1010,9 @@ export const verifyStripePayment = async (req, res) => {
       });
 
       // Assign delivery boys after successful payment
-      console.log("🏍️ Assigning delivery boys...");
-      await assignDeliveryBoys(order, io);
-      console.log("Delivery boy assignment complete");
+      console.log("Payment Verified. Waiting for Owner to Accept before assigning delivery boys.");
+      // await assignDeliveryBoys(order, io);
+      // console.log("Delivery boy assignment complete");
     } else {
       console.error("Socket.IO not available!");
     }

@@ -13,7 +13,9 @@ export const socketHandler = (io) => {
           },
           { new: true }
         );
-        console.log(`User ${userId} connected with socket ${socket.id}, role: ${user?.role}`);
+        // Explicitly join a room for this user
+        socket.join(userId);
+        console.log(`User ${userId} joined room ${userId} with socket ${socket.id}, role: ${user?.role}`);
       } catch (error) {
         console.error("Identity error:", error);
       }

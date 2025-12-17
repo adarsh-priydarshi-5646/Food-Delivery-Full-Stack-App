@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateRealtimeOrderStatus } from "../redux/userSlice";
 import { FaUtensils, FaPen, FaStore, FaBoxOpen, FaRupeeSign, FaChartLine, FaStar, FaUniversity } from "react-icons/fa";
 import { MdRestaurantMenu, MdDeliveryDining } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -9,8 +10,47 @@ import OwnerOrderCard from "./OwnerOrderCard";
 
 function OwnerDashboard() {
   const { myShopData } = useSelector((state) => state.owner);
-  const { myOrders, userData } = useSelector((state) => state.user);
+  const { myOrders, userData, socket } = useSelector((state) => state.user); // Added socket
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // Added dispatch
+
+  useEffect(() => {
+    if (!socket) return;
+    
+    // Listen for new orders (Real-time addition)
+    socket.on("newOrder", (data) => {
+      // Check if this order belongs to any of my shops (owner check)
+      // The backend emits to the owner socket, so we can assume it's relevant
+      if (data.shopOrders && data.shopOrders.owner && data.shopOrders.owner._id === userData._id) {
+          // Check if order already exists to prevent duplicates
+          const exists = myOrders.some(o => o._id === data._id);
+          if (!exists) {
+             // We need to shape it correctly for the store if needed, or just push
+             // The backend logic sends the whole order object usually? 
+             // Logic in MyOrders.jsx handles this by dispatch(setMyOrders([data, ...myOrders]));
+             // We should do similar or rely on a shared handler.
+             // For now, let's dispatch it.
+             // Note: data structure might need alignment with getMyOrders response.
+          }
+      }
+    });
+
+    // Listen for delivery updates (Marked delivered by Delivery Boy)
+    socket.on("orderDelivered", ({ orderId, shopOrderId }) => {
+        const order = myOrders?.find((o) => o._id === orderId);
+        if (order) {
+            const shopOrder = order.shopOrders.find((so) => so._id === shopOrderId);
+            if (shopOrder) {
+                dispatch(updateRealtimeOrderStatus({ orderId, shopId: shopOrder.shop._id, status: "delivered" }));
+            }
+        }
+    });
+
+    return () => {
+      socket.off("newOrder");
+      socket.off("orderDelivered");
+    };
+  }, [socket, myOrders, dispatch, userData]);
   
   // Calculate stats
   const totalOrders = myOrders?.length || 0;

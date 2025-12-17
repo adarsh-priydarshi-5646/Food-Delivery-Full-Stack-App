@@ -29,6 +29,25 @@ function MyOrders() {
       }
     });
 
+    socket?.on("orderDelivered", ({ orderId, shopOrderId, message }) => {
+      // Find the shopId from the structure if possible, or iterate
+      // But updateRealtimeOrderStatus needs shopId.
+      // The backend emits { orderId, shopOrderId, message }
+      // We need to find the shopId corresponding to shopOrderId in our Redux state or backend needs to send it.
+      // Let's look at backend: it sends shopOrderId.
+      // We can iterate myOrders to find the order and then the shopOrder to get the shopId.
+      
+      const order = myOrders.find((o) => o._id === orderId);
+      if (order) {
+        const shopOrder = order.shopOrders.find((so) => so._id === shopOrderId);
+        if (shopOrder) {
+             dispatch(updateRealtimeOrderStatus({ orderId, shopId: shopOrder.shop._id, status: "delivered" }));
+             // Optionally show a toast/alert
+             // alert(message);
+        }
+      }
+    });
+
     return () => {
       socket?.off("newOrder");
       socket?.off("update-status");

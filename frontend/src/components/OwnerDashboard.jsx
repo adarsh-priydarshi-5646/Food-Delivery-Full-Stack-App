@@ -125,7 +125,7 @@ function OwnerDashboard() {
                       <MdDeliveryDining className="text-[#ff4d2d]" /> Live Orders
                    </h2>
                    <span className="bg-[#ff4d2d] text-white text-xs px-2 py-1 rounded-full font-bold">
-                      {myOrders?.filter(o => o.shopOrders.some(so => so.shop._id === myShopData._id && so.status !== 'delivered' && so.status !== 'cancelled')).length || 0}
+                      {myOrders?.filter(o => Array.isArray(o.shopOrders) && o.shopOrders.some(so => so.shop._id === myShopData._id && so.status !== 'delivered' && so.status !== 'cancelled')).length || 0}
                    </span>
                 </div>
 
@@ -133,7 +133,7 @@ function OwnerDashboard() {
                    {myOrders && myOrders.length > 0 ? (
                       [...myOrders]
                       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                      .filter(order => order.shopOrders.some(so => so.shop._id === myShopData._id)) // Only my shop's orders
+                      .filter(order => Array.isArray(order.shopOrders) && order.shopOrders.some(so => so.shop._id === myShopData._id)) // Only my shop's orders
                       .map((order, index) => {
                          return <OwnerOrderCard data={order} key={index} />;
                       })

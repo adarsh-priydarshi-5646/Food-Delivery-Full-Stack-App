@@ -1,5 +1,29 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 
+// Helper functions for localStorage
+const saveCartToLocalStorage = (cartItems, totalAmount) => {
+  try {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    localStorage.setItem('totalAmount', JSON.stringify(totalAmount));
+  } catch (error) {
+    console.error('Error saving cart to localStorage:', error);
+  }
+};
+
+const loadCartFromLocalStorage = () => {
+  try {
+    const cartItems = localStorage.getItem('cartItems');
+    const totalAmount = localStorage.getItem('totalAmount');
+    return {
+      cartItems: cartItems ? JSON.parse(cartItems) : [],
+      totalAmount: totalAmount ? JSON.parse(totalAmount) : 0,
+    };
+  } catch (error) {
+    console.error('Error loading cart from localStorage:', error);
+    return { cartItems: [], totalAmount: 0 };
+  }
+};
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -15,8 +39,18 @@ const userSlice = createSlice({
     myOrders: [],
     searchItems: null,
     socket: null,
+    // Filter state
+    selectedCategories: [],
+    priceRange: { min: 0, max: 1000 },
+    sortBy: 'popularity',
+    quickFilters: { veg: false, fastDelivery: false, topRated: false },
   },
   reducers: {
+    hydrateCart: (state) => {
+      const { cartItems, totalAmount } = loadCartFromLocalStorage();
+      state.cartItems = cartItems;
+      state.totalAmount = totalAmount;
+    },
     setUserData: (state, action) => {
       state.userData = action.payload;
     },
@@ -54,6 +88,7 @@ const userSlice = createSlice({
         (sum, i) => sum + i.price * i.quantity,
         0
       );
+      saveCartToLocalStorage(state.cartItems, state.totalAmount);
     },
 
     setTotalAmount: (state, action) => {
@@ -70,6 +105,7 @@ const userSlice = createSlice({
         (sum, i) => sum + i.price * i.quantity,
         0
       );
+      saveCartToLocalStorage(state.cartItems, state.totalAmount);
     },
 
     removeCartItem: (state, action) => {
@@ -78,6 +114,7 @@ const userSlice = createSlice({
         (sum, i) => sum + i.price * i.quantity,
         0
       );
+      saveCartToLocalStorage(state.cartItems, state.totalAmount);
     },
 
     setMyOrders: (state, action) => {
@@ -115,6 +152,36 @@ const userSlice = createSlice({
     clearCart: (state) => {
       state.cartItems = [];
       state.totalAmount = 0;
+      saveCartToLocalStorage([], 0);
+    },
+
+    // Filter actions
+    setSelectedCategories: (state, action) => {
+      state.selectedCategories = action.payload;
+    },
+    toggleCategory: (state, action) => {
+      const category = action.payload;
+      if (state.selectedCategories.includes(category)) {
+        state.selectedCategories = state.selectedCategories.filter(c => c !== category);
+      } else {
+        state.selectedCategories.push(category);
+      }
+    },
+    setPriceRange: (state, action) => {
+      state.priceRange = action.payload;
+    },
+    setSortBy: (state, action) => {
+      state.sortBy = action.payload;
+    },
+    toggleQuickFilter: (state, action) => {
+      const filterKey = action.payload;
+      state.quickFilters[filterKey] = !state.quickFilters[filterKey];
+    },
+    clearFilters: (state) => {
+      state.selectedCategories = [];
+      state.priceRange = { min: 0, max: 1000 };
+      state.sortBy = 'popularity';
+      state.quickFilters = { veg: false, fastDelivery: false, topRated: false };
     },
   },
 });
@@ -138,5 +205,12 @@ export const {
   setSocket,
   updateRealtimeOrderStatus,
   clearCart,
+  hydrateCart,
+  setSelectedCategories,
+  toggleCategory,
+  setPriceRange,
+  setSortBy,
+  toggleQuickFilter,
+  clearFilters,
 } = userSlice.actions;
 export default userSlice.reducer;

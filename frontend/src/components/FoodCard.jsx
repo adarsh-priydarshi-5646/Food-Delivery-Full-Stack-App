@@ -1,117 +1,160 @@
-import React, { useState } from "react";
-import { FaLeaf } from "react-icons/fa";
-import { FaDrumstickBite } from "react-icons/fa";
+import React from "react";
 import { FaStar } from "react-icons/fa";
-import { FaRegStar } from "react-icons/fa6";
-import { FaMinus } from "react-icons/fa";
-import { FaPlus } from "react-icons/fa";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaMinus, FaPlus } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../redux/userSlice";
+import { addToCart, updateQuantity, removeCartItem } from "../redux/userSlice";
 
 function FoodCard({ data }) {
-  const [quantity, setQuantity] = useState(0);
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.user);
-  const renderStars = (rating) => {
-    //r=3
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        i <= rating ? (
-          <FaStar className="text-yellow-500 text-lg" />
-        ) : (
-          <FaRegStar className="text-yellow-500 text-lg" />
-        )
-      );
-    }
-    return stars;
+  
+  // Check if item is already in cart
+  const cartItem = cartItems.find((i) => i.id === data._id);
+  const currentQuantity = cartItem?.quantity || 0;
+
+  const handleAddToCart = () => {
+    dispatch(
+      addToCart({
+        id: data._id,
+        name: data.name,
+        price: data.price,
+        image: data.image,
+        shop: data.shop,
+        quantity: 1, // Start with quantity 1
+        foodType: data.foodType,
+      })
+    );
   };
 
-  const handleIncrease = () => {
-    const newQty = quantity + 1;
-    setQuantity(newQty);
+  const handleIncrement = () => {
+    const newQty = currentQuantity + 1;
+    dispatch(updateQuantity({ id: data._id, quantity: newQty }));
   };
-  const handleDecrease = () => {
-    if (quantity > 0) {
-      const newQty = quantity - 1;
-      setQuantity(newQty);
+
+  const handleDecrement = () => {
+    if (currentQuantity > 1) {
+      const newQty = currentQuantity - 1;
+      dispatch(updateQuantity({ id: data._id, quantity: newQty }));
+    } else if (currentQuantity === 1) {
+      // Remove from cart if quantity becomes 0
+      dispatch(removeCartItem(data._id));
     }
   };
 
   return (
-    <div className="w-[250px] rounded-2xl border-2 border-[#ff4d2d] bg-white shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col">
-      <div className="relative w-full h-[170px] flex justify-center items-center bg-white">
-        <div className="absolute top-3 right-3 bg-white rounded-full p-1 shadow">
-          {data.foodType == "veg" ? (
-            <FaLeaf className="text-green-600 text-lg" />
+    <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover-lift">
+      {/* Image Section */}
+      <div className="relative w-full h-48 hover-zoom-image bg-gray-100">
+        <img
+          src={data.image}
+          alt={data.name}
+          className="w-full h-full object-cover"
+        />
+        
+        {/* Veg/Non-veg Badge */}
+        <div className="absolute top-3 left-3">
+          {data.foodType === "veg" ? (
+            <div className="bg-white rounded-md p-1 shadow-sm border-2 border-green-600 flex items-center justify-center w-6 h-6">
+              <div className="w-3 h-3 rounded-full bg-green-600"></div>
+            </div>
           ) : (
-            <FaDrumstickBite className="text-red-600 text-lg" />
+            <div className="bg-white rounded-md p-1 shadow-sm border-2 border-red-600 flex items-center justify-center w-6 h-6">
+              <div className="w-3 h-3 rounded-full bg-red-600"></div>
+            </div>
           )}
         </div>
 
-        <img
-          src={data.image}
-          alt=""
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-        />
+        {/* Rating Badge */}
+        {data.rating && data.rating.average > 0 && (
+          <div className="absolute top-3 right-3 bg-green-600 text-white px-2 py-1 rounded-lg flex items-center gap-1 text-xs font-bold shadow-lg">
+            <FaStar className="text-[10px]" />
+            {data.rating.average.toFixed(1)}
+          </div>
+        )}
+
+        {/* Delivery Time Badge */}
+        {data.deliveryTime && (
+          <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-gray-800 px-2 py-1 rounded-md text-xs font-semibold shadow-sm">
+            {data.deliveryTime} mins
+          </div>
+        )}
       </div>
 
-      <div className="flex-1 flex flex-col p-4">
-        <h1 className="font-semibold text-gray-900 text-base truncate">
+      {/* Content Section */}
+      <div className="p-4">
+        {/* Food Name */}
+        <h3 className="text-gray-900 font-bold text-base mb-1 line-clamp-2">
           {data.name}
-        </h1>
+        </h3>
 
-        <div className="flex items-center gap-1 mt-1">
-          {renderStars(data.rating?.average || 0)}
-          <span className="text-xs text-gray-500">
-            {data.rating?.count || 0}
-          </span>
+        {/* Restaurant Name */}
+        {data.shop && data.shop.name && (
+          <p className="text-gray-500 text-sm mb-2 line-clamp-1">
+            {data.shop.name}
+          </p>
+        )}
+
+        {/* Description */}
+        {data.description && (
+          <p className="text-gray-600 text-xs mb-2 line-clamp-2">
+            {data.description}
+          </p>
+        )}
+
+        {/* Price and Category */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col">
+            <span className="text-gray-900 font-bold text-lg">
+              ₹{data.price}
+            </span>
+            {data.category && (
+              <span className="text-gray-500 text-xs">
+                {data.category}
+              </span>
+            )}
+          </div>
+          
+          {/* Rating with count */}
+          {data.rating && data.rating.average > 0 && (
+            <div className="flex items-center gap-1">
+              <FaStar className="text-yellow-500 text-sm" />
+              <span className="text-sm font-semibold text-gray-700">
+                {data.rating.average.toFixed(1)}
+              </span>
+              {data.rating.count > 0 && (
+                <span className="text-xs text-gray-400">
+                  ({data.rating.count})
+                </span>
+              )}
+            </div>
+          )}
         </div>
-      </div>
 
-      <div className="flex items-center justify-between mt-auto p-3">
-        <span className="font-bold text-gray-900 text-lg">₹{data.price}</span>
-
-        <div className="flex items-center border rounded-full overflow-hidden shadow-sm">
+        {/* Add to Cart Button / Quantity Stepper */}
+        {currentQuantity === 0 ? (
           <button
-            className="px-2 py-1 hover:bg-gray-100 transition"
-            onClick={handleDecrease}
+            onClick={handleAddToCart}
+            className="w-full bg-white border-2 border-[#E23744] text-[#E23744] font-bold py-2.5 px-4 rounded-lg hover:bg-[#E23744] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
           >
-            <FaMinus size={12} />
+            ADD
           </button>
-          <span>{quantity}</span>
-          <button
-            className="px-2 py-1 hover:bg-gray-100 transition"
-            onClick={handleIncrease}
-          >
-            <FaPlus size={12} />
-          </button>
-          <button
-            className={`${
-              cartItems.some((i) => i.id == data._id)
-                ? "bg-gray-800"
-                : "bg-[#ff4d2d]"
-            } text-white px-3 py-2 transition-colors`}
-            onClick={() => {
-              quantity > 0
-                ? dispatch(
-                    addToCart({
-                      id: data._id,
-                      name: data.name,
-                      price: data.price,
-                      image: data.image,
-                      shop: data.shop,
-                      quantity,
-                      foodType: data.foodType,
-                    })
-                  )
-                : null;
-            }}
-          >
-            <FaShoppingCart size={16} />
-          </button>
-        </div>
+        ) : (
+          <div className="w-full bg-[#E23744] text-white rounded-lg py-2 px-3 flex items-center justify-between shadow-md">
+            <button
+              onClick={handleDecrement}
+              className="hover:bg-white/20 w-8 h-8 rounded-md flex items-center justify-center transition-colors"
+            >
+              <FaMinus className="text-sm" />
+            </button>
+            <span className="font-bold text-lg">{currentQuantity}</span>
+            <button
+              onClick={handleIncrement}
+              className="hover:bg-white/20 w-8 h-8 rounded-md flex items-center justify-center transition-colors"
+            >
+              <FaPlus className="text-sm" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

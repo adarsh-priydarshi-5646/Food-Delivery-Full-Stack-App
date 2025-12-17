@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
-import homeImage from "../assets/home.png"; // Using home.png as background
+// import homeImage from "../assets/home.png"; // Using home.png as background
 
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentCity } from "../redux/userSlice";
@@ -25,7 +25,7 @@ const LandingPage = () => {
       {/* Hero Section */}
       <div className="relative h-[60vh] lg:h-[70vh] w-full bg-black">
         <img
-          src={homeImage}
+          src="https://t4.ftcdn.net/jpg/02/92/20/37/360_F_292203735_CSsyqyS6A4Z9Czd4Msf7qZEhoxjpzZl1.jpg"
           alt="Delicious Food"
           className="absolute inset-0 w-full h-full object-cover opacity-60"
         />

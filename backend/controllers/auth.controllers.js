@@ -107,15 +107,11 @@ export const sendOtp = async (req, res) => {
     user.isOtpVerified = false;
     await user.save();
     
-    console.log(`Password reset OTP generated for ${email}`);
-    
     // SendGrid (can send to any email)
     try {
       await sendOtpMailSendGrid(email, otp);
-      console.log(`OTP sent successfully to ${email} via SendGrid`);
     } catch (sendgridError) {
       console.error(`SendGrid failed:`, sendgridError.message);
-      console.log(`OTP available in logs above for manual sharing`);
     }
 
     return res.status(200).json({ 

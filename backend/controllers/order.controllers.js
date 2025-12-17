@@ -11,18 +11,11 @@ dotenv.config();
 // Helper function to assign delivery boys
 const assignDeliveryBoys = async (order, io) => {
   try {
-    console.log("Starting delivery boy assignment for order:", order._id);
-    
     for (const shopOrder of order.shopOrders) {
       const { longitude, latitude } = order.deliveryAddress;
-      console.log(`Order location: lat=${latitude}, lon=${longitude}`);
       
       // First, check all delivery boys
       const allDeliveryBoys = await User.find({ role: "deliveryBoy" });
-      console.log(`👥 Total delivery boys in database: ${allDeliveryBoys.length}`);
-      allDeliveryBoys.forEach(boy => {
-        console.log(`  - ${boy._id}: location=${JSON.stringify(boy.location.coordinates)}, online=${boy.isOnline}, socketId=${boy.socketId}`);
-      });
       
       // Find nearby delivery boys
       const nearByDeliveryBoys = await User.find({
@@ -33,15 +26,12 @@ const assignDeliveryBoys = async (order, io) => {
               type: "Point",
               coordinates: [Number(longitude), Number(latitude)],
             },
-            $maxDistance: 10000, // 10km radius (production setting)
+            $maxDistance: 10000, // 10km radius
           },
         },
       });
 
-      console.log(`Delivery boys within 10km: ${nearByDeliveryBoys.length}`);
-      
       if (nearByDeliveryBoys.length === 0) {
-        console.log("No delivery boys found nearby");
         continue;
       }
 
@@ -61,7 +51,6 @@ const assignDeliveryBoys = async (order, io) => {
       );
 
       if (availableBoys.length === 0) {
-        console.log("No available delivery boys");
         continue;
       }
 
@@ -83,10 +72,8 @@ const assignDeliveryBoys = async (order, io) => {
       await deliveryAssignment.populate("shop");
 
       // Notify delivery boys
-      console.log(`Broadcasting to ${availableBoys.length} delivery boys`);
       availableBoys.forEach((boy) => {
         const boySocketId = boy.socketId;
-        console.log(`Delivery boy ${boy._id} socketId: ${boySocketId}, isOnline: ${boy.isOnline}`);
         if (boySocketId && io) {
           io.to(boySocketId).emit("newAssignment", {
             sentTo: boy._id,
@@ -101,9 +88,6 @@ const assignDeliveryBoys = async (order, io) => {
             })),
             subtotal: shopOrder.subtotal,
           });
-          console.log(`Notification sent to delivery boy ${boy._id}`);
-        } else {
-          console.log(`Cannot send to delivery boy ${boy._id} - No socket connection`);
         }
       });
     }
@@ -183,7 +167,6 @@ export const placeOrder = async (req, res) => {
 
     // Notify owners and assign delivery boys for COD orders immediately
     if (paymentMethod === "cod" && io) {
-      console.log("COD Order - Assigning delivery boys...");
       // Notify owners
       newOrder.shopOrders.forEach((shopOrder) => {
         const ownerId = shopOrder.owner._id.toString();
@@ -197,14 +180,8 @@ export const placeOrder = async (req, res) => {
           deliveryAddress: newOrder.deliveryAddress,
           payment: newOrder.payment,
         });
-        console.log(`Owner ${ownerId} notified via room`);
       });
-
-      // Assign delivery boys
-      // await assignDeliveryBoys(newOrder, io); // Delayed until Owner accepts
-      console.log("Delivery assignment delayed until owner acceptance");
-    } else {
-      console.log("Online payment - Delivery assignment will happen after payment verification");
+      // Delivery assignment is delayed until owner acceptance
     }
 
     return res.status(201).json(newOrder);

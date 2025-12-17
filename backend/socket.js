@@ -2,7 +2,6 @@ import User from "./models/user.model.js";
 
 export const socketHandler = (io) => {
   io.on("connection", (socket) => {
-    console.log("New socket connection:", socket.id);
     socket.on("identity", async ({ userId }) => {
       try {
         const user = await User.findByIdAndUpdate(
@@ -15,7 +14,6 @@ export const socketHandler = (io) => {
         );
         // Explicitly join a room for this user
         socket.join(userId);
-        console.log(`User ${userId} joined room ${userId} with socket ${socket.id}, role: ${user?.role}`);
       } catch (error) {
         console.error("Identity error:", error);
       }
@@ -40,7 +38,7 @@ export const socketHandler = (io) => {
           });
         }
       } catch (error) {
-        console.log("updateDeliveryLocation error");
+        console.error("updateDeliveryLocation error", error);
       }
     });
 
@@ -54,7 +52,7 @@ export const socketHandler = (io) => {
           }
         );
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     });
   });

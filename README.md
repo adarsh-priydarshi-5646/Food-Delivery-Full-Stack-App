@@ -1,7 +1,9 @@
 
 # 🍔 Vingo - Food Delivery Application
 
-![Vingo Banner](frontend/src/assets/home.png)
+<img src="frontend/src/assets/home.png" alt="Vingo Banner" height="400" />
+
+
 
 A full-stack, feature-rich food delivery platform built with the MERN stack. Vingo connects users with their favorite local restaurants, offering real-time order tracking, secure payments, and distinct dashboards for users, restaurant owners, and delivery partners.
 
@@ -135,6 +137,20 @@ npm run dev
 3.  **Owner Mode**: Sign up as "Owner" to create a restaurant and manage a menu.
 4.  **Order Food**: Add items to cart -> Checkout -> Pay via Stripe.
 5.  **Track Order**: Watch your order status update in real-time.
+
+---
+
+## 🔐 Default Credentials
+
+Use these credentials to test the application logic (Password for all: `password123`).
+
+| Role | Email | Password | Features |
+|------|-------|----------|----------|
+| **User** | `user@vingo.com` | `password123` | Order food, track delivery |
+| **Owner** | `owner@vingo.com` | `password123` | Manage menu, accept orders |
+| **Delivery Boy** | `rider@vingo.com` | `password123` | View assigned orders, deliver |
+
+> **Note**: For OTP verification during delivery or password reset, use the Master OTP: **`5646`**.
 
 ---
 

@@ -75,164 +75,152 @@ function SignUp() {
     }
   };
   return (
-    <div
-      className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden"
-      style={{ backgroundColor: bgColor }}
-    >
-      <div className="absolute top-10 left-10 w-72 h-72 bg-orange-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div className="absolute top-0 right-10 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-      <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-[#fff9f6]">
+      {/* Animated Blobs */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+        <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-32 left-20 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
+      </div>
       
-      <div
-        className={`bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border-[1px] relative z-10 transform transition-all hover:scale-[1.01] duration-300`}
-        style={{
-          border: `1px solid ${borderColor}`,
-        }}
-      >
+      {/* Glass Card */}
+      <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-md p-8 md:p-10 border border-white/50 relative z-10 transition-all hover:shadow-3xl">
         <div className="text-center mb-8">
-          <div className="inline-block p-3 bg-gradient-to-r from-orange-400 to-red-500 rounded-full mb-4">
-            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-            </svg>
-          </div>
-          <h1 className={`text-4xl font-bold mb-2 bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent`}>
-            Join Vingo
+          <h1 className="text-4xl font-extrabold mb-2 text-[#E23744] tracking-tight">
+            Vingo
           </h1>
-          <p className="text-gray-600">
-            Create your account and start ordering
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Create Account</h2>
+          <p className="text-gray-500 text-sm">
+            Join us to explore the best food in town
           </p>
         </div>
 
-        <div className="mb-4">
-          <label
-            htmlFor="fullName"
-            className="block text-gray-700 font-medium mb-1"
-          >
-            Full Name
-          </label>
-          <input
-            type="text"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none "
-            placeholder="Enter your Full Name"
-            style={{ border: `1px solid ${borderColor}` }}
-            onChange={(e) => setFullName(e.target.value)}
-            value={fullName}
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="email"
-            className="block text-gray-700 font-medium mb-1"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none "
-            placeholder="Enter your Email"
-            style={{ border: `1px solid ${borderColor}` }}
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="mobile"
-            className="block text-gray-700 font-medium mb-1"
-          >
-            Mobile
-          </label>
-          <input
-            type="email"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none "
-            placeholder="Enter your Mobile Number"
-            style={{ border: `1px solid ${borderColor}` }}
-            onChange={(e) => setMobile(e.target.value)}
-            value={mobile}
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="password"
-            className="block text-gray-700 font-medium mb-1"
-          >
-            Password
-          </label>
-          <div className="relative">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-gray-700 text-sm font-semibold mb-1 ml-1" htmlFor="fullName">
+              Full Name
+            </label>
             <input
-              type={`${showPassword ? "text" : "password"}`}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none pr-10"
-              placeholder="Enter your password"
-              style={{ border: `1px solid ${borderColor}` }}
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
+              type="text"
+              className="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E23744]/20 focus:border-[#E23744] transition-all"
+              placeholder="John Doe"
+              onChange={(e) => setFullName(e.target.value)}
+              value={fullName}
               required
             />
-
-            <button
-              className="absolute right-3 cursor-pointer top-[14px] text-gray-500"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {!showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
-            </button>
           </div>
-        </div>
 
-        <div className="mb-4">
-          <label
-            htmlFor="role"
-            className="block text-gray-700 font-medium mb-1"
-          >
-            Role
-          </label>
-          <div className="flex gap-2">
-            {["user", "owner", "deliveryBoy"].map((r) => (
+          <div>
+            <label className="block text-gray-700 text-sm font-semibold mb-1 ml-1" htmlFor="email">
+              Email Address
+            </label>
+            <input
+              type="email"
+              className="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E23744]/20 focus:border-[#E23744] transition-all"
+              placeholder="name@example.com"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 text-sm font-semibold mb-1 ml-1" htmlFor="mobile">
+              Mobile Number
+            </label>
+            <input
+              type="tel"
+              className="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E23744]/20 focus:border-[#E23744] transition-all"
+              placeholder="+91 9876543210"
+              onChange={(e) => setMobile(e.target.value)}
+              value={mobile}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 text-sm font-semibold mb-1 ml-1" htmlFor="password">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#E23744]/20 focus:border-[#E23744] transition-all pr-12"
+                placeholder="Create a strong password"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                required
+              />
               <button
-                className="flex-1 border rounded-lg px-3 py-2 text-center font-medium transition-colors cursor-pointer"
-                onClick={() => setRole(r)}
-                style={
-                  role == r
-                    ? { backgroundColor: primaryColor, color: "white" }
-                    : {
-                        border: `1px solid ${primaryColor}`,
-                        color: primaryColor,
-                      }
-                }
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                onClick={() => setShowPassword((prev) => !prev)}
               >
-                {r}
+                {!showPassword ? <FaRegEye size={18} /> : <FaRegEyeSlash size={18} />}
               </button>
-            ))}
+            </div>
           </div>
+
+          <div>
+            <label className="block text-gray-700 text-sm font-semibold mb-2 ml-1" htmlFor="role">
+              I am a...
+            </label>
+            <div className="flex gap-3">
+              {["user", "owner", "deliveryBoy"].map((r) => (
+                <button
+                  key={r}
+                  className={`flex-1 rounded-xl px-2 py-2 text-center text-sm font-semibold transition-all shadow-sm ${
+                    role === r
+                      ? "bg-[#E23744] text-white shadow-md shadow-red-500/20"
+                      : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  }`}
+                  onClick={() => setRole(r)}
+                >
+                  {r === 'deliveryBoy' ? 'Rider' : r.charAt(0).toUpperCase() + r.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button
+            className="w-full bg-[#E23744] hover:bg-[#c02a35] text-white font-bold py-3.5 rounded-xl shadow-lg shadow-orange-500/30 transform transition-all active:scale-[0.98] mt-2"
+            onClick={handleSignUp}
+            disabled={loading}
+          >
+            {loading ? <ClipLoader size={20} color="white" /> : "Create Account"}
+          </button>
+
+          {err && (
+            <div className="bg-red-50 text-red-500 text-sm text-center py-2 rounded-lg border border-red-100">
+              {err}
+            </div>
+          )}
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-[#fff9f6] text-gray-500 rounded">Or sign up with</span>
+            </div>
+          </div>
+
+          <button
+            className="w-full bg-white border border-gray-300 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-3"
+            onClick={handleGoogleAuth}
+          >
+            <FcGoogle size={22} />
+            <span>Google</span>
+          </button>
         </div>
 
-        <button
-          className={`w-full font-semibold py-2 rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
-          onClick={handleSignUp}
-          disabled={loading}
-        >
-          {loading ? <ClipLoader size={20} color="white" /> : "Sign Up"}
-        </button>
-        {err && <p className="text-red-500 text-center my-[10px]">*{err}</p>}
-
-        <button
-          className="w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition cursor-pointer duration-200 border-gray-400 hover:bg-gray-100"
-          onClick={handleGoogleAuth}
-        >
-          <FcGoogle size={20} />
-          <span>Sign up with Google</span>
-        </button>
-        <p
-          className="text-center mt-6 cursor-pointer"
-          onClick={() => navigate("/signin")}
-        >
-          Already have an account ?{" "}
-          <span className="text-[#ff4d2d]">Sign In</span>
+        <p className="text-center mt-8 text-gray-600">
+          Already have an account?{" "}
+          <span
+            className="text-[#E23744] font-bold cursor-pointer hover:underline"
+            onClick={() => navigate("/signin")}
+          >
+            Sign In
+          </span>
         </p>
       </div>
     </div>

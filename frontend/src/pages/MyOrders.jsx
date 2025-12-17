@@ -5,6 +5,7 @@ import { FaClipboardList } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import UserOrderCard from "../components/UserOrderCard";
 import OwnerOrderCard from "../components/OwnerOrderCard";
+import DeliveryHistoryCard from "../components/DeliveryHistoryCard"; // Import new card
 import {
   setMyOrders,
   updateOrderStatus,
@@ -88,6 +89,8 @@ function MyOrders() {
                 <UserOrderCard data={order} allOrders={myOrders} key={index} />
               ) : userData.role == "owner" ? (
                 <OwnerOrderCard data={order} key={index} />
+              ) : userData.role == "deliveryBoy" ? (
+                <DeliveryHistoryCard data={order} key={index} />
               ) : null
             )
           ) : (

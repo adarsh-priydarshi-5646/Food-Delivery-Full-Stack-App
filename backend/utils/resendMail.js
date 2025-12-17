@@ -8,13 +8,13 @@ export const sendOtpMailResend = async (to, otp) => {
   try {
     console.log(`Sending OTP email via Resend to ${to}`);
     
-    // Resend free tier only allows sending to verified email
-    // For testing, always send to your own email
+    
+    
     const recipientEmail = process.env.EMAIL || 'adarshpriydarshi5646@gmail.com';
     
     const { data, error } = await resend.emails.send({
-      from: 'Vingo Food Delivery <onboarding@resend.dev>', // Resend test domain
-      to: [recipientEmail], // Always send to your verified email
+      from: 'Vingo Food Delivery <onboarding@resend.dev>', 
+      to: [recipientEmail], 
       subject: `Reset Your Password - Vingo (OTP for ${to})`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -46,12 +46,12 @@ export const sendDeliveryOtpMailResend = async (user, otp) => {
   try {
     console.log(`Sending delivery OTP email via Resend to ${user.email}`);
     
-    // Resend free tier only allows sending to verified email
+    
     const recipientEmail = process.env.EMAIL || 'adarshpriydarshi5646@gmail.com';
     
     const { data, error } = await resend.emails.send({
       from: 'Vingo Food Delivery <onboarding@resend.dev>',
-      to: [recipientEmail], // Always send to your verified email
+      to: [recipientEmail], 
       subject: `Delivery OTP - Vingo (for ${user.fullName})`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

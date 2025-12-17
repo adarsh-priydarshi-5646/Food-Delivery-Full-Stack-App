@@ -30,7 +30,7 @@ function Shop() {
 
   return (
     <div className="min-h-screen bg-[#F8F8F8]">
-      {/* Back Button */}
+      {}
       <button
         className="fixed top-6 left-6 z-30 flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-900 px-4 py-2.5 rounded-full shadow-lg transition-all hover:shadow-xl border border-gray-200"
         onClick={() => navigate("/")}
@@ -39,7 +39,7 @@ function Shop() {
         <span className="font-semibold">Back</span>
       </button>
 
-      {/* Restaurant Header */}
+      {}
       {shop && (
         <div className="relative w-full h-72 md:h-80 lg:h-96">
           <img
@@ -51,17 +51,17 @@ function Shop() {
           
           <div className="absolute inset-0 flex flex-col justify-end px-6 pb-8 md:px-12 md:pb-12">
             <div className="max-w-7xl mx-auto w-full">
-              {/* Restaurant Icon */}
+              {}
               <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4 shadow-lg">
                 <FaStore className="text-[#E23744] text-2xl" />
               </div>
 
-              {/* Restaurant Name */}
+              {}
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 drop-shadow-lg">
                 {shop.name}
               </h1>
 
-              {/* Restaurant Info */}
+              {}
               <div className="flex flex-wrap items-center gap-4 text-white">
                 <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
                   <FaLocationDot className="text-red-400" />
@@ -83,7 +83,7 @@ function Shop() {
                 )}
               </div>
 
-              {/* Cuisine Type */}
+              {}
               {shop.cuisine && (
                 <p className="text-gray-200 mt-3 text-lg">
                   {shop.cuisine}
@@ -94,7 +94,7 @@ function Shop() {
         </div>
       )}
 
-      {/* Menu Section */}
+      {}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">

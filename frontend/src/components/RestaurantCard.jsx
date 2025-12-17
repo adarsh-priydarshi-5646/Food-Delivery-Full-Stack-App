@@ -14,14 +14,14 @@ function RestaurantCard({ restaurant }) {
       onClick={handleClick}
       className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
     >
-      {/* Restaurant Image */}
+      {}
       <div className="relative h-48 overflow-hidden">
         <img
           src={restaurant.image}
           alt={restaurant.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
-        {/* Rating Badge */}
+        {}
         {restaurant.rating && (
           <div className="absolute top-3 right-3 bg-green-600 text-white px-2.5 py-1 rounded-lg flex items-center gap-1 font-semibold text-sm shadow-lg">
             <FaStar className="text-xs" />
@@ -30,13 +30,13 @@ function RestaurantCard({ restaurant }) {
         )}
       </div>
 
-      {/* Restaurant Info */}
+      {}
       <div className="p-4">
         <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-1 group-hover:text-[#E23744] transition-colors">
           {restaurant.name}
         </h3>
 
-        {/* Cuisine Tags */}
+        {}
         {restaurant.cuisine && (
           <div className="flex flex-wrap gap-1 mb-3">
             {restaurant.cuisine.split(',').slice(0, 3).map((cuisine, index) => (
@@ -50,7 +50,7 @@ function RestaurantCard({ restaurant }) {
           </div>
         )}
 
-        {/* Details */}
+        {}
         <div className="flex items-center justify-between text-sm text-gray-600">
           <div className="flex items-center gap-1">
             <FaClock className="text-[#E23744] text-xs" />

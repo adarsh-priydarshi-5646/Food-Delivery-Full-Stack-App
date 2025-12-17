@@ -8,7 +8,7 @@ function FoodCard({ data }) {
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.user);
   
-  // Check if item is already in cart
+  
   const cartItem = cartItems.find((i) => i.id === data._id);
   const currentQuantity = cartItem?.quantity || 0;
 
@@ -20,7 +20,7 @@ function FoodCard({ data }) {
         price: data.price,
         image: data.image,
         shop: data.shop,
-        quantity: 1, // Start with quantity 1
+        quantity: 1, 
         foodType: data.foodType,
       })
     );
@@ -36,14 +36,14 @@ function FoodCard({ data }) {
       const newQty = currentQuantity - 1;
       dispatch(updateQuantity({ id: data._id, quantity: newQty }));
     } else if (currentQuantity === 1) {
-      // Remove from cart if quantity becomes 0
+      
       dispatch(removeCartItem(data._id));
     }
   };
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover-lift">
-      {/* Image Section */}
+      {}
       <div className="relative w-full h-48 hover-zoom-image bg-gray-100">
         <img
           src={data.image}
@@ -51,7 +51,7 @@ function FoodCard({ data }) {
           className="w-full h-full object-cover"
         />
         
-        {/* Veg/Non-veg Badge */}
+        {}
         <div className="absolute top-3 left-3">
           {data.foodType === "veg" ? (
             <div className="bg-white rounded-md p-1 shadow-sm border-2 border-green-600 flex items-center justify-center w-6 h-6">
@@ -64,7 +64,7 @@ function FoodCard({ data }) {
           )}
         </div>
 
-        {/* Rating Badge */}
+        {}
         {data.rating && data.rating.average > 0 && (
           <div className="absolute top-3 right-3 bg-green-600 text-white px-2 py-1 rounded-lg flex items-center gap-1 text-xs font-bold shadow-lg">
             <FaStar className="text-[10px]" />
@@ -72,7 +72,7 @@ function FoodCard({ data }) {
           </div>
         )}
 
-        {/* Delivery Time Badge */}
+        {}
         {data.deliveryTime && (
           <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-gray-800 px-2 py-1 rounded-md text-xs font-semibold shadow-sm">
             {data.deliveryTime} mins
@@ -80,28 +80,28 @@ function FoodCard({ data }) {
         )}
       </div>
 
-      {/* Content Section */}
+      {}
       <div className="p-4">
-        {/* Food Name */}
+        {}
         <h3 className="text-gray-900 font-bold text-base mb-1 line-clamp-2">
           {data.name}
         </h3>
 
-        {/* Restaurant Name */}
+        {}
         {data.shop && data.shop.name && (
           <p className="text-gray-500 text-sm mb-2 line-clamp-1">
             {data.shop.name}
           </p>
         )}
 
-        {/* Description */}
+        {}
         {data.description && (
           <p className="text-gray-600 text-xs mb-2 line-clamp-2">
             {data.description}
           </p>
         )}
 
-        {/* Price and Category */}
+        {}
         <div className="flex items-center justify-between mb-3">
           <div className="flex flex-col">
             <span className="text-gray-900 font-bold text-lg">
@@ -114,7 +114,7 @@ function FoodCard({ data }) {
             )}
           </div>
           
-          {/* Rating with count */}
+          {}
           {data.rating && data.rating.average > 0 && (
             <div className="flex items-center gap-1">
               <FaStar className="text-yellow-500 text-sm" />
@@ -130,7 +130,7 @@ function FoodCard({ data }) {
           )}
         </div>
 
-        {/* Add to Cart Button / Quantity Stepper */}
+        {}
         {currentQuantity === 0 ? (
           <button
             onClick={handleAddToCart}

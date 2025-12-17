@@ -66,7 +66,7 @@ function SignIn() {
   };
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-white relative">
-       {/* Close/Home button for better UX */}
+       {}
        <div className="absolute top-6 left-6 cursor-pointer" onClick={() => navigate("/")}>
           <h1 className="text-3xl font-extrabold italic text-[#E23744] tracking-tight">Vingo</h1>
        </div>

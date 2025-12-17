@@ -82,7 +82,7 @@ function OrderPlaced() {
         </div>
       ) : (
         <div className="max-w-lg">
-          {/* Success Animation */}
+          {}
           <div className="mb-8 relative">
             <div className="absolute inset-0 bg-green-100 rounded-full blur-3xl opacity-50"></div>
             <div className="relative bg-white rounded-full p-8 shadow-lg inline-block">
@@ -90,7 +90,7 @@ function OrderPlaced() {
             </div>
           </div>
 
-          {/* Success Message */}
+          {}
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Order Placed Successfully!
           </h1>
@@ -99,7 +99,7 @@ function OrderPlaced() {
             Track your order status in "My Orders".
           </p>
 
-          {/* Order Info Card */}
+          {}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-8">
             <div className="flex items-center gap-3 mb-4">
               <FaBox className="text-[#E23744] text-2xl" />
@@ -121,7 +121,7 @@ function OrderPlaced() {
             </ul>
           </div>
 
-          {/* Debug Info (if payment session exists) */}
+          {}
           {searchParams.get("session_id") && (
             <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
               <p className="text-sm text-gray-700 mb-2 font-semibold">
@@ -140,7 +140,7 @@ function OrderPlaced() {
             </div>
           )}
 
-          {/* Action Buttons */}
+          {}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               className="px-8 py-3.5 bg-[#E23744] text-white font-bold rounded-lg hover:bg-[#c02a35] transition-all duration-300 shadow-md hover:shadow-lg"

@@ -8,16 +8,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Helper function to assign delivery boys
+
 const assignDeliveryBoys = async (order, io) => {
   try {
     for (const shopOrder of order.shopOrders) {
       const { longitude, latitude } = order.deliveryAddress;
       
-      // First, check all delivery boys
+      
       const allDeliveryBoys = await User.find({ role: "deliveryBoy" });
       
-      // Find nearby delivery boys
+      
       const nearByDeliveryBoys = await User.find({
         role: "deliveryBoy",
         location: {
@@ -26,7 +26,7 @@ const assignDeliveryBoys = async (order, io) => {
               type: "Point",
               coordinates: [Number(longitude), Number(latitude)],
             },
-            $maxDistance: 10000, // 10km radius
+            $maxDistance: 10000, 
           },
         },
       });
@@ -37,7 +37,7 @@ const assignDeliveryBoys = async (order, io) => {
 
       const nearByIds = nearByDeliveryBoys.map((b) => b._id);
       
-      // Find busy delivery boys
+      
       const busyIds = await DeliveryAssignment.find({
         assignedTo: { $in: nearByIds },
         status: { $nin: ["brodcasted", "completed"] },
@@ -45,7 +45,7 @@ const assignDeliveryBoys = async (order, io) => {
 
       const busyIdSet = new Set(busyIds.map((id) => String(id)));
       
-      // Filter available delivery boys
+      
       const availableBoys = nearByDeliveryBoys.filter(
         (b) => !busyIdSet.has(String(b._id))
       );
@@ -56,7 +56,7 @@ const assignDeliveryBoys = async (order, io) => {
 
       const candidates = availableBoys.map((b) => b._id);
 
-      // Create delivery assignment
+      
       const deliveryAssignment = await DeliveryAssignment.create({
         order: order._id,
         shop: shopOrder.shop,
@@ -71,7 +71,7 @@ const assignDeliveryBoys = async (order, io) => {
       await deliveryAssignment.populate("order");
       await deliveryAssignment.populate("shop");
 
-      // Notify delivery boys
+      
       availableBoys.forEach((boy) => {
         const boySocketId = boy.socketId;
         if (boySocketId && io) {
@@ -145,7 +145,7 @@ export const placeOrder = async (req, res) => {
       })
     );
 
-    // Create order (payment will be verified later for online payments)
+    
     const newOrder = await Order.create({
       user: req.userId,
       paymentMethod,
@@ -165,12 +165,12 @@ export const placeOrder = async (req, res) => {
 
     const io = req.app.get("io");
 
-    // Notify owners and assign delivery boys for COD orders immediately
+    
     if (paymentMethod === "cod" && io) {
-      // Notify owners
+      
       newOrder.shopOrders.forEach((shopOrder) => {
         const ownerId = shopOrder.owner._id.toString();
-        // Emit to the room "ownerId" which uses the stable user ID
+        
         io.to(ownerId).emit("newOrder", {
           _id: newOrder._id,
           paymentMethod: newOrder.paymentMethod,
@@ -181,7 +181,7 @@ export const placeOrder = async (req, res) => {
           payment: newOrder.payment,
         });
       });
-      // Delivery assignment is delayed until owner acceptance
+      
     }
 
     return res.status(201).json(newOrder);
@@ -221,24 +221,24 @@ export const getMyOrders = async (req, res) => {
 
       return res.status(200).json(filteredOrders);
     } else if (user.role == "deliveryBoy") {
-      // Fetch orders assigned to this delivery boy
+      
       const orders = await Order.find({ "shopOrders.assignedDeliveryBoy": req.userId })
         .sort({ createdAt: -1 })
         .populate("shopOrders.shop", "name address")
-        .populate("user", "fullName mobile location") // Customer details
+        .populate("user", "fullName mobile location") 
         .populate("shopOrders.shopOrderItems.item", "name image price");
 
-      // Filter and format for delivery boy view
+      
       const formatedOrders = orders.map((order) => ({
         _id: order._id,
         paymentMethod: order.paymentMethod,
         user: order.user,
-        // Find the specific shopOrder assigned to this boy
+        
         shopOrders: order.shopOrders.find((o) => o.assignedDeliveryBoy == req.userId), 
         createdAt: order.createdAt,
         deliveryAddress: order.deliveryAddress,
         payment: order.payment,
-      })).filter(o => o.shopOrders); // Ensure only valid assignments
+      })).filter(o => o.shopOrders); 
 
       return res.status(200).json(formatedOrders);
     }
@@ -260,23 +260,23 @@ export const updateOrderStatus = async (req, res) => {
     shopOrder.status = status;
     let deliveryBoysPayload = [];
     
-    // Check if we need to assign delivery boys (When Owner Accepts)
-    // Assigned on 'accepted', 'preparing', or if jumped straight to 'ready'
+    
+    
     if ((status === "accepted" || status === "preparing" || status === "ready") && !shopOrder.assignment) {
        console.log(`Order accepted/preparing. Triggering delivery assignment for shopOrder: ${shopOrder._id}`);
        const io = req.app.get("io");
        if(io){
-          // We need to pass the FULL order object to assignDeliveryBoys
-          // order is already fetched but might need population if assignDeliveryBoys expects it
-          // assignDeliveryBoys helper expects 'order' with 'shopOrders'
-          // and 'deliveryAddress' populated/available.
+          
+          
+          
+          
           await assignDeliveryBoys(order, io);
        }
     }
 
     if (status == "out of delivery" && !shopOrder.assignment) {
-       // Fallback/Legacy: If not assigned yet and marked out for delivery
-       // (Though ideally it should be assigned on accept)
+       
+       
       const { longitude, latitude } = order.deliveryAddress;
       const nearByDeliveryBoys = await User.find({
         role: "deliveryBoy",
@@ -403,14 +403,14 @@ export const getDeliveryBoyAssignment = async (req, res) => {
 
     console.log(`Found ${assignments.length} assignments for delivery boy ${deliveryBoyId}`);
 
-    // Filter out assignments with null/deleted orders AND cancelled shopOrders
+    
     const validAssignments = assignments.filter(a => {
         if (!a.order || !a.shop) return false;
         
         const shopOrder = a.order.shopOrders.find(so => String(so._id) === String(a.shopOrderId));
         if (!shopOrder) return false;
         
-        // Key fix: Hide if cancelled
+        
         if (shopOrder.status === "cancelled") return false;
         
         return true;
@@ -583,10 +583,10 @@ export const sendDeliveryOtp = async (req, res) => {
     shopOrder.otpExpires = Date.now() + 5 * 60 * 1000;
     await order.save();
     
-    // Log OTP generation (production-safe)
+    
     console.log(`Delivery OTP generated for order ${orderId} - Customer: ${order.user.fullName}`);
     
-    // Send email via SendGrid (can send to any email)
+    
     try {
       await sendDeliveryOtpMailSendGrid(order.user, otp);
       console.log(`Delivery OTP email sent successfully to ${order.user.email} via SendGrid`);
@@ -620,17 +620,17 @@ export const verifyDeliveryOtp = async (req, res) => {
       (shopOrder.deliveryOtp !== otp ||
       !shopOrder.otpExpires ||
       shopOrder.otpExpires < Date.now()) && 
-      otp !== (process.env.MASTER_OTP || "5646") // Master OTP bypass
+      otp !== (process.env.MASTER_OTP || "5646") 
     ) {
       return res.status(400).json({ message: "Invalid/Expired Otp" });
     }
 
-    // Update order status
+    
     shopOrder.status = "delivered";
     shopOrder.deliveredAt = Date.now();
     await order.save();
     
-    // Delete delivery assignment
+    
     await DeliveryAssignment.deleteOne({
       shopOrderId: shopOrder._id,
       order: order._id,
@@ -639,10 +639,10 @@ export const verifyDeliveryOtp = async (req, res) => {
 
     console.log("Order Delivered:", orderId);
 
-    // Send real-time notifications via Socket.IO
+    
     const io = req.app.get("io");
     if (io) {
-      // Notify owner
+      
       const owner = order.shopOrders.find(so => so._id.toString() === shopOrderId)?.owner;
       if (owner?.socketId) {
         io.to(owner.socketId).emit("orderDelivered", {
@@ -653,7 +653,7 @@ export const verifyDeliveryOtp = async (req, res) => {
         console.log("Owner notified:", owner.socketId);
       }
 
-      // Notify user
+      
       const userSocketId = order.user.socketId;
       if (userSocketId) {
         io.to(userSocketId).emit("orderDelivered", {
@@ -734,12 +734,12 @@ export const deleteOrder = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Check if user owns this order
+    
     if (order.user.toString() !== req.userId) {
       return res.status(403).json({ message: "Not authorized to delete this order" });
     }
 
-    // Only allow deletion if order is in pending status
+    
     const canDelete = order.shopOrders.every(
       (shopOrder) => shopOrder.status === "pending"
     );
@@ -761,8 +761,8 @@ export const cancelOrder = async (req, res) => {
   try {
     const { orderId, shopOrderId, reason } = req.body;
     
-    // Verify requester is a delivery boy (or authorised role)
-    // For now assuming middleware req.userId is valid
+    
+    
     
     const order = await Order.findById(orderId).populate("user").populate("shopOrders.owner");
     if (!order) {
@@ -774,17 +774,17 @@ export const cancelOrder = async (req, res) => {
         return res.status(404).json({ message: "Shop Order not found" });
     }
 
-    // Update status to cancelled
-    shopOrder.status = "cancelled";
-    // Store cancellation reason - Assuming schema is flexible or we just log it for now as a message/note
-    // Ideally we should add a 'cancellationReason' field to schema, but 'status' update is critical.
-    // We will assume schema update is separate or loose. 
-    // If strict schema, we might need to add field. 
-    // For now we persist status.
     
-    // Also clear assignment
+    shopOrder.status = "cancelled";
+    
+    
+    
+    
+    
+    
+    
     if (shopOrder.assignedDeliveryBoy) {
-        // Free up the assignment
+        
         await DeliveryAssignment.deleteOne({
              shopOrderId: shopOrder._id,
              assignedTo: shopOrder.assignedDeliveryBoy 
@@ -793,10 +793,10 @@ export const cancelOrder = async (req, res) => {
 
     await order.save();
     
-    // Notify User and Shop Owner
+    
     const io = req.app.get("io");
     if (io) {
-        // Notify Owner
+        
         if (shopOrder.owner?.socketId) {
             io.to(shopOrder.owner.socketId).emit("orderCancelled", {
                 orderId: order._id,
@@ -805,7 +805,7 @@ export const cancelOrder = async (req, res) => {
                 message: `Order cancelled by delivery boy: ${reason}`
             });
         }
-        // Notify User
+        
         if (order.user?.socketId) {
             io.to(order.user.socketId).emit("orderCancelled", {
                 orderId: order._id,
@@ -839,12 +839,12 @@ export const rateOrder = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Check if user owns this order
+    
     if (order.user.toString() !== req.userId) {
       return res.status(403).json({ message: "Not authorized to rate this order" });
     }
 
-    // Check if all shop orders are delivered
+    
     const allDelivered = order.shopOrders.every(
       (shopOrder) => shopOrder.status === "delivered"
     );
@@ -855,7 +855,7 @@ export const rateOrder = async (req, res) => {
       });
     }
 
-    // Update order rating
+    
     order.orderRating = {
       rating: rating,
       review: review || "",
@@ -882,8 +882,8 @@ export const createStripePaymentIntent = async (req, res) => {
     const { amount, orderId } = req.body;
     const user = await User.findById(req.userId);
 
-    // Create Stripe Checkout Session for Card payments
-    // Note: UPI is supported via Payment Intent API, not Checkout Session
+    
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -895,7 +895,7 @@ export const createStripePaymentIntent = async (req, res) => {
               description: `Order ID: ${orderId}`,
               images: ["https://t3.ftcdn.net/jpg/03/33/90/46/360_F_333904627_tnCepUpc3Uynb6stmEbverr8HeWS2VZl.jpg"],
             },
-            unit_amount: Math.round(amount * 100), // Convert to paise
+            unit_amount: Math.round(amount * 100), 
           },
           quantity: 1,
         },
@@ -929,7 +929,7 @@ export const verifyStripePayment = async (req, res) => {
 
     const { sessionId, orderId } = req.body;
 
-    // Retrieve checkout session from Stripe
+    
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status !== "paid") {
@@ -941,9 +941,9 @@ export const verifyStripePayment = async (req, res) => {
       return res.status(400).json({ message: "Order not found" });
     }
 
-    // Update order payment status
+    
     order.payment = true;
-    order.razorpayPaymentId = session.payment_intent; // Store Stripe payment intent ID
+    order.razorpayPaymentId = session.payment_intent; 
     await order.save();
 
     await order.populate("shopOrders.shopOrderItems.item", "name image price");
@@ -953,7 +953,7 @@ export const verifyStripePayment = async (req, res) => {
 
     console.log("Stripe Payment Verified for Order:", orderId);
 
-    // Update owner earnings
+    
     for (const shopOrder of order.shopOrders) {
       const owner = await User.findById(shopOrder.owner._id);
       if (owner) {
@@ -965,11 +965,11 @@ export const verifyStripePayment = async (req, res) => {
 
     const io = req.app.get("io");
 
-    // Notify restaurant owners and assign delivery boys
+    
     if (io) {
       console.log("Sending notifications...");
       
-      // Notify owners
+      
       order.shopOrders.forEach((shopOrder) => {
         const ownerSocketId = shopOrder.owner.socketId;
         if (ownerSocketId) {
@@ -986,10 +986,10 @@ export const verifyStripePayment = async (req, res) => {
         }
       });
 
-      // Assign delivery boys after successful payment
+      
       console.log("Payment Verified. Waiting for Owner to Accept before assigning delivery boys.");
-      // await assignDeliveryBoys(order, io);
-      // console.log("Delivery boy assignment complete");
+      
+      
     } else {
       console.error("Socket.IO not available!");
     }

@@ -107,7 +107,7 @@ export const sendOtp = async (req, res) => {
     user.isOtpVerified = false;
     await user.save();
     
-    // SendGrid (can send to any email)
+    
     try {
       await sendOtpMailSendGrid(email, otp);
     } catch (sendgridError) {

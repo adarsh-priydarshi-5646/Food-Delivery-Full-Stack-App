@@ -10,32 +10,32 @@ import OwnerOrderCard from "./OwnerOrderCard";
 
 function OwnerDashboard() {
   const { myShopData } = useSelector((state) => state.owner);
-  const { myOrders, userData, socket } = useSelector((state) => state.user); // Added socket
+  const { myOrders, userData, socket } = useSelector((state) => state.user); 
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Added dispatch
+  const dispatch = useDispatch(); 
 
   useEffect(() => {
     if (!socket) return;
     
-    // Listen for new orders (Real-time addition)
+    
     socket.on("newOrder", (data) => {
-      // Check if this order belongs to any of my shops (owner check)
-      // The backend emits to the owner socket, so we can assume it's relevant
+      
+      
       if (data.shopOrders && data.shopOrders.owner && data.shopOrders.owner._id === userData._id) {
-          // Check if order already exists to prevent duplicates
+          
           const exists = myOrders.some(o => o._id === data._id);
           if (!exists) {
-             // We need to shape it correctly for the store if needed, or just push
-             // The backend logic sends the whole order object usually? 
-             // Logic in MyOrders.jsx handles this by dispatch(setMyOrders([data, ...myOrders]));
-             // We should do similar or rely on a shared handler.
-             // For now, let's dispatch it.
-             // Note: data structure might need alignment with getMyOrders response.
+             
+             
+             
+             
+             
+             
           }
       }
     });
 
-    // Listen for delivery updates (Marked delivered by Delivery Boy)
+    
     socket.on("orderDelivered", ({ orderId, shopOrderId }) => {
         const order = myOrders?.find((o) => o._id === orderId);
         if (order) {
@@ -52,7 +52,7 @@ function OwnerDashboard() {
     };
   }, [socket, myOrders, dispatch, userData]);
   
-  // Calculate stats
+  
   const totalOrders = myOrders?.length || 0;
   const totalRevenue = myOrders?.reduce((sum, order) => {
     if (!order.shopOrders || !Array.isArray(order.shopOrders)) return sum;
@@ -89,7 +89,7 @@ function OwnerDashboard() {
 
       {myShopData && (
         <div className="w-full flex flex-col items-center gap-6 px-4 sm:px-6 pb-8">
-          {/* Stats Bar */}
+          {}
           <div className="w-full max-w-5xl bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-wrap gap-6 justify-between items-center mt-6">
              <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-[#ff4d2d]/10 rounded-full flex items-center justify-center text-[#ff4d2d] text-2xl font-bold">
@@ -128,9 +128,9 @@ function OwnerDashboard() {
              </div>
           </div>
 
-          {/* Content Area */}
+          {}
           <div className="w-full max-w-5xl flex flex-col md:flex-row gap-6">
-             {/* Left Column: Menu Items */}
+             {}
              <div className="flex-1">
                 <div className="flex items-center justify-between mb-4">
                    <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -158,7 +158,7 @@ function OwnerDashboard() {
                 </div>
              </div>
 
-             {/* Right Column: Live Orders */}
+             {}
              <div className="flex-[1.5]">
                 <div className="flex items-center justify-between mb-4">
                    <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -173,7 +173,7 @@ function OwnerDashboard() {
                    {myOrders && myOrders.length > 0 ? (
                       [...myOrders]
                       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                      .filter(order => Array.isArray(order.shopOrders) && order.shopOrders.some(so => so.shop._id === myShopData._id)) // Only my shop's orders
+                      .filter(order => Array.isArray(order.shopOrders) && order.shopOrders.some(so => so.shop._id === myShopData._id)) 
                       .map((order, index) => {
                          return <OwnerOrderCard data={order} key={index} />;
                       })

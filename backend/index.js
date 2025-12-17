@@ -49,7 +49,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Serve static files from frontend build in production
+
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/dist')));
 }

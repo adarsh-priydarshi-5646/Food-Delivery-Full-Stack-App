@@ -53,7 +53,7 @@ function Nav() {
 
   return (
     <div className="w-full h-20 flex items-center justify-between md:justify-center gap-8 px-6 fixed top-0 z-50 bg-[#F8F8F8] shadow-sm">
-      {/* Mobile Search Bar */}
+      {}
       {showSearch && userData.role == "user" && (
         <div className="w-[90%] h-16 bg-[#F8F8F8] shadow-xl rounded-xl items-center gap-4 flex fixed top-20 left-[5%] md:hidden px-4 border border-gray-200">
           <div className="flex items-center w-[30%] gap-2 border-r-2 border-gray-200 pr-3">
@@ -75,12 +75,12 @@ function Nav() {
         </div>
       )}
 
-      {/* Logo */}
+      {}
       <h1 className="text-3xl font-bold text-[#E23744] cursor-pointer" onClick={() => navigate("/")}>
         Vingo
       </h1>
 
-      {/* Desktop Search Bar */}
+      {}
       {userData.role == "user" && (
         <div className="md:w-[60%] lg:w-[40%] h-14 bg-white shadow-md rounded-xl items-center gap-4 hidden md:flex px-4 border border-gray-200">
           <div className="flex items-center w-[30%] gap-2 border-r-2 border-gray-200 pr-3">
@@ -102,9 +102,9 @@ function Nav() {
         </div>
       )}
 
-      {/* Navigation Actions */}
+      {}
       <div className="flex items-center gap-4">
-        {/* Mobile Search Toggle */}
+        {}
         {userData.role == "user" &&
           (showSearch ? (
             <RxCross2
@@ -120,7 +120,7 @@ function Nav() {
             />
           ))}
 
-        {/* Owner Actions */}
+        {}
         {userData.role == "owner" ? (
           <>
             {myShopData && (
@@ -157,7 +157,7 @@ function Nav() {
           </>
         ) : (
           <>
-            {/* User Actions */}
+            {}
             {userData.role == "user" && (
               <div className="relative cursor-pointer" onClick={() => navigate("/cart")}>
                 <FiShoppingCart size={24} className="text-[#E23744]" />
@@ -178,7 +178,7 @@ function Nav() {
           </>
         )}
 
-        {/* Profile Avatar */}
+        {}
         <div
           className="w-10 h-10 rounded-full flex items-center justify-center bg-[#E23744] text-white text-lg font-bold cursor-pointer shadow-md hover:shadow-lg transition-shadow"
           onClick={() => setShowInfo((prev) => !prev)}
@@ -186,7 +186,7 @@ function Nav() {
           {userData?.fullName.slice(0, 1).toUpperCase()}
         </div>
 
-        {/* Profile Dropdown */}
+        {}
         {showInfo && (
           <div
             className={`fixed top-20 right-4 ${

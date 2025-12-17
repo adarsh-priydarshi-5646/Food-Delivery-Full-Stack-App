@@ -16,7 +16,7 @@ import { serverUrl } from "../App";
 import { addMyOrder, clearCart } from "../redux/userSlice";
 import { loadStripe } from "@stripe/stripe-js";
 
-// Fix Leaflet default marker icon issue
+
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -154,7 +154,7 @@ function CheckOut() {
   return (
     <div className="min-h-screen bg-[#F8F8F8] flex justify-center px-4 py-6">
       <div className="w-full max-w-5xl">
-        {/* Header */}
+        {}
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => navigate("/cart")}
@@ -170,9 +170,9 @@ function CheckOut() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Delivery & Payment */}
+          {}
           <div className="lg:col-span-2 space-y-6">
-            {/* Delivery Location Section */}
+            {}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-900">
                 <IoLocationSharp className="text-[#E23744]" />
@@ -226,7 +226,7 @@ function CheckOut() {
               </p>
             </div>
 
-            {/* Payment Method Section */}
+            {}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
               <h2 className="text-xl font-bold mb-4 text-gray-900">
                 Payment Method
@@ -270,7 +270,7 @@ function CheckOut() {
             </div>
           </div>
 
-          {/* Right Column - Order Summary (Sticky) */}
+          {}
           <div className="lg:col-span-1">
             <div className="sticky top-24 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-200">

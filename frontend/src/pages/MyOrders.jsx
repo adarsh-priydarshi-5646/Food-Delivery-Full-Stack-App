@@ -5,7 +5,7 @@ import { FaClipboardList } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import UserOrderCard from "../components/UserOrderCard";
 import OwnerOrderCard from "../components/OwnerOrderCard";
-import DeliveryHistoryCard from "../components/DeliveryHistoryCard"; // Import new card
+import DeliveryHistoryCard from "../components/DeliveryHistoryCard"; 
 import {
   setMyOrders,
   updateOrderStatus,
@@ -31,20 +31,20 @@ function MyOrders() {
     });
 
     socket?.on("orderDelivered", ({ orderId, shopOrderId, message }) => {
-      // Find the shopId from the structure if possible, or iterate
-      // But updateRealtimeOrderStatus needs shopId.
-      // The backend emits { orderId, shopOrderId, message }
-      // We need to find the shopId corresponding to shopOrderId in our Redux state or backend needs to send it.
-      // Let's look at backend: it sends shopOrderId.
-      // We can iterate myOrders to find the order and then the shopOrder to get the shopId.
+      
+      
+      
+      
+      
+      
       
       const order = myOrders.find((o) => o._id === orderId);
       if (order) {
         const shopOrder = order.shopOrders.find((so) => so._id === shopOrderId);
         if (shopOrder) {
              dispatch(updateRealtimeOrderStatus({ orderId, shopId: shopOrder.shop._id, status: "delivered" }));
-             // Optionally show a toast/alert
-             // alert(message);
+             
+             
         }
       }
     });
@@ -58,7 +58,7 @@ function MyOrders() {
   return (
     <div className="w-full min-h-screen bg-[#F8F8F8] flex justify-center px-4 py-6 pt-10">
       <div className="w-full max-w-5xl">
-        {/* Header */}
+        {}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-6">
           <div className="flex items-center gap-4 mb-4">
             <button
@@ -81,7 +81,7 @@ function MyOrders() {
           </div>
         </div>
 
-        {/* Orders List */}
+        {}
         <div className="space-y-4">
           {myOrders && myOrders.length > 0 ? (
             myOrders.map((order, index) =>

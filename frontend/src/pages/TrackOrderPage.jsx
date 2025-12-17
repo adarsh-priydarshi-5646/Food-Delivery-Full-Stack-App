@@ -55,7 +55,7 @@ function TrackOrderPage() {
   return (
     <div className="min-h-screen bg-[#F8F8F8] pt-24 px-4 pb-10">
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
+        {}
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate("/my-orders")}
@@ -71,7 +71,7 @@ function TrackOrderPage() {
 
         {currentOrder.shopOrders?.map((shopOrder, index) => (
           <div key={index} className="space-y-6">
-            {/* Status Card */}
+            {}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-6">
                 <div>
@@ -88,7 +88,7 @@ function TrackOrderPage() {
                 )}
               </div>
 
-              {/* Progress Bar */}
+              {}
               <div className="relative mb-8">
                 <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 rounded-full"></div>
                 <div 
@@ -118,7 +118,7 @@ function TrackOrderPage() {
                 </div>
               </div>
 
-              {/* Delivery Boy Info */}
+              {}
               {shopOrder.assignedDeliveryBoy && shopOrder.status !== "delivered" && (
                 <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between border border-gray-100">
                   <div className="flex items-center gap-4">
@@ -140,7 +140,7 @@ function TrackOrderPage() {
               )}
             </div>
 
-            {/* Live Map */}
+            {}
             {shopOrder.assignedDeliveryBoy && shopOrder.status !== "delivered" && (
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 h-[400px]">
                  <DeliveryBoyTracking
@@ -158,7 +158,7 @@ function TrackOrderPage() {
               </div>
             )}
 
-            {/* Order Details */}
+            {}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
               <h3 className="font-bold text-lg mb-4 text-gray-900">Order Details</h3>
               <div className="space-y-3">

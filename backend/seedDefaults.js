@@ -32,7 +32,7 @@ const users = [
 
 const seedDefaults = async () => {
   try {
-    // Connect to MongoDB if not already connected
+    
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGODB_URL);
       console.log("Connected to MongoDB");
@@ -55,7 +55,7 @@ const seedDefaults = async () => {
         console.log(`User ${u.email} exists.`);
       }
 
-      // If Owner, ensure they have a Shop
+      
       if (u.role === "owner") {
         const shop = await Shop.findOne({ owner: user._id });
         if (!shop) {

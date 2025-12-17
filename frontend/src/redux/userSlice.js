@@ -1,6 +1,6 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 
-// Helper functions for localStorage
+
 const saveCartToLocalStorage = (cartItems, totalAmount) => {
   try {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
@@ -39,7 +39,7 @@ const userSlice = createSlice({
     myOrders: [],
     searchItems: null,
     socket: null,
-    // Filter state
+    
     selectedCategories: [],
     priceRange: { min: 0, max: 1000 },
     sortBy: 'popularity',
@@ -155,7 +155,7 @@ const userSlice = createSlice({
       saveCartToLocalStorage([], 0);
     },
 
-    // Filter actions
+    
     setSelectedCategories: (state, action) => {
       state.selectedCategories = action.payload;
     },

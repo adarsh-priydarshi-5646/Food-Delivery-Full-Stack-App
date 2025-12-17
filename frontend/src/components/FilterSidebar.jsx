@@ -28,7 +28,7 @@ function FilterSidebar({ hideCategoryFilter = false }) {
 
   return (
     <div className="w-full lg:w-64 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
         <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
           <FaFilter className="text-[#E23744]" />
@@ -44,7 +44,7 @@ function FilterSidebar({ hideCategoryFilter = false }) {
         )}
       </div>
 
-      {/* Quick Filters */}
+      {}
       <div className="mb-6">
         <h4 className="text-sm font-semibold text-gray-700 mb-3">Quick Filters</h4>
         <div className="flex flex-wrap gap-2">
@@ -84,7 +84,7 @@ function FilterSidebar({ hideCategoryFilter = false }) {
         </div>
       </div>
 
-      {/* Sort By */}
+      {}
       <div className="mb-6">
         <h4 className="text-sm font-semibold text-gray-700 mb-3">Sort By</h4>
         <div className="space-y-2">
@@ -109,7 +109,7 @@ function FilterSidebar({ hideCategoryFilter = false }) {
         </div>
       </div>
 
-      {/* Categories - Only show if not hidden */}
+      {}
       {!hideCategoryFilter && (
         <div className="mb-4">
           <h4 className="text-sm font-semibold text-gray-700 mb-3">Categories</h4>

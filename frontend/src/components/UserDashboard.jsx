@@ -31,7 +31,7 @@ function UserDashboard() {
   const [showRightCateButton, setShowRightCateButton] = useState(false);
   const [filteredItems, setFilteredItems] = useState([]);
 
-  // Filter and sort items based on state
+  
   useEffect(() => {
     if (!itemsInMyCity) {
       setFilteredItems([]);
@@ -40,17 +40,17 @@ function UserDashboard() {
 
     let result = [...itemsInMyCity];
 
-    // Filter by categories
+    
     if (selectedCategories.length > 0) {
       result = result.filter(item => selectedCategories.includes(item.category));
     }
 
-    // Filter by price range
+    
     result = result.filter(item => 
       item.price >= priceRange.min && item.price <= priceRange.max
     );
 
-    // Filter by quick filters
+    
     if (quickFilters.veg) {
       result = result.filter(item => item.isVeg === true);
     }
@@ -61,7 +61,7 @@ function UserDashboard() {
       result = result.filter(item => item.rating >= 4.0);
     }
 
-    // Sort items
+    
     switch (sortBy) {
       case 'popularity':
         result.sort((a, b) => (b.orders || 0) - (a.orders || 0));
@@ -132,7 +132,7 @@ function UserDashboard() {
   }, [categories]);
 
   const handleCategoryClick = (category) => {
-    // Navigate to category page instead of filtering
+    
     if (category !== "All") {
       navigate(`/category/${category}`);
     }
@@ -143,7 +143,7 @@ function UserDashboard() {
       <Nav />
       
       <div className="w-full max-w-7xl px-4 mt-6">
-        {/* Search Results Section */}
+        {}
         {searchItems && searchItems.length > 0 && (
           <div className="mb-10 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h1 className="text-gray-900 text-2xl sm:text-3xl font-bold flex items-center gap-2 mb-6">
@@ -157,10 +157,10 @@ function UserDashboard() {
           </div>
         )}
 
-        {/* Main Content */}
+        {}
         {(!searchItems || searchItems.length === 0) && (
           <>
-            {/* ========== SECTION 1: Category Exploration ========== */}
+            {}
             <div className="mb-10">
               <div className="flex items-center gap-3 mb-6">
                 <MdCategory className="text-[#E23744] text-2xl" />
@@ -208,7 +208,7 @@ function UserDashboard() {
               </div>
             </div>
 
-            {/* ========== SECTION 2: Top Restaurants ========== */}
+            {}
             {shopInMyCity && shopInMyCity.length > 0 && (
               <div className="mb-10">
                 <div className="flex items-center gap-3 mb-6">
@@ -230,7 +230,7 @@ function UserDashboard() {
                 {shopInMyCity.length > 8 && (
                   <div className="mt-6 text-center">
                     <button
-                      onClick={() => {/* Could navigate to all restaurants page */}}
+                      onClick={() => {}}
                       className="px-6 py-2 text-[#E23744] border-2 border-[#E23744] rounded-lg hover:bg-[#E23744] hover:text-white transition-colors font-semibold"
                     >
                       View All Restaurants
@@ -240,7 +240,7 @@ function UserDashboard() {
               </div>
             )}
 
-            {/* ========== SECTION 3: Popular Dishes (with Sidebar Filters) ========== */}
+            {}
             <div className="mb-10">
               <div className="flex items-center gap-3 mb-6">
                 <FaUtensils className="text-[#E23744] text-2xl" />
@@ -253,12 +253,12 @@ function UserDashboard() {
               </p>
 
               <div className="flex gap-6">
-                {/* Sidebar - Hidden on mobile, visible on lg+ */}
+                {}
                 <div className="hidden lg:block flex-shrink-0">
                   <FilterSidebar />
                 </div>
 
-                {/* Food Items Grid */}
+                {}
                 <div className="flex-1">
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-gray-800 text-lg font-semibold">

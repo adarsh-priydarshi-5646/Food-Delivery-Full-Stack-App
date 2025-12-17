@@ -9,8 +9,8 @@ export const sendOtpMailSendGrid = async (to, otp) => {
     console.log(`Sending OTP email via SendGrid to ${to}`);
     
     const msg = {
-      to: to, // Can send to any email!
-      from: process.env.EMAIL || 'priydarshiadarsh3@gmail.com', // Your verified sender
+      to: to, 
+      from: process.env.EMAIL || 'priydarshiadarsh3@gmail.com', 
       subject: 'Reset Your Password - Vingo',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -39,7 +39,7 @@ export const sendDeliveryOtpMailSendGrid = async (user, otp) => {
     console.log(`Sending delivery OTP email via SendGrid to ${user.email}`);
     
     const msg = {
-      to: user.email, // Can send to any email!
+      to: user.email, 
       from: process.env.EMAIL || 'priydarshiadarsh3@gmail.com',
       subject: 'Delivery OTP - Vingo',
       html: `

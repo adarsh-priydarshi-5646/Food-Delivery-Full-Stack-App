@@ -12,14 +12,14 @@ const seedDefaultRestaurant = async () => {
     await mongoose.connect(process.env.MONGODB_URL);
     console.log("Database connected");
 
-    // Check if default restaurant already exists
+    
     const existingDefaultShop = await Shop.findOne({ isDefault: true });
     if (existingDefaultShop) {
       console.log("Default restaurant already exists!");
       process.exit(0);
     }
 
-    // Create a default owner user for the restaurant
+    
     let defaultOwner = await User.findOne({ email: "default@vingo.com" });
     
     if (!defaultOwner) {
@@ -34,7 +34,7 @@ const seedDefaultRestaurant = async () => {
       console.log("Default owner created");
     }
 
-    // Create default restaurant
+    
     const defaultShop = await Shop.create({
       name: "Vingo Express",
       image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80",
@@ -48,7 +48,7 @@ const seedDefaultRestaurant = async () => {
 
     console.log("Default restaurant created:", defaultShop.name);
 
-    // Create default food items with real images
+    
     const defaultItems = [
       {
         name: "Margherita Pizza",
@@ -151,7 +151,7 @@ const seedDefaultRestaurant = async () => {
     const createdItems = await Item.insertMany(defaultItems);
     console.log(`${createdItems.length} default food items created`);
 
-    // Update shop with item IDs
+    
     defaultShop.items = createdItems.map((item) => item._id);
     await defaultShop.save();
 

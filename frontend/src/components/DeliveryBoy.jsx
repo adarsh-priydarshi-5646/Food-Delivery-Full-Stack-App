@@ -240,7 +240,7 @@ function DeliveryBoy() {
     }
   }, [resendTimer]);
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center pb-20 font-sans">
+    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center pb-32 font-sans">
       <Nav />
       
       <div className="w-full max-w-[800px] flex flex-col gap-6 items-center px-4 mt-8">
@@ -412,7 +412,7 @@ function DeliveryBoy() {
                   />
                </div>
                
-               <div className="p-5">
+               <div className="p-5 relative z-20 bg-white -mt-4 rounded-t-2xl shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                   <div className="flex justify-between items-start mb-6">
                      <div>
                         <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Pickup From</p>

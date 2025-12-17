@@ -121,6 +121,8 @@ function SignUp() {
               onChange={(e) => setMobile(e.target.value)}
               value={mobile}
               required
+              inputMode="numeric"
+              pattern="[0-9]*"
             />
           </div>
 

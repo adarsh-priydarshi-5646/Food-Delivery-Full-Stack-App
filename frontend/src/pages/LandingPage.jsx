@@ -4,8 +4,21 @@ import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import homeImage from "../assets/home.png"; // Using home.png as background
 
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentCity } from "../redux/userSlice";
+
 const LandingPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { currentCity } = useSelector((state) => state.user);
+  const [showCityDropdown, setShowCityDropdown] = React.useState(false);
+  
+  const cities = ['Delhi NCR', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai'];
+
+  const handleCitySelect = (city) => {
+    dispatch(setCurrentCity(city));
+    setShowCityDropdown(false);
+  };
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-gray-800">
@@ -20,12 +33,12 @@ const LandingPage = () => {
         {/* Navbar Overlay */}
         <nav className="absolute top-0 w-full p-4 lg:p-6 flex justify-between items-center z-10 text-white max-w-7xl mx-auto left-0 right-0">
            <div className="hidden md:flex gap-6 text-lg font-light">
-             <button className="hover:text-gray-200 transition">Add Restaurant</button>
-             <button className="hover:text-gray-200 transition">View Cities</button>
+             <button className="hover:text-gray-200 transition cursor-pointer">Add Restaurant</button>
+             <button className="hover:text-gray-200 transition cursor-pointer">View Cities</button>
            </div>
            <div className="flex gap-6 text-lg font-light">
-             <button onClick={() => navigate("/signin")} className="hover:text-gray-200 transition">Log in</button>
-             <button onClick={() => navigate("/signup")} className="hover:text-gray-200 transition">Sign up</button>
+             <button onClick={() => navigate("/signin")} className="hover:text-gray-200 transition cursor-pointer">Log in</button>
+             <button onClick={() => navigate("/signup")} className="hover:text-gray-200 transition cursor-pointer">Sign up</button>
            </div>
         </nav>
 
@@ -40,21 +53,38 @@ const LandingPage = () => {
           
           {/* Search Bar */}
           <div className="w-full max-w-3xl bg-white rounded-lg flex items-center p-3 shadow-lg">
-             <div className="hidden md:flex items-center text-gray-500 px-3 gap-2 border-r border-gray-300 w-1/3 cursor-pointer hover:bg-gray-50 transition p-2 rounded-l-lg">
+             <div className="relative md:flex items-center text-gray-500 px-3 gap-2 border-r border-gray-300 w-1/3 cursor-pointer hover:bg-gray-50 transition p-2 rounded-l-lg hidden" onClick={() => setShowCityDropdown(!showCityDropdown)}>
                 <div className="text-[#ff7e8b]">
                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                    </svg>
                 </div>
-                <span className="truncate">Select City</span>
-                <svg className="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                <span className="truncate">{currentCity || "Select City"}</span>
+                <svg className={`w-4 h-4 ml-auto transition-transform ${showCityDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                
+                {showCityDropdown && (
+                  <div className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-2 py-2 z-50">
+                    {cities.map((city) => (
+                      <div 
+                        key={city} 
+                        className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-gray-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCitySelect(city);
+                        }}
+                      >
+                        {city}
+                      </div>
+                    ))}
+                  </div>
+                )}
              </div>
              <div className="flex items-center flex-1 px-4 gap-3">
                 <FaSearch className="text-gray-400 text-lg" />
                 <input 
                   type="text" 
                   placeholder="Search for restaurant, cuisine or a dish" 
-                  className="w-full outline-none text-gray-700 placeholder-gray-400 text-lg font-light"
+                  className="w-full outline-none text-gray-700 placeholder-gray-400 text-lg font-light cursor-pointer"
                   readOnly 
                   onClick={() => navigate("/signin")}
                 />
@@ -135,19 +165,19 @@ const LandingPage = () => {
                </p>
                
                <div className="flex gap-4 mb-6">
-                  <div className="flex items-center gap-2">
-                     <input type="radio" name="contact" id="email" defaultChecked className="accent-[#E23744]" />
-                     <label htmlFor="email" className="text-gray-700">Email</label>
+                  <div className="flex items-center gap-2 cursor-pointer">
+                     <input type="radio" name="contact" id="email" defaultChecked className="accent-[#E23744] cursor-pointer" />
+                     <label htmlFor="email" className="text-gray-700 cursor-pointer">Email</label>
                   </div>
-                  <div className="flex items-center gap-2">
-                     <input type="radio" name="contact" id="phone" className="accent-[#E23744]" />
-                     <label htmlFor="phone" className="text-gray-700">Phone</label>
+                  <div className="flex items-center gap-2 cursor-pointer">
+                     <input type="radio" name="contact" id="phone" className="accent-[#E23744] cursor-pointer" />
+                     <label htmlFor="phone" className="text-gray-700 cursor-pointer">Phone</label>
                   </div>
                </div>
 
                <div className="flex gap-3 mb-8">
                   <input type="text" placeholder="Email" className="p-3 border border-gray-300 rounded-lg w-2/3 focus:outline-none focus:border-[#E23744]" />
-                  <button className="bg-[#E23744] hover:bg-[#c02a35] text-white px-6 py-3 rounded-lg w-1/3 transition">Share App Link</button>
+                  <button className="bg-[#E23744] hover:bg-[#c02a35] text-white px-6 py-3 rounded-lg w-1/3 transition cursor-pointer">Share App Link</button>
                </div>
                
                <p className="text-gray-400 mb-4 text-sm">Download app from</p>

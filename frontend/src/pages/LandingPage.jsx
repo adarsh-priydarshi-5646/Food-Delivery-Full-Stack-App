@@ -31,14 +31,24 @@ const LandingPage = () => {
         />
         
         {/* Navbar Overlay */}
-        <nav className="absolute top-0 w-full p-4 lg:p-6 flex justify-between items-center z-10 text-white max-w-7xl mx-auto left-0 right-0">
+        <nav className="absolute top-0 w-full p-4 lg:p-6 flex justify-between items-center z-50 text-white max-w-7xl mx-auto left-0 right-0">
            <div className="hidden md:flex gap-6 text-lg font-light">
              <button className="hover:text-gray-200 transition cursor-pointer">Add Restaurant</button>
              <button className="hover:text-gray-200 transition cursor-pointer">View Cities</button>
            </div>
-           <div className="flex gap-6 text-lg font-light">
-             <button onClick={() => navigate("/signin")} className="hover:text-gray-200 transition cursor-pointer">Log in</button>
-             <button onClick={() => navigate("/signup")} className="hover:text-gray-200 transition cursor-pointer">Sign up</button>
+           <div className="flex gap-4 md:gap-6 text-lg font-light items-center">
+             <button 
+                onClick={() => navigate("/signin")} 
+                className="text-white hover:text-gray-200 transition cursor-pointer text-lg"
+             >
+               Log in
+             </button>
+             <button 
+                onClick={() => navigate("/signup")} 
+                className="bg-[#E23744] hover:bg-[#c02a35] text-white px-5 py-2 rounded-full transition cursor-pointer text-lg font-medium shadow-md hover:shadow-lg active:scale-95"
+             >
+               Sign up
+             </button>
            </div>
         </nav>
 

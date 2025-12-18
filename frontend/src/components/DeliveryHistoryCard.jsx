@@ -3,13 +3,13 @@ import { MdRestaurant, MdPerson, MdAccessTime, MdCheckCircle, MdCancel } from "r
 import { FaRupeeSign, FaMapMarkerAlt } from "react-icons/fa";
 
 function DeliveryHistoryCard({ data }) {
-  const ratePerDelivery = 50; // Fixed rate per delivery as per DeliveryBoy.jsx
+  const ratePerDelivery = 50; 
   const isDelivered = data.shopOrders?.status === "delivered";
   const isCancelled = data.shopOrders?.status === "cancelled";
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-all">
-      {/* Header */}
+      {}
       <div className="flex justify-between items-start mb-4 border-b border-gray-50 pb-3">
         <div className="flex items-center gap-3">
             <div className={`p-2 rounded-full ${isDelivered ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
@@ -30,7 +30,7 @@ function DeliveryHistoryCard({ data }) {
         </div>
       </div>
 
-      {/* Details */}
+      {}
       <div className="space-y-4">
           <div className="flex justify-between items-start">
              <div className="flex-1">
@@ -58,7 +58,7 @@ function DeliveryHistoryCard({ data }) {
           </div>
       </div>
 
-      {/* Status Footer */}
+      {}
       <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
             <div className={`text-sm font-bold uppercase px-3 py-1 rounded-full ${
                 isDelivered ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"

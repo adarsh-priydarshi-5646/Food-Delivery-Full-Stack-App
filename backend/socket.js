@@ -12,7 +12,7 @@ export const socketHandler = (io) => {
           },
           { new: true }
         );
-        // Explicitly join a room for this user
+        
         socket.join(userId);
       } catch (error) {
         console.error("Identity error:", error);

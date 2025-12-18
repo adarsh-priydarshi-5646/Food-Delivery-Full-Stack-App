@@ -11,13 +11,13 @@ function CartPage() {
 
   const deliveryFee = 40;
   const platformFee = 5;
-  const gst = Math.round(totalAmount * 0.05); // 5% GST
+  const gst = Math.round(totalAmount * 0.05); 
   const grandTotal = totalAmount + deliveryFee + platformFee + gst;
 
   return (
     <div className="min-h-screen bg-[#F8F8F8] flex justify-center px-4 py-6">
       <div className="w-full max-w-6xl">
-        {/* Header */}
+        {}
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => navigate("/")}
@@ -35,7 +35,7 @@ function CartPage() {
         </div>
 
         {cartItems?.length === 0 ? (
-          /* Empty Cart State */
+          
           <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-200">
             <FaShoppingCart className="text-gray-300 text-6xl mx-auto mb-4" />
             <h3 className="text-gray-900 text-xl font-bold mb-2">
@@ -52,16 +52,16 @@ function CartPage() {
             </button>
           </div>
         ) : (
-          /* 2-Column Layout: Cart Items + Bill Summary */
+          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Cart Items */}
+            {}
             <div className="lg:col-span-2 space-y-4">
               {cartItems?.map((item, index) => (
                 <CartItemCard data={item} key={index} />
               ))}
             </div>
 
-            {/* Right Column - Bill Details (Sticky) */}
+            {}
             <div className="lg:col-span-1">
               <div className="sticky top-24 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
                 <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-200">

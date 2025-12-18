@@ -42,7 +42,7 @@ function App() {
   useGetItemsByCity();
   useGetMyOrders();
 
-  // Hydrate cart from localStorage on app initialization
+  
   useEffect(() => {
     dispatch(hydrateCart());
   }, [dispatch]);
@@ -60,7 +60,7 @@ function App() {
     };
   }, [userData?._id]);
 
-  // Show loading screen while checking authentication
+  
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">

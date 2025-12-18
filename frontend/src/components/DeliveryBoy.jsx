@@ -32,7 +32,7 @@ function DeliveryBoy() {
   const [message, setMessage] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
   
-  // Cancellation State
+  
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [customReason, setCustomReason] = useState("");
@@ -45,7 +45,7 @@ function DeliveryBoy() {
     "Other"
   ];
 
-  // Request notification permission
+  
   useEffect(() => {
     if (userData?.role === "deliveryBoy" && Notification.permission === "default") {
       Notification.requestPermission().then(permission => {
@@ -54,7 +54,7 @@ function DeliveryBoy() {
     }
   }, [userData]);
 
-  // Load initial data
+  
   useEffect(() => {
     if (userData?.role === "deliveryBoy") {
       console.log("Loading delivery boy data...");
@@ -148,7 +148,7 @@ function DeliveryBoy() {
         console.log("Updated assignments:", updated);
         return updated;
       });
-      // Show browser notification if permission granted
+      
       if (Notification.permission === "granted") {
         new Notification("New Delivery Order!", {
           body: `New order from ${data.shopName}`,
@@ -164,9 +164,9 @@ function DeliveryBoy() {
   }, [socket]);
 
   const sendOtp = async (isResend = false) => {
-    // Optimistic UI: Show input immediately, don't block
+    
     setShowOtpBox(true);
-    setResendTimer(300); // 5 minutes cooldown
+    setResendTimer(300); 
 
     try {
       const result = await axios.post(
@@ -180,13 +180,13 @@ function DeliveryBoy() {
       
       console.log("OTP Response:", result.data);
       
-      // Development aid only - doesn't block the user flow generally
+      
       if (result.data.otp) {
         console.log(`DEV ONLY OTP: ${result.data.otp}`);
       }
     } catch (error) {
       console.error("Background OTP send failed:", error);
-      // User can use "Resend OTP" button effectively if this fails
+      
     }
   };
   const verifyOtp = async () => {
@@ -213,7 +213,7 @@ function DeliveryBoy() {
       setMessage(result.data.message);
       
       
-      // Wait shortly to show success message then reload
+      
       setTimeout(() => {
         window.location.reload();
       }, 100);
@@ -221,7 +221,7 @@ function DeliveryBoy() {
     } catch (error) {
       console.error("OTP Verification Error:", error);
       const errorMessage = error.response?.data?.message || "Wrong OTP. Please try again.";
-      // Use alert for critical error feedback as requested, but message state is also set
+      
       setMessage("Wrong OTP ❌");
       alert(errorMessage);
       setLoading(false);
@@ -280,7 +280,7 @@ function DeliveryBoy() {
     handleTodayDeliveries();
   }, [userData]);
 
-  // Resend timer countdown
+  
   useEffect(() => {
     if (resendTimer > 0) {
       const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
@@ -293,7 +293,7 @@ function DeliveryBoy() {
       
       <div className="w-full max-w-[800px] flex flex-col gap-6 items-center px-4 mt-8">
         
-        {/* Profile Header Card */}
+        {}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 w-full flex items-center justify-between">
            <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-[#ffecf0] rounded-full flex items-center justify-center text-[#E23744] text-2xl font-bold shadow-sm border border-[#ffecf0]">
@@ -436,7 +436,7 @@ function DeliveryBoy() {
           </div>
         )}
 
-        {/* Active Order Card */}
+        {}
         {currentOrder && (
           <div className="w-full">
             <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -444,7 +444,7 @@ function DeliveryBoy() {
             </h2>
             
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col">
-               {/* Map Section - Top */}
+               {}
                <div className="h-[300px] w-full bg-gray-100 relative z-0">
                   <DeliveryBoyTracking
                     data={{
@@ -460,9 +460,9 @@ function DeliveryBoy() {
                   />
                </div>
                
-               {/* Details Section - Bottom */}
+               {}
                <div className="p-6 flex flex-col gap-6 bg-white relative z-10">
-                  {/* Order Info */}
+                  {}
                   <div className="flex flex-col md:flex-row gap-6 justify-between items-start border-b border-gray-100 pb-6">
                      <div className="flex-1">
                         <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-2 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Pickup From</p>
@@ -486,7 +486,7 @@ function DeliveryBoy() {
                      </div>
                   </div>
 
-                  {/* Actions */}
+                  {}
                   <div className="w-full">
                     {!showOtpBox ? (
                       <button
@@ -560,7 +560,7 @@ function DeliveryBoy() {
         )}
       </div>
 
-      {/* Cancel Order Modal */}
+      {}
       {showCancelModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden scale-100 animate-in fade-in zoom-in duration-200">

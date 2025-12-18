@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
-// import homeImage from "../assets/home.png";
+
 
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentCity } from "../redux/userSlice";

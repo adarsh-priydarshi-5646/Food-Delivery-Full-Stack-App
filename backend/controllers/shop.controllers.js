@@ -63,13 +63,13 @@ export const getShopByCity = async (req, res) => {
   try {
     const { city } = req.params;
 
-    // Get shops in the specific city
+    
     const cityShops = await Shop.find({
       city: { $regex: new RegExp(`^${city}$`, "i") },
       isDefault: false,
     }).populate("items");
 
-    // Get default restaurant (available in all cities)
+    
     const defaultShop = await Shop.findOne({ isDefault: true }).populate("items");
 
     console.log(`City: ${city}`);
@@ -77,7 +77,7 @@ export const getShopByCity = async (req, res) => {
     console.log(`City shops count:`, cityShops.length);
     console.log(`City shops:`, cityShops.map(s => s.name));
 
-    // Combine default shop with city-specific shops
+    
     const shops = defaultShop ? [defaultShop, ...cityShops] : cityShops;
 
     if (!shops || shops.length === 0) {

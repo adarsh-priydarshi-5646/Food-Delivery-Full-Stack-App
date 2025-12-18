@@ -56,7 +56,7 @@ function OwnerOrderCard({ data }) {
         ))}
       </div>
       
-      {/* Status Control */}
+      {}
       <div className="bg-gray-50 p-3 rounded-lg flex items-center justify-between gap-3">
          <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${
@@ -87,7 +87,7 @@ function OwnerOrderCard({ data }) {
          )}
       </div>
 
-      {/* Delivery Info */}
+      {}
       {(data.shopOrders.status === "preparing" || data.shopOrders.status === "ready" || data.shopOrders.status === "out of delivery") && (
          <div className="mt-3 text-xs text-gray-500 flex items-center justify-between bg-blue-50 p-2 rounded border border-blue-100">
             <span>Delivery Partner:</span>

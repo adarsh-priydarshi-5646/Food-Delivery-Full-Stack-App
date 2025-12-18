@@ -19,7 +19,7 @@ function CategoryPage() {
   
   const [filteredItems, setFilteredItems] = useState([]);
 
-  // Filter items by category and other filters
+  
   useEffect(() => {
     if (!itemsInMyCity) {
       setFilteredItems([]);
@@ -28,20 +28,20 @@ function CategoryPage() {
 
     let result = [...itemsInMyCity];
 
-    // Filter by URL category parameter
+    
     result = result.filter(item => item.category === categoryName);
 
-    // Apply additional filters from sidebar
+    
     if (selectedCategories.length > 0) {
       result = result.filter(item => selectedCategories.includes(item.category));
     }
 
-    // Filter by price range
+    
     result = result.filter(item => 
       item.price >= priceRange.min && item.price <= priceRange.max
     );
 
-    // Quick filters
+    
     if (quickFilters.veg) {
       result = result.filter(item => item.isVeg === true);
     }
@@ -52,7 +52,7 @@ function CategoryPage() {
       result = result.filter(item => item.rating >= 4.0);
     }
 
-    // Sort items
+    
     switch (sortBy) {
       case 'popularity':
         result.sort((a, b) => (b.orders || 0) - (a.orders || 0));
@@ -81,7 +81,7 @@ function CategoryPage() {
       <Nav />
       
       <div className="w-full max-w-7xl px-4 mt-6">
-        {/* Breadcrumb */}
+        {}
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
           <button 
             onClick={() => navigate('/')}
@@ -94,7 +94,7 @@ function CategoryPage() {
           <span className="text-gray-800 font-semibold">{categoryName}</span>
         </div>
 
-        {/* Page Header */}
+        {}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             {categoryName}
@@ -104,14 +104,14 @@ function CategoryPage() {
           </p>
         </div>
 
-        {/* Sidebar + Items Grid */}
+        {}
         <div className="flex gap-6 mb-8">
-          {/* Sidebar - Hidden on mobile, visible on lg+ */}
+          {}
           <div className="hidden lg:block flex-shrink-0">
             <FilterSidebar hideCategoryFilter={true} />
           </div>
 
-          {/* Food Items Grid */}
+          {}
           <div className="flex-1">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-gray-800 text-xl font-semibold">

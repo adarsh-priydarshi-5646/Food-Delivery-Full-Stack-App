@@ -12,7 +12,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore socket.io instance in Redux state
+        
         ignoredActions: ['user/setSocket'],
         ignoredPaths: ['user.socket'],
       },

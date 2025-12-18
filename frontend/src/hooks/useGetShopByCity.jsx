@@ -10,7 +10,7 @@ function useGetShopByCity() {
   useEffect(() => {
     const fetchShops = async () => {
       try {
-        if (!currentCity) return; // Optional: don't fetch if no city
+        if (!currentCity) return; 
         const result = await axios.get(
           `${serverUrl}/api/shop/get-by-city/${currentCity}`,
           { withCredentials: true }

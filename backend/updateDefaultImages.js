@@ -10,7 +10,7 @@ const updateDefaultImages = async () => {
     await mongoose.connect(process.env.MONGODB_URL);
     console.log("Database connected");
 
-    // Find default restaurant
+    
     const defaultShop = await Shop.findOne({ isDefault: true });
     
     if (!defaultShop) {
@@ -18,12 +18,12 @@ const updateDefaultImages = async () => {
       process.exit(1);
     }
 
-    // Update restaurant image
+    
     defaultShop.image = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80";
     await defaultShop.save();
     console.log("Restaurant image updated");
 
-    // Update food items images
+    
     const imageMap = {
       "Margherita Pizza": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500&q=80",
       "Chicken Burger": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80",

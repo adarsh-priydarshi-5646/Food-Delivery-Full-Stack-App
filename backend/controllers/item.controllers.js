@@ -113,16 +113,16 @@ export const getItemByCity = async (req, res) => {
       return res.status(400).json({ message: "city is required" });
     }
     
-    // Get shops in the specific city
+    
     const cityShops = await Shop.find({
       city: { $regex: new RegExp(`^${city}$`, "i") },
       isDefault: false,
     }).populate("items");
 
-    // Get default restaurant (available in all cities)
+    
     const defaultShop = await Shop.findOne({ isDefault: true }).populate("items");
 
-    // Combine shop IDs
+    
     const cityShopIds = cityShops.map((shop) => shop._id);
     const shopIds = defaultShop ? [defaultShop._id, ...cityShopIds] : cityShopIds;
 
@@ -156,16 +156,16 @@ export const searchItems = async (req, res) => {
       return null;
     }
     
-    // Get shops in the specific city
+    
     const cityShops = await Shop.find({
       city: { $regex: new RegExp(`^${city}$`, "i") },
       isDefault: false,
     }).populate("items");
 
-    // Get default restaurant (available in all cities)
+    
     const defaultShop = await Shop.findOne({ isDefault: true }).populate("items");
 
-    // Combine shop IDs
+    
     const cityShopIds = cityShops.map((s) => s._id);
     const shopIds = defaultShop ? [defaultShop._id, ...cityShopIds] : cityShopIds;
 

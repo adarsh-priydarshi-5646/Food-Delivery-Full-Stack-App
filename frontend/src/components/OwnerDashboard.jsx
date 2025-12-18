@@ -217,7 +217,7 @@ function OwnerDashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
-             {/* Menu Section */}
+             {/* Menu Section - COMPACT REDESIGN */}
              <div className="lg:col-span-1 flex flex-col h-full">
                 <div className="flex items-center justify-between mb-5">
                    <h2 className="text-xl font-bold text-gray-800 flex items-center gap-3">
@@ -227,14 +227,14 @@ function OwnerDashboard() {
                       Menu Items
                    </h2>
                    <button
-                     className="text-sm font-bold text-white bg-[#ff4d2d] hover:bg-orange-600 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-sm"
+                     className="text-xs font-bold text-white bg-[#ff4d2d] hover:bg-orange-600 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 shadow-sm"
                      onClick={() => navigate("/add-item")}
                    >
-                     <FaPlus size={12} /> Add New
+                     <FaPlus size={10} /> Add
                    </button>
                 </div>
                 
-                <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 space-y-4 min-h-[400px] max-h-[800px] overflow-y-auto custom-scrollbar">
+                <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-2 space-y-2 min-h-[400px] max-h-[800px] overflow-y-auto custom-scrollbar">
                    {myShopData.items.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center p-6 text-gray-400">
                          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
@@ -245,7 +245,30 @@ function OwnerDashboard() {
                       </div>
                    ) : (
                       myShopData.items.map((item, index) => (
-                         <OwnerItemCard data={item} key={index} />
+                        // Compact Item Row Component for Dashboard
+                         <div key={index} className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all group">
+                            <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 relative">
+                               <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                               {item.foodType === 'veg' ? (
+                                  <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-500 border border-white"></div>
+                               ) : (
+                                  <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 border border-white"></div>
+                               )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                               <h4 className="font-bold text-gray-800 text-sm truncate">{item.name}</h4>
+                               <p className="text-xs text-gray-500 truncate">{item.category}</p>
+                               <div className="flex items-center gap-2 mt-1">
+                                  <span className="text-sm font-extrabold text-[#ff4d2d]">₹{item.price}</span>
+                               </div>
+                            </div>
+                            <button 
+                               onClick={() => navigate(`/edit-item/${item._id}`)}
+                               className="p-2 text-gray-400 hover:text-[#ff4d2d] hover:bg-orange-50 rounded-lg transition-colors"
+                            >
+                               <FaPen size={12} />
+                            </button>
+                         </div>
                       ))
                    )}
                 </div>
@@ -273,11 +296,12 @@ function OwnerDashboard() {
                         {[...myOrders]
                           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                           .filter(order => {
+                              // Ensure object structure handling for shopOrders
                               if (order.shopOrders && typeof order.shopOrders === 'object' && !Array.isArray(order.shopOrders)) {
-                                  // Simplified check for object structure
                                   const orderShopId = order.shopOrders.shop?._id || order.shopOrders.shop;
                                   return orderShopId === myShopData?._id;
                               }
+                              // Ensure array structure handling
                               if (order.shopOrders && Array.isArray(order.shopOrders)) {
                                   return order.shopOrders.some(so => (so.shop?._id || so.shop) === myShopData?._id);
                               }

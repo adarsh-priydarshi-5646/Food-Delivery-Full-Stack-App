@@ -191,9 +191,14 @@ function EditItem() {
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Upload Image</label>
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors relative overflow-hidden group">
+                  <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors relative overflow-hidden group">
                      {frontendImage ? (
-                        <img src={frontendImage} alt="Preview" className="w-full h-full object-cover" />
+                        <div className="relative w-full h-full">
+                           <img src={frontendImage} alt="Preview" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                           <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <span className="text-white font-medium flex items-center gap-2"><IoMdCloudUpload /> Change Image</span>
+                           </div>
+                        </div>
                      ) : (
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                            <IoMdCloudUpload className="text-gray-400 group-hover:text-[#ff4d2d] mb-2 transform group-hover:scale-110 transition-transform" size={32} />

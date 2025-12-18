@@ -54,17 +54,50 @@ function OwnerDashboard() {
   
   const totalOrders = myOrders?.length || 0;
   const totalRevenue = myOrders?.reduce((sum, order) => {
-    if (!order.shopOrders || !Array.isArray(order.shopOrders)) return sum;
-    const shopOrder = order.shopOrders.find(so => so.shop?._id === myShopData?._id);
-    return sum + (shopOrder?.subtotal || 0);
+    // Check if shopOrders is an object (single shop order structure)
+    if (order.shopOrders && typeof order.shopOrders === 'object' && !Array.isArray(order.shopOrders)) {
+       // Correctly match the shop ID (handling populated object vs string ID)
+       const orderShopId = order.shopOrders.shop?._id || order.shopOrders.shop;
+       if (orderShopId === myShopData?._id && order.shopOrders.status !== 'cancelled') {
+           return sum + (order.shopOrders.subtotal || 0);
+       }
+       return sum;
+    }
+    
+    // Fallback: Check if shopOrders is an array (multi-shop order structure)
+    if (order.shopOrders && Array.isArray(order.shopOrders)) {
+        const shopOrder = order.shopOrders.find(so => {
+            const soShopId = so.shop?._id || so.shop;
+            return soShopId === myShopData?._id;
+        });
+        
+        if (shopOrder && shopOrder.status !== 'cancelled') {
+            return sum + (shopOrder.subtotal || 0);
+        }
+    }
+    return sum;
   }, 0) || 0;
   const totalItems = myShopData?.items?.length || 0;
 
   // Filter live orders
-  const activeOrders = myOrders?.filter(o => 
-    Array.isArray(o.shopOrders) && 
-    o.shopOrders.some(so => so.shop._id === myShopData?._id && so.status !== 'delivered' && so.status !== 'cancelled')
-  ) || [];
+  const activeOrders = myOrders?.filter(o => {
+    // Handle single object structure
+    if (o.shopOrders && typeof o.shopOrders === 'object' && !Array.isArray(o.shopOrders)) {
+        const orderShopId = o.shopOrders.shop?._id || o.shopOrders.shop;
+        return orderShopId === myShopData?._id && 
+               o.shopOrders.status !== 'delivered' && 
+               o.shopOrders.status !== 'cancelled';
+    }
+    
+    // Handle array structure
+    if (o.shopOrders && Array.isArray(o.shopOrders)) {
+        return o.shopOrders.some(so => {
+             const soShopId = so.shop?._id || so.shop;
+             return soShopId === myShopData?._id && so.status !== 'delivered' && so.status !== 'cancelled';
+        });
+    }
+    return false;
+  }) || [];
 
   return (
     <div className="w-full min-h-screen bg-gray-50/50 flex flex-col items-center pb-12">
@@ -239,7 +272,17 @@ function OwnerDashboard() {
                       <div className="space-y-4">
                         {[...myOrders]
                           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                          .filter(order => Array.isArray(order.shopOrders) && order.shopOrders.some(so => so.shop._id === myShopData._id)) 
+                          .filter(order => {
+                              if (order.shopOrders && typeof order.shopOrders === 'object' && !Array.isArray(order.shopOrders)) {
+                                  // Simplified check for object structure
+                                  const orderShopId = order.shopOrders.shop?._id || order.shopOrders.shop;
+                                  return orderShopId === myShopData?._id;
+                              }
+                              if (order.shopOrders && Array.isArray(order.shopOrders)) {
+                                  return order.shopOrders.some(so => (so.shop?._id || so.shop) === myShopData?._id);
+                              }
+                              return false;
+                          }) 
                           .map((order, index) => (
                              <OwnerOrderCard data={order} key={index} />
                           ))}

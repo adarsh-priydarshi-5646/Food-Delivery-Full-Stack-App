@@ -54,9 +54,9 @@ const LandingPage = () => {
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-white mb-4 tracking-tighter italic font-serif">
             Vingo
           </h1>
-          <p className="text-xl md:text-3xl text-white mb-10 font-normal tracking-wide">
+          <h2 className="text-xl md:text-3xl text-white mb-10 font-normal tracking-wide">
             Discover the best food & drinks in your city
-          </p>
+          </h2>
           
           <div className="w-full max-w-3xl bg-white rounded-lg flex items-center p-3 shadow-lg">
              <div className="relative md:flex items-center text-gray-500 px-3 gap-2 border-r border-gray-300 w-1/3 cursor-pointer hover:bg-gray-50 transition p-2 rounded-l-lg hidden" onClick={() => setShowCityDropdown(!showCityDropdown)}>

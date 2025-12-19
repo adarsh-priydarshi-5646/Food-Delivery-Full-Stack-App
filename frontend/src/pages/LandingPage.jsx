@@ -25,7 +25,7 @@ const LandingPage = () => {
       <div className="relative h-[60vh] lg:h-[70vh] w-full bg-black">
         <img
           src="https://t4.ftcdn.net/jpg/02/92/20/37/360_F_292203735_CSsyqyS6A4Z9Czd4Msf7qZEhoxjpzZl1.jpg"
-          alt="Delicious Food"
+          alt="Vingo - Delicious Food Delivery Background"
           className="absolute inset-0 w-full h-full object-cover opacity-60"
         />
         
@@ -104,7 +104,7 @@ const LandingPage = () => {
         <div className="py-12 grid grid-cols-1 md:grid-cols-3 gap-6">
            <div className="group rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => navigate("/signup")}>
               <div className="h-40 overflow-hidden">
-                 <img src="https://b.zmtcdn.com/webFrontend/e5b8785c257af2a7f354f1addaf37e4e1647364814.jpeg" alt="Order Online" className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                 <img src="https://b.zmtcdn.com/webFrontend/e5b8785c257af2a7f354f1addaf37e4e1647364814.jpeg" alt="Order Online - Vingo Food Delivery Service" className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
               </div>
               <div className="p-4">
                  <h3 className="text-xl font-medium text-gray-900">Order Online</h3>
@@ -114,7 +114,7 @@ const LandingPage = () => {
 
            <div className="group rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => navigate("/signup")}>
               <div className="h-40 overflow-hidden">
-                 <img src="https://b.zmtcdn.com/webFrontend/d026b357feb0d63c997549f6398da8cc1647364915.jpeg" alt="Dining" className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                 <img src="https://b.zmtcdn.com/webFrontend/d026b357feb0d63c997549f6398da8cc1647364915.jpeg" alt="Dining - Find Best Restaurants with Vingo" className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
               </div>
               <div className="p-4">
                  <h3 className="text-xl font-medium text-gray-900">Dining</h3>
@@ -124,7 +124,7 @@ const LandingPage = () => {
 
            <div className="group rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => navigate("/signup")}>
               <div className="h-40 overflow-hidden">
-                <img src="https://b.zmtcdn.com/webFrontend/d9d80ef91cb552e3fdfadb3d4f4379761647365057.jpeg" alt="Nightlife" className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                <img src="https://b.zmtcdn.com/webFrontend/d9d80ef91cb552e3fdfadb3d4f4379761647365057.jpeg" alt="Nightlife - Explore Best Nightlife with Vingo" className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
               </div>
               <div className="p-4">
                  <h3 className="text-xl font-medium text-gray-900">Nightlife and Clubs</h3>
@@ -154,7 +154,7 @@ const LandingPage = () => {
       <div className="bg-[#fffbf7] py-20 px-4">
          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10">
             <div className="w-full md:w-1/2 flex justify-center">
-               <img src="https://b.zmtcdn.com/data/o2_assets/f773629053b24263e69f601925790f301680693809.png" alt="App Preview" className="w-[300px]" />
+               <img src="https://b.zmtcdn.com/data/o2_assets/f773629053b24263e69f601925790f301680693809.png" alt="Vingo Mobile App Preview - Fast Delivery at Your Fingertips" className="w-[300px]" />
             </div>
             <div className="w-full md:w-1/2">
                <h2 className="text-4xl md:text-5xl font-medium text-gray-900 mb-4">Get the Vingo App</h2>
@@ -181,8 +181,8 @@ const LandingPage = () => {
                
                <p className="text-gray-400 mb-4 text-sm">Download app from</p>
                <div className="flex gap-4">
-                  <img src="https://b.zmtcdn.com/data/webuikit/23e930757c3df49840c482a8638bf5c31556001144.png" alt="Google Play" className="h-10 cursor-pointer" />
-                  <img src="https://b.zmtcdn.com/data/webuikit/9f0c85a5e33adb783fa0aef667075f9e1556003622.png" alt="App Store" className="h-10 cursor-pointer" />
+                  <img src="https://b.zmtcdn.com/data/webuikit/23e930757c3df49840c482a8638bf5c31556001144.png" alt="Download Vingo App on Google Play Store" className="h-10 cursor-pointer" />
+                  <img src="https://b.zmtcdn.com/data/webuikit/9f0c85a5e33adb783fa0aef667075f9e1556003622.png" alt="Download Vingo App on Apple App Store" className="h-10 cursor-pointer" />
                </div>
             </div>
          </div>

@@ -12,68 +12,125 @@ import { setAddress, setLocation } from "../redux/mapSlice";
 
 function useGetCity(auto = false) {
   const dispatch = useDispatch();
-  const { currentCity } = useSelector((state) => state.user);
+const { currentCity, userData } = useSelector((state) => state.user);
   const apiKey = import.meta.env.VITE_GEOAPIKEY;
   
-  const getCity = () => {
-    return new Promise((resolve, reject) => {
+  const getCity = (isSilent = false) => {
+    return new Promise(async (resolve, reject) => {
+      // Priority 1: Check for cached data (instant)
+      const cachedCity = localStorage.getItem("last_known_city");
+      const cachedAddress = localStorage.getItem("last_known_address");
+
+      // Priority 2: Use Profile Default Address if exists
+      const defaultAddress = userData?.addresses?.find(a => a.isDefault) || userData?.addresses?.[0];
+      const profileFallback = defaultAddress ? {
+        city: defaultAddress.city,
+        state: defaultAddress.state,
+        address: `${defaultAddress.flatNo}, ${defaultAddress.area}`,
+        lat: defaultAddress.lat,
+        lon: defaultAddress.lon
+      } : null;
+
+      const useFallbacks = () => {
+        const fallback = profileFallback || { city: cachedCity || "Delhi NCR", address: cachedAddress };
+        if (fallback.city) dispatch(setCurrentCity(fallback.city));
+        if (fallback.address) {
+          dispatch(setCurrentAddress(fallback.address));
+          dispatch(setAddress(fallback.address));
+        }
+        if (fallback.lat) dispatch(setLocation({ lat: fallback.lat, lon: fallback.lon }));
+        resolve(fallback);
+      };
+
       if (!navigator.geolocation) {
-        reject(new Error("Geolocation is not supported by your browser"));
+        useFallbacks();
         return;
+      }
+
+      // Check permission for silent mode to avoid violation warning
+      if (isSilent && navigator.permissions && navigator.permissions.query) {
+        try {
+          const status = await navigator.permissions.query({ name: 'geolocation' });
+          if (status.state !== 'granted') {
+            useFallbacks();
+            return;
+          }
+        } catch (e) {}
       }
 
       navigator.geolocation.getCurrentPosition(async (position) => {
         try {
           if (!apiKey) {
-            console.warn("VITE_GEOAPIKEY is missing. Falling back to default city.");
-            dispatch(setCurrentCity("Delhi NCR"));
-            resolve({ city: "Delhi NCR" });
+            const fallback = profileFallback || (cachedCity ? { city: cachedCity, address: cachedAddress } : { city: "Delhi NCR" });
+            dispatch(setCurrentCity(fallback.city));
+            if (fallback.address) {
+              dispatch(setCurrentAddress(fallback.address));
+              dispatch(setAddress(fallback.address));
+            }
+            if (fallback.lat) dispatch(setLocation({ lat: fallback.lat, lon: fallback.lon }));
+            resolve(fallback);
             return;
           }
 
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
+          const { latitude, longitude } = position.coords;
           dispatch(setLocation({ lat: latitude, lon: longitude }));
           
           const result = await axios.get(
             `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${apiKey}`
           );
           
-          if (result.data && result.data.results && result.data.results.length > 0) {
-            const city = result.data.results[0].city || result.data.results[0].county || result.data.results[0].suburb;
-            const state = result.data.results[0].state;
-            const address = result.data.results[0].address_line2 || result.data.results[0].address_line1;
+          if (result.data?.results?.length > 0) {
+            const res = result.data.results[0];
+            const city = res.city || res.county || res.suburb || profileFallback?.city || cachedCity || "Delhi NCR";
+            const state = res.state;
+            const address = res.address_line2 || res.address_line1;
             
+            localStorage.setItem("last_known_city", city);
+            localStorage.setItem("last_known_address", address);
+
             dispatch(setCurrentCity(city));
             dispatch(setCurrentState(state));
             dispatch(setCurrentAddress(address));
-            dispatch(setAddress(result.data.results[0].address_line2));
+            dispatch(setAddress(address));
             
-            resolve({ city, state, address });
+            resolve({ 
+              city, state, address, lat: latitude, lon: longitude,
+              house_number: res.house_number || "",
+              street: res.street || "",
+              suburb: res.suburb || "",
+              postcode: res.postcode || ""
+            });
           } else {
-            console.warn("No results from Geoapify");
-            resolve({ city: "Delhi NCR" });
+            const finalFallback = profileFallback || { city: cachedCity || "Delhi NCR", address: cachedAddress };
+            if (finalFallback.city) dispatch(setCurrentCity(finalFallback.city));
+            resolve(finalFallback);
           }
         } catch (error) {
-          console.error("Error in getCity details fetch:", error);
-          dispatch(setCurrentCity("Delhi NCR")); // Fallback
-          reject(error);
+          const finalFallback = profileFallback || { city: cachedCity || "Delhi NCR", address: cachedAddress };
+          if (finalFallback.city) dispatch(setCurrentCity(finalFallback.city));
+          resolve(finalFallback);
         }
       }, (error) => {
-        console.error("Geolocation permission/error:", error);
-        dispatch(setCurrentCity("Delhi NCR")); // Fallback
-        reject(error);
-      }, { timeout: 10000, enableHighAccuracy: true });
+        // Fallback sequentially: Profile -> Cache -> Default
+        const fallback = profileFallback || { city: cachedCity || "Delhi NCR", address: cachedAddress };
+        if (fallback.city) dispatch(setCurrentCity(fallback.city));
+        if (fallback.address) {
+          dispatch(setCurrentAddress(fallback.address));
+          dispatch(setAddress(fallback.address));
+        }
+        if (fallback.lat) dispatch(setLocation({ lat: fallback.lat, lon: fallback.lon }));
+        resolve(fallback);
+      }, { timeout: 8000, enableHighAccuracy: true, maximumAge: 300000 });
     });
   };
 
   useEffect(() => {
-    // If auto is true, and we either don't have a city OR we are on the default "Delhi NCR",
-    // attempt to get a fresh location.
-    if (auto && (!currentCity || currentCity === "Delhi NCR")) {
-      getCity().catch(err => console.error("Auto city fetch failed, stayed at default:", err));
+    // If we have userData, we might want to override a generic fallback with a profile address
+    const isGenericFallback = currentCity === "Delhi NCR";
+    if (auto && (!currentCity || (userData && isGenericFallback))) {
+      getCity(true).catch(() => {});
     }
-  }, [auto]);
+  }, [auto, currentCity, userData]);
 
   return { getCity };
 }

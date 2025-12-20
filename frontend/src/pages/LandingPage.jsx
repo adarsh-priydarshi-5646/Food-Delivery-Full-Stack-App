@@ -12,7 +12,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentCity } = useSelector((state) => state.user);
-  const { getCity } = useGetCity();
+  const { getCity } = useGetCity(true);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [locating, setLocating] = useState(false);
   const [activeExplore, setActiveExplore] = useState(null);

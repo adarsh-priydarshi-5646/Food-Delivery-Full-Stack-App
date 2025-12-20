@@ -10,9 +10,11 @@ import { setSearchItems, setUserData } from "../redux/userSlice";
 import { FaPlus } from "react-icons/fa6";
 import { TbReceipt2 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import useGetCity from "../hooks/useGetCity";
 
 function Nav() {
   const { userData, currentCity, cartItems } = useSelector((state) => state.user);
+  useGetCity(true); // Auto-fetch location on mount
   const { myShopData } = useSelector((state) => state.owner);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -59,7 +61,7 @@ function Nav() {
           <div className="flex items-center w-[30%] gap-2 border-r-2 border-gray-200 pr-3">
             <FaLocationDot size={20} className="text-[#E23744]" />
             <div className="w-full truncate text-gray-700 text-sm font-medium">
-              {currentCity}
+              {currentCity || <span className="text-gray-400 italic">Detecting...</span>}
             </div>
           </div>
           <div className="w-[70%] flex items-center gap-2">
@@ -87,7 +89,7 @@ function Nav() {
           <div className="flex items-center w-[30%] gap-2 border-r-2 border-gray-200 pr-3">
             <FaLocationDot size={20} className="text-[#E23744]" />
             <div className="w-full truncate text-gray-700 font-medium">
-              {currentCity}
+              {currentCity || <span className="text-gray-400 italic text-sm">Detecting location...</span>}
             </div>
           </div>
           <div className="w-[70%] flex items-center gap-2">
@@ -199,6 +201,12 @@ function Nav() {
           >
             <div className="text-lg font-bold text-gray-900 pb-2 border-b border-gray-200">
               {userData.fullName}
+            </div>
+            <div
+              className="text-gray-700 font-semibold cursor-pointer hover:bg-gray-100 py-2 px-3 rounded-lg transition-colors"
+              onClick={() => navigate("/profile")}
+            >
+              My Profile
             </div>
             {userData.role == "user" && (
               <div

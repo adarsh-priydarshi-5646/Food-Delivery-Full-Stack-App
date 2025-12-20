@@ -8,9 +8,12 @@ import axios from "axios";
 import { serverUrl } from "../App";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { ClipLoader } from "react-spinners";
-import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice";
+import { useDispatch } from "react-redux";
+import useGetCity from "../hooks/useGetCity";
+
 function SignIn() {
+  const { getCity } = useGetCity();
   const primaryColor = "#ff4d2d";
   const hoverColor = "#e64323";
   const bgColor = "#fff9f6";
@@ -36,6 +39,8 @@ function SignIn() {
       dispatch(setUserData(result.data));
       setErr("");
       setLoading(false);
+      // Trigger location fetch on successful login
+      getCity().catch(e => console.error("Initial city fetch failed:", e));
       navigate("/");
     } catch (error) {
       setErr(error?.response?.data?.message);
@@ -58,6 +63,8 @@ function SignIn() {
         { withCredentials: true }
       );
       dispatch(setUserData(data));
+      // Trigger location fetch on successful login
+      getCity().catch(e => console.error("Initial city fetch failed:", e));
       navigate("/");
     } catch (error) {
       console.error(error);

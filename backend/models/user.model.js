@@ -67,7 +67,25 @@ const userSchema = new mongoose.Schema(
         default: "",
       },
     },
+    addresses: [
+      {
+        label: { type: String, default: "Home" },
+        flatNo: { type: String, required: true },
+        area: { type: String, required: true },
+        landmark: { type: String },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        pincode: { type: String, required: true },
+        lat: { type: Number },
+        lon: { type: Number },
+        isDefault: { type: Boolean, default: false },
+      },
+    ],
     totalEarnings: {
+      type: Number,
+      default: 0,
+    },
+    points: {
       type: Number,
       default: 0,
     },

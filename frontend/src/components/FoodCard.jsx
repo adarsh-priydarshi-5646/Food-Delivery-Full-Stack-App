@@ -1,10 +1,10 @@
-import React from "react";
+import React, { memo } from "react";
 import { FaStar } from "react-icons/fa";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, updateQuantity, removeCartItem } from "../redux/userSlice";
 
-function FoodCard({ data }) {
+const FoodCard = memo(({ data }) => {
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.user);
   
@@ -49,6 +49,7 @@ function FoodCard({ data }) {
           src={data.image}
           alt={data.name}
           className="w-full h-full object-cover"
+          loading="lazy"
           width="380"
           height="192"
         />
@@ -160,6 +161,15 @@ function FoodCard({ data }) {
       </div>
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // Custom comparison to prevent unnecessary re-renders
+  return (
+    prevProps.data._id === nextProps.data._id &&
+    prevProps.data.name === nextProps.data.name &&
+    prevProps.data.price === nextProps.data.price
+  );
+});
+
+FoodCard.displayName = 'FoodCard';
 
 export default FoodCard;

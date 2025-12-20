@@ -38,14 +38,52 @@ vi.mock('@stripe/stripe-js', () => ({
     loadStripe: vi.fn().mockResolvedValue({}),
 }));
 
+vi.mock('../../hooks/useGetCity', () => ({
+    default: () => ({
+        getCity: vi.fn().mockResolvedValue({ city: 'Test City', address: 'Test Address' })
+    })
+}));
+
+vi.mock('../../components/AddressAutocomplete', () => ({
+    default: ({ onSelect, initialValue }) => (
+        <input 
+            data-testid="address-autocomplete"
+            value={initialValue}
+            onChange={(e) => onSelect({ address: e.target.value, lat: 12, lon: 77 })}
+            placeholder="Search for a building, street or area..."
+        />
+    )
+}));
+
+// Mock icons
+vi.mock('react-icons/io', () => ({ IoIosArrowRoundBack: () => <div>Icon</div> }));
+vi.mock('react-icons/io5', () => ({ IoSearchOutline: () => <div>Icon</div>, IoLocationSharp: () => <div>Icon</div> }));
+vi.mock('react-icons/tb', () => ({ TbCurrentLocation: () => <div>Icon</div> }));
+vi.mock('react-icons/md', () => ({ MdDeliveryDining: () => <div>Icon</div>, MdOutlineAddLocationAlt: () => <div>Icon</div> }));
+vi.mock('react-icons/fa', () => ({ 
+    FaCreditCard: () => <div>Icon</div>, 
+    FaReceipt: () => <div>Icon</div>, 
+    FaCheckCircle: () => <div>Icon</div>,
+    FaPlus: () => <div>Icon</div>,
+    FaFacebook: () => <div>Icon</div>,
+    FaTwitter: () => <div>Icon</div>,
+    FaInstagram: () => <div>Icon</div>,
+    FaLinkedin: () => <div>Icon</div>,
+    FaEnvelope: () => <div>Icon</div>,
+    FaPhone: () => <div>Icon</div>,
+    FaMapMarkerAlt: () => <div>Icon</div>
+}));
+vi.mock('react-icons/fa6', () => ({ FaMobileScreenButton: () => <div>Icon</div> }));
+
 describe('CheckOut Component', () => {
     const defaultState = {
         map: { location: { lat: 12, lon: 77 }, address: '' },
         user: { 
             cartItems: [{ name: 'Pizza', price: 200, quantity: 1 }], 
             totalAmount: 200,
-            userData: { location: { coordinates: [77, 12] } }
-        }
+            userData: { fullName: 'Test User', location: { coordinates: [77, 12] } }
+        },
+        owner: { myShopData: null }
     };
 
     it('renders checkout form and summary', () => {
@@ -63,9 +101,9 @@ describe('CheckOut Component', () => {
         );
 
         expect(screen.getByText('Checkout')).toBeInTheDocument();
-        expect(screen.getByPlaceholderText('Enter your delivery address')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Search for a building, street or area...')).toBeInTheDocument();
         expect(screen.getByTestId('map-container')).toBeInTheDocument();
-        expect(screen.getByText('Pizza x 1')).toBeInTheDocument();
+        expect(screen.getByText('Pizza')).toBeInTheDocument();
         expect(screen.getByText('Place Order')).toBeInTheDocument(); // Default COD
     });
 
@@ -78,7 +116,7 @@ describe('CheckOut Component', () => {
             </BrowserRouter>
         );
 
-        const cardBtn = screen.getByText('UPI / Card');
+        const cardBtn = screen.getByText('Cards / Wallet / UPI');
         fireEvent.click(cardBtn);
         
         expect(screen.getByText('Pay & Place Order')).toBeInTheDocument();
@@ -98,8 +136,8 @@ describe('CheckOut Component', () => {
             </BrowserRouter>
         );
         
-        // Input address
-        fireEvent.change(screen.getByPlaceholderText('Enter your delivery address'), { target: { value: 'Test Address' } });
+        // Search address via autocomplete mock
+        fireEvent.change(screen.getByPlaceholderText('Search for a building, street or area...'), { target: { value: 'Test Address' } });
 
         const placeOrderBtn = screen.getByText('Place Order');
         fireEvent.click(placeOrderBtn);

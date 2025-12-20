@@ -48,6 +48,10 @@ vi.mock('react-icons/fa', () => {
     FaChevronDown: Icon,
     FaMobileAlt: Icon,
     FaEnvelope: Icon,
+    FaUtensils: Icon,
+    FaStore: Icon,
+    FaLink: Icon,
+    FaCity: Icon,
   };
 });
 
@@ -64,13 +68,14 @@ vi.mock('framer-motion', () => ({
 }));
 
 describe('App Component', () => {
-  it('renders Landing Page when not authenticated', () => {
-    render(
+  it('renders Landing Page when not authenticated', async () => {
+    const { findByRole } = render(
       <BrowserRouter>
         <App />
       </BrowserRouter>
     );
-    // Expect Vingo title from Landing Page
-    expect(screen.getByRole('heading', { name: 'Vingo', level: 1 })).toBeInTheDocument();
+    // Wait for lazy-loaded component to render
+    const heading = await findByRole('heading', { name: 'Vingo', level: 1 });
+    expect(heading).toBeInTheDocument();
   });
 });

@@ -27,6 +27,7 @@ import TrackOrderPage from "./pages/TrackOrderPage";
 import Shop from "./pages/Shop";
 import BankDetails from "./pages/BankDetails";
 import CategoryPage from "./pages/CategoryPage";
+import Profile from "./pages/Profile";
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -54,7 +55,7 @@ function App() {
 
   // Re-enabled auto-geolocation for production correctness
   useUpdateLocation();
-  useGetCity(true);
+  // Location fetch is better handled selectively to avoid browser "User Gesture" violations
   
   useEffect(() => {
     dispatch(hydrateCart());
@@ -138,6 +139,10 @@ function App() {
       <Route
         path="/bank-details"
         element={userData ? <BankDetails /> : <Navigate to={"/signin"} />}
+      />
+      <Route
+        path="/profile"
+        element={userData ? <Profile /> : <Navigate to={"/signin"} />}
       />
     </Routes>
   );

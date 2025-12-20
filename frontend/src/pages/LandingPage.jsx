@@ -365,27 +365,31 @@ const LandingPage = () => {
                     className="absolute w-full h-full flex items-center justify-center pointer-events-none"
                     style={{ zIndex: 15 }}
                   >
-                    <motion.div
-                      animate={{ 
-                        scale: [item.scale, item.scale * 1.1, item.scale],
-                        rotate: [-10, 10, -10],
-                        y: [-15, 15, -15]
-                      }}
-                      transition={{ 
-                        duration: 3 + (idx % 3), 
-                        repeat: Infinity,
-                        delay: idx * 0.3 
-                      }}
+                    <div
+                      className="absolute flex items-center justify-center"
                       style={{ 
                         transform: `translate(${Math.cos(angle) * item.r}px, ${Math.sin(angle) * item.r}px)` 
                       }}
                     >
-                      <img 
-                        src={item.img} 
-                        alt="Delicious Item" 
-                        className="w-[90px] h-[90px] md:w-[110px] md:h-[110px] object-cover rounded-full border-[3px] border-white shadow-lg backdrop-blur-md hover:scale-110 transition-transform duration-300"
-                      />
-                    </motion.div>
+                      <motion.div
+                        animate={{ 
+                          scale: [item.scale, item.scale * 1.1, item.scale],
+                          rotate: [-10, 10, -10],
+                          y: [-15, 15, -15]
+                        }}
+                        transition={{ 
+                          duration: 3 + (idx % 3), 
+                          repeat: Infinity,
+                          delay: idx * 0.3 
+                        }}
+                      >
+                        <img 
+                          src={item.img} 
+                          alt="Delicious Item" 
+                          className="w-[90px] h-[90px] md:w-[110px] md:h-[110px] object-cover rounded-full border-[3px] border-white shadow-lg backdrop-blur-md hover:scale-110 transition-transform duration-300"
+                        />
+                      </motion.div>
+                    </div>
                   </motion.div>
                 );
               })}

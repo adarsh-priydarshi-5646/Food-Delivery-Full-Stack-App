@@ -68,8 +68,10 @@ function useGetCity(auto = false) {
   };
 
   useEffect(() => {
-    if (auto && !currentCity) {
-      getCity().catch(err => console.error("Auto city fetch failed:", err));
+    // If auto is true, and we either don't have a city OR we are on the default "Delhi NCR",
+    // attempt to get a fresh location.
+    if (auto && (!currentCity || currentCity === "Delhi NCR")) {
+      getCity().catch(err => console.error("Auto city fetch failed, stayed at default:", err));
     }
   }, [auto]);
 

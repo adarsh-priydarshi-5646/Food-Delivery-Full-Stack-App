@@ -101,14 +101,21 @@ const LandingPage = () => {
       {/* Hero Section */}
       <div className="relative h-[500px] md:h-[600px] w-full flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
-          <img
-            src="https://b.zmtcdn.com/web_assets/81f3ff974d82520780078ba1cfbd453a1583259680.png"
-            alt="Hero Background"
-            className="w-full h-full object-cover scale-105"
-            width="1920"
-            height="600"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70" />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentElement.classList.add('bg-hero-fallback');
+            }}
+            className="w-full h-full object-cover"
+            poster="https://b.zmtcdn.com/web_assets/81f3ff974d82520780078ba1cfbd453a1583259680.png"
+          >
+            <source src="https://b.zmtcdn.com/web_assets/b40b97e677bc7b2ca77c58c61db266fe1603954218.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
         </div>
         
         <div className="relative z-10 flex flex-col items-center text-center px-4 w-full max-w-[900px]">
@@ -338,7 +345,7 @@ const LandingPage = () => {
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                 />
                 
-                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/60 to-transparent group-hover:via-black/80 transition-all duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent group-hover:from-black/90 group-hover:via-black/70 transition-all duration-500 z-10" />
                 
                 <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
                    <motion.div 
@@ -356,12 +363,12 @@ const LandingPage = () => {
                    </div>
                 </div>
 
-                <div className="absolute bottom-0 left-0 w-full p-6 z-20 transform group-hover:-translate-y-2 transition-transform duration-500">
+                <div className="absolute bottom-0 left-0 w-full p-6 z-20 transform group-hover:-translate-y-1 transition-transform duration-500">
                   <span className="text-red-400 font-bold text-[11px] uppercase tracking-[0.2em] mb-2 block opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
                     {item.category || "Best Seller"}
                   </span>
-                  <h3 className="text-[24px] font-[800] text-white mb-2 leading-tight group-hover:text-red-50 transition-colors">{item.name}</h3>
-                  <p className="text-white/70 text-[14px] line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
+                  <h3 className="text-[24px] font-[800] text-white mb-2 leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-colors">{item.name}</h3>
+                  <p className="text-white text-[14px] font-[500] line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75 leading-snug drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                     {item.description || "Freshly prepared with premium ingredients and authentic spices."}
                   </p>
                   <button className="w-full py-3.5 bg-[#d9263a] text-white rounded-xl font-[800] text-sm flex items-center justify-center gap-2 transition-all duration-500 active:scale-95 group-hover:bg-[#ff4d61] shadow-lg group-hover:shadow-red-500/40">

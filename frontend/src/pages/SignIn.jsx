@@ -60,7 +60,7 @@ function SignIn() {
       dispatch(setUserData(data));
       navigate("/");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setErr(error?.response?.data?.message || "Google sign in failed");
     }
   };

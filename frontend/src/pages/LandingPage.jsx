@@ -302,43 +302,6 @@ const LandingPage = () => {
             {/* Right Animation Area */}
             <div className="lg:w-1/2 relative h-[550px] w-full flex items-center justify-center">
               
-              {/* Floating Baby Boy Character - Following Food */}
-              <motion.div
-                animate={{ 
-                  x: [0, 150, -150, 0],
-                  y: [0, -50, 50, 0],
-                  rotate: [0, 5, -5, 0],
-                  scale: [1, 1.05, 0.95, 1]
-                }}
-                transition={{ 
-                  duration: 15, 
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="absolute z-40 pointer-events-none"
-              >
-                <div className="relative">
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <img 
-                      src="/assets/baby-boy.png" 
-                      alt="Playful Baby Eating" 
-                      className="w-[220px] md:w-[280px] drop-shadow-[0_45px_45px_rgba(0,0,0,0.3)] filter contrast-110"
-                    />
-                  </motion.div>
-                  {/* Floating Heart/Sparkles bubbles to show he's "playing" */}
-                  <motion.div 
-                    animate={{ y: -50, opacity: [0, 1, 0], scale: [0, 1.5, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                    className="absolute top-0 right-0 text-red-500 text-3xl"
-                  >
-                    ❤️
-                  </motion.div>
-                </div>
-              </motion.div>
-
               {/* Main Center Dish - 3D Perspective */}
               <motion.div
                 animate={{ 
@@ -370,9 +333,13 @@ const LandingPage = () => {
                 { img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=150", r: 260, speed: 24, delay: 6 },
                 { img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=150", r: 210, speed: 19, delay: 7.5 },
                 { img: "https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=150", r: 250, speed: 26, delay: 2 },
-                { img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=150", r: 190, speed: 21, delay: 5.5 }
+                { img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=150", r: 190, speed: 21, delay: 5.5 },
+                { img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=150", r: 300, speed: 30, delay: 1 },
+                { img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150", r: 170, speed: 15, delay: 3.5 },
+                { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=150", r: 320, speed: 35, delay: 0.5 },
+                { img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=150", r: 150, speed: 12, delay: 4 }
               ].map((item, idx) => {
-                const angle = (idx / 8) * Math.PI * 2;
+                const angle = (idx / 12) * Math.PI * 2;
                 return (
                   <motion.div
                     key={idx}

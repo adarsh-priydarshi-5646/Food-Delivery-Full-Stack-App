@@ -21,7 +21,6 @@ function useUpdateLocation() {
         { lat, lon },
         { withCredentials: true }
       );
-      console.log(result.data);
     };
 
     navigator.geolocation.watchPosition((pos) => {

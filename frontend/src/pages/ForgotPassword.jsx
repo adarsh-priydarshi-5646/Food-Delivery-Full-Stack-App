@@ -21,7 +21,6 @@ function ForgotPassword() {
         { email },
         { withCredentials: true }
       );
-      console.log(result);
       setErr("");
       setStep(2);
       setLoading(false);
@@ -38,7 +37,6 @@ function ForgotPassword() {
         { email, otp },
         { withCredentials: true }
       );
-      console.log(result);
       setErr("");
       setStep(3);
       setLoading(false);
@@ -59,7 +57,6 @@ function ForgotPassword() {
         { withCredentials: true }
       );
       setErr("");
-      console.log(result);
       setLoading(false);
       navigate("/signin");
     } catch (error) {

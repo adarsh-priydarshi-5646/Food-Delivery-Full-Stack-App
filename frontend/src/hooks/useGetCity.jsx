@@ -69,7 +69,7 @@ function useGetCity(auto = false) {
 
   useEffect(() => {
     if (auto && !currentCity) {
-      getCity().catch(err => console.log("Auto city fetch failed:", err));
+      getCity().catch(err => console.error("Auto city fetch failed:", err));
     }
   }, [auto]);
 

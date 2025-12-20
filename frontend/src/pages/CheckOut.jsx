@@ -65,7 +65,7 @@ function CheckOut() {
       );
       dispatch(setAddress(result?.data?.results[0].address_line2));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -79,7 +79,7 @@ function CheckOut() {
       const { lat, lon } = result.data.features[0].properties;
       dispatch(setLocation({ lat, lon }));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

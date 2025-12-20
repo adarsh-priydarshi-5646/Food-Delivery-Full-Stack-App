@@ -27,7 +27,7 @@ function Nav() {
       });
       dispatch(setUserData(null));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -39,7 +39,7 @@ function Nav() {
       );
       dispatch(setSearchItems(result.data));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

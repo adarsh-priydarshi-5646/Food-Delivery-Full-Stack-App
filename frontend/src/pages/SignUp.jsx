@@ -50,10 +50,10 @@ function SignUp() {
 
   const handleGoogleAuth = async () => {
     if (!mobile) {
-      return setErr("mobile no is required");
+      return setErr("Please enter your mobile number first");
     }
     const provider = new GoogleAuthProvider();
-    const { auth } = await import("../../firebase");
+    const { auth } = await import("../firebase");
     try {
       const result = await signInWithPopup(auth, provider);
       const { data } = await axios.post(

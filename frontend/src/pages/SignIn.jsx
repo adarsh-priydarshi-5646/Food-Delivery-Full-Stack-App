@@ -44,7 +44,7 @@ function SignIn() {
   };
   const handleGoogleAuth = async () => {
     const provider = new GoogleAuthProvider();
-    const { auth } = await import("../../firebase");
+    const { auth } = await import("../firebase");
     const result = await signInWithPopup(auth, provider);
     try {
       const { data } = await axios.post(

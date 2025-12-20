@@ -219,7 +219,7 @@ function OwnerDashboard() {
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
              
-             {/* Menu Section - Fixed Height Panel */}
+             {/* Menu Section - COMPACT REDESIGN */}
              <div className="lg:col-span-1 bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col h-[600px] overflow-hidden">
                 <div className="p-5 border-b border-gray-100 bg-white sticky top-0 z-10 flex items-center justify-between">
                    <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -229,7 +229,7 @@ function OwnerDashboard() {
                       Menu Items
                    </h2>
                    <button
-                     className="text-xs font-bold text-white bg-gray-900 hover:bg-gray-800 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 shadow-sm"
+                     className="text-xs font-bold text-white bg-[#ff4d2d] hover:bg-orange-600 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 shadow-sm"
                      onClick={() => navigate("/add-item")}
                    >
                      <FaPlus size={10} /> Add
@@ -246,7 +246,7 @@ function OwnerDashboard() {
                       </div>
                    ) : (
                       myShopData.items.map((item, index) => (
-                         <div key={index} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-orange-50/50 border border-transparent hover:border-orange-100 transition-all group cursor-pointer">
+                         <div key={index} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-orange-50/50 border border-transparent hover:border-orange-100 transition-all group cursor-pointer" onClick={() => navigate(`/edit-item/${item._id}`)}>
                             <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 relative shadow-sm group-hover:shadow transition-all">
                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                                {item.foodType === 'veg' ? (

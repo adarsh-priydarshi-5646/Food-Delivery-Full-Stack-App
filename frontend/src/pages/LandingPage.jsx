@@ -306,7 +306,7 @@ const LandingPage = () => {
               <motion.div
                 animate={{ 
                   rotate: 360,
-                  y: [0, -25, 0]
+                  y: [0, -15, 0]
                 }}
                 transition={{ 
                   rotate: { duration: 25, repeat: Infinity, ease: "linear" },
@@ -315,20 +315,20 @@ const LandingPage = () => {
                 className="relative z-20"
               >
                 <div className="relative group">
-                  <div className="absolute inset-[-20px] bg-gradient-to-br from-red-100 to-orange-50 rounded-full blur-[80px] opacity-40 group-hover:opacity-60 transition-opacity duration-1000" />
+                  <div className="absolute inset-[-15px] bg-gradient-to-br from-red-100 to-orange-50 rounded-full blur-[60px] opacity-40 group-hover:opacity-60 transition-opacity duration-1000" />
                   <img 
                     src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=450" 
                     alt="Signature Pizza" 
-                    className="w-[300px] h-[300px] object-cover rounded-full border-[12px] border-white shadow-[0_60px_100px_-20px_rgba(0,0,0,0.4)] relative z-10"
+                    className="w-[180px] h-[180px] object-cover rounded-full border-[8px] border-white shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] relative z-10"
                   />
                 </div>
               </motion.div>
 
-              {/* Orbit Lines - Visible Paths */}
-              {[160, 240, 320].map((radius, i) => (
+              {/* Orbit Lines - Visible Paths with Glow */}
+              {[120, 190, 260].map((radius, i) => (
                 <div 
                   key={`orbit-${i}`}
-                  className="absolute rounded-full border border-dashed border-[#d9263a]/20"
+                  className="absolute rounded-full border border-dashed border-[#d9263a]/30"
                   style={{
                     width: radius * 2,
                     height: radius * 2,
@@ -341,51 +341,49 @@ const LandingPage = () => {
               {[
                 { 
                   orbit: "inner", 
-                  radius: 160, 
+                  radius: 120, 
                   items: [
-                    { img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150", speed: 15, scale: 0.8 },
-                    { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150", speed: 15, scale: 0.8 },
-                    { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=150", speed: 15, scale: 0.8 }
+                    { img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150", speed: 20, scale: 0.7 },
+                    { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150", speed: 20, scale: 0.7 },
+                    { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=150", speed: 20, scale: 0.7 }
                   ]
                 },
                 { 
                   orbit: "middle", 
-                  radius: 240, 
+                  radius: 190, 
                   items: [
-                    { img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=150", speed: 25, scale: 1 },
-                    { img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=150", speed: 25, scale: 1 },
-                    { img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=150", speed: 25, scale: 1 },
-                    { img: "https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=150", speed: 25, scale: 1 }
+                    { img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=150", speed: 30, scale: 0.8 },
+                    { img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=150", speed: 30, scale: 0.8 },
+                    { img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=150", speed: 30, scale: 0.8 },
+                    { img: "https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=150", speed: 30, scale: 0.8 },
+                    { img: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?q=80&w=150", speed: 30, scale: 0.8 }
                   ]
                 },
                 { 
                   orbit: "outer", 
-                  radius: 320, 
+                  radius: 260, 
                   items: [
-                    { img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=150", speed: 35, scale: 1.1 },
-                    { img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=150", speed: 35, scale: 1.1 },
-                    { img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150", speed: 35, scale: 1.1 },
-                    { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=150", speed: 35, scale: 1.1 },
-                    { img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=150", speed: 35, scale: 1.1 }
+                    { img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=150", speed: 40, scale: 0.9 },
+                    { img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=150", speed: 40, scale: 0.9 },
+                    { img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150", speed: 40, scale: 0.9 },
+                    { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=150", speed: 40, scale: 0.9 },
+                    { img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=150", speed: 40, scale: 0.9 },
+                    { img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=150", speed: 40, scale: 0.9 }
                   ]
                 }
               ].flatMap((orbitGroup, groupIdx) => 
                 orbitGroup.items.map((item, itemIdx) => {
-                  // Calculate perfect spacing based on number of items in this orbit
                   const totalInOrbit = orbitGroup.items.length;
                   const angleStep = (Math.PI * 2) / totalInOrbit;
-                  // Add offset to stagger orbits so items don't line up radially
-                  const orbitOffset = groupIdx * (Math.PI / 4); 
+                  // Stagger start angles slightly for natural look, but keep even spacing
+                  const orbitOffset = groupIdx * (Math.PI / 3); 
                   const angle = (itemIdx * angleStep) + orbitOffset;
                   
-                  return { ...item, r: orbitGroup.radius, angle, delay: itemIdx * 0.5 };
+                  return { ...item, r: orbitGroup.radius, angle, delay: itemIdx * 0.2 };
                 })
               ).map((item, idx) => {
-                // Alternating direction for adjacent orbits can be nice, 
-                // but let's stick to user request for "orbit-like" movement.
-                // We'll keep one consistent direction or alternate by ring.
-                // Let's alternate direction based on radius for visual interest.
-                const isClockwise = item.r === 240 ? -1 : 1; 
+                // Determine direction: Outer & Inner clockwise, Middle counter-clockwise for contrast
+                const isClockwise = item.r === 190 ? -1 : 1; 
 
                 return (
                   <motion.div
@@ -395,7 +393,7 @@ const LandingPage = () => {
                       duration: item.speed, 
                       repeat: Infinity, 
                       ease: "linear",
-                      delay: item.delay
+                      delay: 0 // Remove delay from container rotation to keep them synchronized in the ring
                     }}
                     className="absolute w-full h-full flex items-center justify-center pointer-events-none"
                     style={{ zIndex: 15 }}
@@ -408,23 +406,20 @@ const LandingPage = () => {
                     >
                       <motion.div
                         animate={{ 
+                          rotate: [0, -360 * isClockwise], // Counter-rotate to keep image upright
                           scale: [item.scale, item.scale * 1.1, item.scale],
-                          rotate: [-10, 10, -10],
-                          y: [-15, 15, -15]
+                          y: [-5, 5, -5] // Subtle bobbing
                         }}
                         transition={{ 
-                          duration: 3 + (idx % 3), 
-                          repeat: Infinity,
-                          delay: idx * 0.3 
-                        }}
-                        style={{
-                           // Ensure no overlap by adding a bit of randomness or just relying on the spacing
+                          rotate: { duration: item.speed, repeat: Infinity, ease: "linear" }, // Match orbit speed
+                          scale: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: idx * 0.5 },
+                          y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: idx * 0.3 }
                         }}
                       >
                         <img 
                           src={item.img} 
                           alt="Delicious Item" 
-                          className="w-[90px] h-[90px] md:w-[110px] md:h-[110px] object-cover rounded-full border-[3px] border-white shadow-lg backdrop-blur-md hover:scale-110 transition-transform duration-300"
+                          className="w-[70px] h-[70px] md:w-[90px] md:h-[90px] object-cover rounded-full border-[3px] border-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md hover:scale-110 hover:shadow-orange-500/20 transition-all duration-300"
                         />
                       </motion.div>
                     </div>

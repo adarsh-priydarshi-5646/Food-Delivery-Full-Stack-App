@@ -324,6 +324,19 @@ const LandingPage = () => {
                 </div>
               </motion.div>
 
+              {/* Orbit Lines - Visible Paths */}
+              {[160, 240, 320].map((radius, i) => (
+                <div 
+                  key={`orbit-${i}`}
+                  className="absolute rounded-full border border-dashed border-[#d9263a]/20"
+                  style={{
+                    width: radius * 2,
+                    height: radius * 2,
+                    zIndex: 10
+                  }}
+                />
+              ))}
+
               {/* Orbiting & Floating Food Symphony - Massive Collection */}
               {[
                 // Inner Orbit (Fast)

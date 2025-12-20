@@ -324,26 +324,38 @@ const LandingPage = () => {
                 </div>
               </motion.div>
 
-              {/* Orbiting Food Items - More Variety */}
+              {/* Orbiting & Floating Food Symphony - Massive Collection */}
               {[
-                { img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150", r: 240, speed: 18, delay: 0 },
-                { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150", r: 200, speed: 22, delay: 1.5 },
-                { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=150", r: 280, speed: 28, delay: 3 },
-                { img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=150", r: 220, speed: 20, delay: 4.5 },
-                { img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=150", r: 260, speed: 24, delay: 6 },
-                { img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=150", r: 210, speed: 19, delay: 7.5 },
-                { img: "https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=150", r: 250, speed: 26, delay: 2 },
-                { img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=150", r: 190, speed: 21, delay: 5.5 },
-                { img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=150", r: 300, speed: 30, delay: 1 },
-                { img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150", r: 170, speed: 15, delay: 3.5 },
-                { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=150", r: 320, speed: 35, delay: 0.5 },
-                { img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=150", r: 150, speed: 12, delay: 4 }
+                // Inner Orbit (Fast)
+                { img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150", r: 160, speed: 15, delay: 0, scale: 0.8 },
+                { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150", r: 160, speed: 15, delay: 2, scale: 0.8 },
+                { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=150", r: 160, speed: 15, delay: 4, scale: 0.8 },
+                
+                // Middle Orbit (Medium)
+                { img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=150", r: 240, speed: 25, delay: 1, scale: 1 },
+                { img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=150", r: 240, speed: 25, delay: 3, scale: 1 },
+                { img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=150", r: 240, speed: 25, delay: 5, scale: 1 },
+                { img: "https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=150", r: 240, speed: 25, delay: 7, scale: 1 },
+
+                // Outer Orbit (Slow & Large)
+                { img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=150", r: 320, speed: 35, delay: 0, scale: 1.1 },
+                { img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=150", r: 320, speed: 35, delay: 2.5, scale: 1.1 },
+                { img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150", r: 320, speed: 35, delay: 5, scale: 1.1 },
+                { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=150", r: 320, speed: 35, delay: 7.5, scale: 1.1 },
+                { img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=150", r: 320, speed: 35, delay: 10, scale: 1.1 },
+
+                // Random Floating Elements (Bubbles/Ingredients)
+                { img: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?q=80&w=100", r: 120, speed: 10, delay: 1, scale: 0.6 }, // Pizza slice
+                { img: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=100", r: 280, speed: 30, delay: 4, scale: 0.7 }, // Pizza whole
+                { img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=100", r: 200, speed: 20, delay: 6, scale: 0.6 }  // Dessert
               ].map((item, idx) => {
-                const angle = (idx / 12) * Math.PI * 2;
+                const angle = (idx / 15) * Math.PI * 2; // Distribute vaguely evenly
+                const isClockwise = idx % 2 === 0 ? 1 : -1;
+                
                 return (
                   <motion.div
                     key={idx}
-                    animate={{ rotate: [0, 360] }}
+                    animate={{ rotate: [0, 360 * isClockwise] }}
                     transition={{ 
                       duration: item.speed, 
                       repeat: Infinity, 
@@ -355,14 +367,14 @@ const LandingPage = () => {
                   >
                     <motion.div
                       animate={{ 
-                        scale: [1, 1.15, 1],
-                        rotate: [-15, 15, -15],
-                        y: [0, -20, 0]
+                        scale: [item.scale, item.scale * 1.1, item.scale],
+                        rotate: [-10, 10, -10],
+                        y: [-15, 15, -15]
                       }}
                       transition={{ 
-                        duration: 4, 
+                        duration: 3 + (idx % 3), 
                         repeat: Infinity,
-                        delay: idx * 0.5 
+                        delay: idx * 0.3 
                       }}
                       style={{ 
                         transform: `translate(${Math.cos(angle) * item.r}px, ${Math.sin(angle) * item.r}px)` 
@@ -371,7 +383,7 @@ const LandingPage = () => {
                       <img 
                         src={item.img} 
                         alt="Delicious Item" 
-                        className="w-[100px] h-[100px] object-cover rounded-[20px] border-4 border-white shadow-xl transform rotate-12 backdrop-blur-sm"
+                        className="w-[90px] h-[90px] md:w-[110px] md:h-[110px] object-cover rounded-full border-[3px] border-white shadow-lg backdrop-blur-md hover:scale-110 transition-transform duration-300"
                       />
                     </motion.div>
                   </motion.div>

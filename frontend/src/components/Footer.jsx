@@ -50,9 +50,9 @@ function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-[#ff4d2d] transition text-sm">
-                  About Us
-                </a>
+                <Link to="/docs" className="hover:text-[#ff4d2d] transition text-sm">
+                  Technical Docs
+                </Link>
               </li>
             </ul>
           </div>

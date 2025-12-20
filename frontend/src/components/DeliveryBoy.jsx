@@ -48,16 +48,13 @@ function DeliveryBoy() {
   
   useEffect(() => {
     if (userData?.role === "deliveryBoy" && Notification.permission === "default") {
-      Notification.requestPermission().then(permission => {
-        console.log("Notification permission:", permission);
-      });
+      Notification.requestPermission();
     }
   }, [userData]);
 
   
   useEffect(() => {
     if (userData?.role === "deliveryBoy") {
-      console.log("Loading delivery boy data...");
       getAssignments();
       getCurrentOrder();
     }
@@ -78,7 +75,7 @@ function DeliveryBoy() {
         });
       })),
         (error) => {
-          console.log(error);
+          console.error(error);
         },
         {
           enableHighAccuracy: true,
@@ -104,7 +101,7 @@ function DeliveryBoy() {
 
       setAvailableAssignments(result.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -116,7 +113,7 @@ function DeliveryBoy() {
       );
       setCurrentOrder(result.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -126,26 +123,21 @@ function DeliveryBoy() {
         `${serverUrl}/api/order/accept-order/${assignmentId}`,
         { withCredentials: true }
       );
-      console.log(result.data);
       await getCurrentOrder();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   useEffect(() => {
     if (!socket) {
-      console.log("Socket not available for delivery boy");
       return;
     }
 
-    console.log("Setting up newAssignment listener for delivery boy");
     
     socket.on("newAssignment", (data) => {
-      console.log("New assignment received:", data);
       setAvailableAssignments((prev) => {
         const updated = [...prev, data];
-        console.log("Updated assignments:", updated);
         return updated;
       });
       
@@ -158,7 +150,6 @@ function DeliveryBoy() {
     });
 
     return () => {
-      console.log("Removing newAssignment listener");
       socket.off("newAssignment");
     };
   }, [socket]);
@@ -178,12 +169,9 @@ function DeliveryBoy() {
         { withCredentials: true }
       );
       
-      console.log("OTP Response:", result.data);
       
-      
-      if (result.data.otp) {
-        console.log(`DEV ONLY OTP: ${result.data.otp}`);
-      }
+      // OTP is sent to user mobile/email
+
     } catch (error) {
       console.error("Background OTP send failed:", error);
       
@@ -209,7 +197,6 @@ function DeliveryBoy() {
         { withCredentials: true }
       );
       
-      console.log("OTP Verification Success:", result.data);
       setMessage(result.data.message);
       
       
@@ -267,10 +254,9 @@ function DeliveryBoy() {
         `${serverUrl}/api/order/get-today-deliveries`,
         { withCredentials: true }
       );
-      console.log(result.data);
       setTodayDeliveries(result.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -288,7 +274,7 @@ function DeliveryBoy() {
     }
   }, [resendTimer]);
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center pb-32 font-sans">
+    <main className="w-full min-h-screen bg-gray-50 flex flex-col items-center pb-32 font-sans">
       <Nav />
       
       <div className="w-full max-w-[800px] flex flex-col gap-6 items-center px-4 mt-8">
@@ -615,7 +601,7 @@ function DeliveryBoy() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }
 

@@ -8,8 +8,10 @@ function CategoryCard({ name, image, onClick }) {
     >
       <img
         src={image}
-        alt=""
+        alt={name}
         className=" w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
+        width="180"
+        height="180"
       />
       <div className="absolute  bottom-0 w-full left-0  bg-[#ffffff96] bg-opacity-95 px-3 py-1 rounded-t-xl text-center shadow text-sm font-medium text-gray-800 backdrop-blur">
         {name}

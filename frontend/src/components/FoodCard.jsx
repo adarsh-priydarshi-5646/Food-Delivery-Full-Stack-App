@@ -49,6 +49,8 @@ function FoodCard({ data }) {
           src={data.image}
           alt={data.name}
           className="w-full h-full object-cover"
+          width="380"
+          height="192"
         />
         
         {}

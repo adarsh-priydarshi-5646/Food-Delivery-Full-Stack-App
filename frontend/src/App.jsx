@@ -1,47 +1,61 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import useGetCurrentUser from "./hooks/useGetCurrentUser";
+import { useDispatch, useSelector } from "react-redux";
+import useGetMyshop from "./hooks/useGetMyShop";
+import useGetShopByCity from "./hooks/useGetShopByCity";
+import useGetItemsByCity from "./hooks/useGetItemsByCity";
+import useGetMyOrders from "./hooks/useGetMyOrders";
+import useUpdateLocation from "./hooks/useUpdateLocation";
+import { io } from "socket.io-client";
+import { setSocket, hydrateCart } from "./redux/userSlice";
+
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
-import useGetCurrentUser from "./hooks/useGetCurrentUser";
-import { useDispatch, useSelector } from "react-redux";
 import LandingPage from "./pages/LandingPage";
 import Home from "./pages/Home";
 import useGetCity from "./hooks/useGetCity";
-import useGetMyshop from "./hooks/useGetMyShop";
 import CreateEditShop from "./pages/CreateEditShop";
 import AddItem from "./pages/AddItem";
 import EditItem from "./pages/EditItem";
-import useGetShopByCity from "./hooks/useGetShopByCity";
-import useGetItemsByCity from "./hooks/useGetItemsByCity";
 import CartPage from "./pages/CartPage";
 import CheckOut from "./pages/CheckOut";
 import OrderPlaced from "./pages/OrderPlaced";
 import MyOrders from "./pages/MyOrders";
-import useGetMyOrders from "./hooks/useGetMyOrders";
-import useUpdateLocation from "./hooks/useUpdateLocation";
 import TrackOrderPage from "./pages/TrackOrderPage";
 import Shop from "./pages/Shop";
 import BankDetails from "./pages/BankDetails";
 import CategoryPage from "./pages/CategoryPage";
-import { useEffect } from "react";
-import { io } from "socket.io-client";
-import { setSocket, hydrateCart } from "./redux/userSlice";
+import Profile from "./pages/Profile";
+
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="text-center">
+      <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#E23744] border-r-transparent align-[-0.125em]"></div>
+      <p className="mt-4 text-lg text-gray-700 font-medium">Loading...</p>
+    </div>
+  </div>
+);
 
 export const serverUrl = import.meta.env.PROD 
   ? "https://food-delivery-full-stack-app-3.onrender.com"
   : "http://localhost:8000";
+
 function App() {
   const { userData, authLoading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  
+  // Authentication & Initial Data
   useGetCurrentUser();
-  useUpdateLocation();
-  useGetCity();
   useGetMyshop();
   useGetShopByCity();
   useGetItemsByCity();
   useGetMyOrders();
 
+  // Re-enabled auto-geolocation for production correctness
+  useUpdateLocation();
+  // Location fetch is better handled selectively to avoid browser "User Gesture" violations
   
   useEffect(() => {
     dispatch(hydrateCart());
@@ -60,16 +74,8 @@ function App() {
     };
   }, [userData?._id]);
 
-  
   if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-orange-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-          <p className="mt-4 text-lg text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingFallback />;
   }
 
   return (
@@ -134,9 +140,12 @@ function App() {
         path="/bank-details"
         element={userData ? <BankDetails /> : <Navigate to={"/signin"} />}
       />
+      <Route
+        path="/profile"
+        element={userData ? <Profile /> : <Navigate to={"/signin"} />}
+      />
     </Routes>
   );
 }
 
 export default App;
-

@@ -52,7 +52,7 @@ function CreateEditShop() {
       setLoading(false);
       navigate("/");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setLoading(false);
     }
   };

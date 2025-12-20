@@ -19,7 +19,7 @@ function OwnerItemCard({ data }) {
         );
         dispatch(setMyShopData(result.data));
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
   };

@@ -20,6 +20,8 @@ function RestaurantCard({ restaurant }) {
           src={restaurant.image}
           alt={restaurant.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          width="300"
+          height="192"
         />
         {}
         {restaurant.rating && (

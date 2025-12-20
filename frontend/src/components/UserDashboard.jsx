@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import Nav from "./Nav";
 import { categories } from "../category";
 import CategoryCard from "./CategoryCard";
@@ -29,28 +29,24 @@ function UserDashboard() {
   const navigate = useNavigate();
   const [showLeftCateButton, setShowLeftCateButton] = useState(false);
   const [showRightCateButton, setShowRightCateButton] = useState(false);
-  const [filteredItems, setFilteredItems] = useState([]);
 
-  
-  useEffect(() => {
-    if (!itemsInMyCity) {
-      setFilteredItems([]);
-      return;
-    }
+  // Optimize filtering with useMemo to prevent recalculations
+  const filteredItems = useMemo(() => {
+    if (!itemsInMyCity) return [];
 
     let result = [...itemsInMyCity];
 
-    
+    // Category filter
     if (selectedCategories.length > 0) {
       result = result.filter(item => selectedCategories.includes(item.category));
     }
 
-    
+    // Price range filter
     result = result.filter(item => 
       item.price >= priceRange.min && item.price <= priceRange.max
     );
 
-    
+    // Quick filters
     if (quickFilters.veg) {
       result = result.filter(item => item.isVeg === true);
     }
@@ -61,28 +57,21 @@ function UserDashboard() {
       result = result.filter(item => item.rating >= 4.0);
     }
 
-    
+    // Sorting
     switch (sortBy) {
       case 'popularity':
-        result.sort((a, b) => (b.orders || 0) - (a.orders || 0));
-        break;
+        return result.sort((a, b) => (b.orders || 0) - (a.orders || 0));
       case 'rating':
-        result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        break;
+        return result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
+        return result.sort((a, b) => a.price - b.price);
       case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
+        return result.sort((a, b) => b.price - a.price);
       case 'delivery-time':
-        result.sort((a, b) => (a.deliveryTime || 60) - (b.deliveryTime || 60));
-        break;
+        return result.sort((a, b) => (a.deliveryTime || 60) - (b.deliveryTime || 60));
       default:
-        break;
+        return result;
     }
-
-    setFilteredItems(result);
   }, [itemsInMyCity, selectedCategories, priceRange, sortBy, quickFilters]);
 
   const updateButton = (ref, setLeftButton, setRightButton) => {

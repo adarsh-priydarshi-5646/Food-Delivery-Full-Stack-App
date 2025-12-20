@@ -187,7 +187,7 @@ function Nav() {
           className="w-10 h-10 rounded-full flex items-center justify-center bg-[#E23744] text-white text-lg font-bold cursor-pointer shadow-md hover:shadow-lg transition-shadow"
           onClick={() => setShowInfo((prev) => !prev)}
         >
-          {userData?.fullName.slice(0, 1).toUpperCase()}
+          {userData?.fullName?.slice(0, 1).toUpperCase() || "?"}
         </div>
 
         {}

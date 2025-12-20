@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,25 +9,26 @@ import useGetMyOrders from "./hooks/useGetMyOrders";
 import useUpdateLocation from "./hooks/useUpdateLocation";
 import { io } from "socket.io-client";
 import { setSocket, hydrateCart } from "./redux/userSlice";
-
-import SignUp from "./pages/SignUp";
-import SignIn from "./pages/SignIn";
-import ForgotPassword from "./pages/ForgotPassword";
-import LandingPage from "./pages/LandingPage";
-import Home from "./pages/Home";
 import useGetCity from "./hooks/useGetCity";
-import CreateEditShop from "./pages/CreateEditShop";
-import AddItem from "./pages/AddItem";
-import EditItem from "./pages/EditItem";
-import CartPage from "./pages/CartPage";
-import CheckOut from "./pages/CheckOut";
-import OrderPlaced from "./pages/OrderPlaced";
-import MyOrders from "./pages/MyOrders";
-import TrackOrderPage from "./pages/TrackOrderPage";
-import Shop from "./pages/Shop";
-import BankDetails from "./pages/BankDetails";
-import CategoryPage from "./pages/CategoryPage";
-import Profile from "./pages/Profile";
+
+// Lazy load all page components for code splitting
+const SignUp = React.lazy(() => import("./pages/SignUp"));
+const SignIn = React.lazy(() => import("./pages/SignIn"));
+const ForgotPassword = React.lazy(() => import("./pages/ForgotPassword"));
+const LandingPage = React.lazy(() => import("./pages/LandingPage"));
+const Home = React.lazy(() => import("./pages/Home"));
+const CreateEditShop = React.lazy(() => import("./pages/CreateEditShop"));
+const AddItem = React.lazy(() => import("./pages/AddItem"));
+const EditItem = React.lazy(() => import("./pages/EditItem"));
+const CartPage = React.lazy(() => import("./pages/CartPage"));
+const CheckOut = React.lazy(() => import("./pages/CheckOut"));
+const OrderPlaced = React.lazy(() => import("./pages/OrderPlaced"));
+const MyOrders = React.lazy(() => import("./pages/MyOrders"));
+const TrackOrderPage = React.lazy(() => import("./pages/TrackOrderPage"));
+const Shop = React.lazy(() => import("./pages/Shop"));
+const BankDetails = React.lazy(() => import("./pages/BankDetails"));
+const CategoryPage = React.lazy(() => import("./pages/CategoryPage"));
+const Profile = React.lazy(() => import("./pages/Profile"));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -79,72 +80,74 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route
-        path="/signup"
-        element={!userData ? <SignUp /> : <Navigate to={"/"} />}
-      />
-      <Route
-        path="/signin"
-        element={!userData ? <SignIn /> : <Navigate to={"/"} />}
-      />
-      <Route
-        path="/forgot-password"
-        element={!userData ? <ForgotPassword /> : <Navigate to={"/"} />}
-      />
-      <Route
-        path="/"
-        element={userData ? <Home /> : <LandingPage />}
-      />
-      <Route
-        path="/create-edit-shop"
-        element={userData ? <CreateEditShop /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/add-item"
-        element={userData ? <AddItem /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/edit-item/:itemId"
-        element={userData ? <EditItem /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/cart"
-        element={userData ? <CartPage /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/checkout"
-        element={userData ? <CheckOut /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/order-placed"
-        element={userData ? <OrderPlaced /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/my-orders"
-        element={userData ? <MyOrders /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/track-order/:orderId"
-        element={userData ? <TrackOrderPage /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/shop/:shopId"
-        element={userData ? <Shop /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/category/:categoryName"
-        element={userData ? <CategoryPage /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/bank-details"
-        element={userData ? <BankDetails /> : <Navigate to={"/signin"} />}
-      />
-      <Route
-        path="/profile"
-        element={userData ? <Profile /> : <Navigate to={"/signin"} />}
-      />
-    </Routes>
+    <Suspense fallback={<LoadingFallback />}>
+      <Routes>
+        <Route
+          path="/signup"
+          element={!userData ? <SignUp /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/signin"
+          element={!userData ? <SignIn /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/forgot-password"
+          element={!userData ? <ForgotPassword /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/"
+          element={userData ? <Home /> : <LandingPage />}
+        />
+        <Route
+          path="/create-edit-shop"
+          element={userData ? <CreateEditShop /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/add-item"
+          element={userData ? <AddItem /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/edit-item/:itemId"
+          element={userData ? <EditItem /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/cart"
+          element={userData ? <CartPage /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/checkout"
+          element={userData ? <CheckOut /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/order-placed"
+          element={userData ? <OrderPlaced /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/my-orders"
+          element={userData ? <MyOrders /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/track-order/:orderId"
+          element={userData ? <TrackOrderPage /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/shop/:shopId"
+          element={userData ? <Shop /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/category/:categoryName"
+          element={userData ? <CategoryPage /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/bank-details"
+          element={userData ? <BankDetails /> : <Navigate to={"/signin"} />}
+        />
+        <Route
+          path="/profile"
+          element={userData ? <Profile /> : <Navigate to={"/signin"} />}
+        />
+      </Routes>
+    </Suspense>
   );
 }
 

@@ -135,7 +135,7 @@ const Documentation = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-outfit selection:bg-[#E23744]/20 selection:text-[#E23744] overflow-x-hidden">
+    <div className="h-screen bg-[#fafafa] font-outfit selection:bg-[#E23744]/20 selection:text-[#E23744] overflow-hidden">
       {/* Premium Reading Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#E23744] to-[#f42f3e] z-[70] origin-left shadow-sm"
@@ -215,8 +215,8 @@ const Documentation = () => {
         </div>
       </header>
 
-      <div className="flex pt-28 px-4 md:px-8 max-w-[1600px] mx-auto">
-        <aside className={`fixed md:sticky top-28 left-0 h-[calc(100vh-120px)] w-72 bg-white/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-gray-100 md:border-none rounded-3xl z-40 transition-all duration-500 shadow-2xl md:shadow-none transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)] md:translate-x-0'} overflow-y-auto custom-scrollbar pr-4`}>
+      <div className="flex pt-24 h-full px-4 md:px-8 max-w-[1600px] mx-auto overflow-hidden">
+        <aside className={`fixed md:sticky top-24 left-0 h-[calc(100vh-120px)] w-72 bg-white/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-gray-100 md:border-none rounded-3xl z-40 transition-all duration-500 shadow-2xl md:shadow-none transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)] md:translate-x-0'} overflow-y-auto custom-scrollbar pr-4`}>
           <nav className="p-4 space-y-8">
             {navItems.map((group, idx) => (
               <div key={idx} className="space-y-3">
@@ -267,10 +267,10 @@ const Documentation = () => {
           )}
         </AnimatePresence>
 
-        <main className="flex-1 w-full max-w-4xl mx-auto mb-20 bg-white border border-gray-100 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 overflow-hidden min-h-screen relative">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#E23744] via-[#ff4d2d] to-[#E23744] opacity-50"></div>
+        <main className="flex-1 w-full max-w-4xl mx-auto h-[calc(100vh-140px)] bg-white border border-gray-100 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 overflow-y-auto custom-scrollbar relative">
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#E23744] via-[#ff4d2d] to-[#E23744] opacity-50 sticky top-0 z-[20]"></div>
           
-          <div className="p-8 md:p-16 lg:p-20">
+          <div className="p-8 md:p-14 lg:p-16">
             {sections[activeSection] && (
               <motion.div
                 key={activeSection}
@@ -293,35 +293,34 @@ const Documentation = () => {
                   className="docs-content prose prose-slate max-w-none 
                     prose-headings:font-black prose-headings:tracking-[-0.03em] prose-headings:text-gray-900
                     prose-h1:hidden
-                    prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-8 prose-h2:pt-8 prose-h2:border-t prose-h2:border-gray-50
-                    prose-h3:text-xl prose-h3:mt-12 prose-h3:mb-6 prose-h3:font-extrabold
-                    prose-p:text-gray-700 prose-p:leading-[1.8] prose-p:mb-8 prose-p:text-[17px] prose-p:font-medium
+                    prose-h2:text-4xl prose-h2:mt-16 prose-h2:mb-8 prose-h2:pt-8 prose-h2:text-gray-900 prose-h2:tracking-tight
+                    prose-h3:text-2xl prose-h3:mt-12 prose-h3:mb-6 prose-h3:font-black prose-h3:text-gray-800
+                    prose-p:text-gray-600 prose-p:leading-[1.8] prose-p:mb-8 prose-p:text-[18px] prose-p:font-medium
                     prose-ul:list-none prose-ul:ml-0 prose-ul:mb-10
-                    prose-li:text-gray-600 prose-li:mb-4 prose-li:pl-8 prose-li:relative prose-li:font-medium
-                    prose-li:before:content-['→'] prose-li:before:absolute prose-li:before:left-0 prose-li:before:text-[#E23744] prose-li:before:font-black
-                    prose-blockquote:border-l-[6px] prose-blockquote:border-[#E23744] prose-blockquote:bg-gradient-to-r prose-blockquote:from-[#E23744]/5 prose-blockquote:to-transparent prose-blockquote:px-10 prose-blockquote:py-8 prose-blockquote:italic prose-blockquote:rounded-2xl prose-blockquote:text-[#E23744] prose-blockquote:font-bold prose-blockquote:my-14
-                    prose-code:bg-gray-100 prose-code:text-[#E23744] prose-code:px-2.5 prose-code:py-1 prose-code:rounded-lg prose-code:font-bold prose-code:text-[0.9em] prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:bg-[#0d1117] prose-pre:text-gray-300 prose-pre:p-10 prose-pre:rounded-[1.5rem] prose-pre:shadow-2xl prose-pre:my-14 prose-pre:border prose-pre:border-white/10 prose-pre:relative
-                    prose-a:text-[#E23744] prose-a:font-black prose-a:underline decoration-[#E23744]/30 hover:decoration-[#E23744] underline-offset-4 transition-all
-                    prose-img:rounded-[2rem] prose-img:shadow-2xl prose-img:my-16 prose-img:mx-auto prose-img:border-8 prose-img:border-gray-50
-                    prose-hr:border-gray-100 prose-hr:my-24
-                    prose-table:w-full prose-table:text-sm prose-table:my-14 prose-table:rounded-[1.5rem] prose-table:overflow-hidden prose-table:border prose-table:border-gray-100 prose-table:shadow-lg
-                    prose-thead:bg-gray-50/80 prose-th:px-8 prose-th:py-5 prose-th:text-gray-900 prose-th:font-black prose-th:text-left prose-th:uppercase prose-th:tracking-wider prose-th:text-[11px]
-                    prose-td:px-8 prose-td:py-5 prose-td:text-gray-600 prose-td:font-medium prose-tr:border-b prose-tr:border-gray-50 last:prose-tr:border-none hover:prose-tr:bg-gray-50/50 transition-colors"
+                    prose-li:text-gray-600 prose-li:mb-5 prose-li:pl-10 prose-li:relative prose-li:font-medium prose-li:text-[17px]
+                    prose-li:before:content-[''] prose-li:before:absolute prose-li:before:left-0 prose-li:before:top-[12px] prose-li:before:w-2.5 prose-li:before:h-2.5 prose-li:before:bg-gradient-to-br prose-li:before:from-[#E23744] prose-li:before:to-[#ff4d2d] prose-li:before:rounded-full
+                    prose-blockquote:border-l-[8px] prose-blockquote:border-[#E23744] prose-blockquote:bg-[#E23744]/5 prose-blockquote:px-10 prose-blockquote:py-10 prose-blockquote:italic prose-blockquote:rounded-[2rem] prose-blockquote:text-[#E23744] prose-blockquote:font-bold prose-blockquote:my-16 prose-blockquote:shadow-sm
+                    prose-code:bg-gray-100 prose-code:text-[#E23744] prose-code:px-2.5 prose-code:py-1 prose-code:rounded-lg prose-code:font-black prose-code:text-[0.9em] prose-code:before:content-none prose-code:after:content-none
+                    prose-pre:bg-[#0d1117] prose-pre:text-gray-300 prose-pre:p-10 prose-pre:rounded-[1.5rem] prose-pre:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] prose-pre:my-14 prose-pre:border prose-pre:border-white/10 prose-pre:relative
+                    prose-a:text-[#E23744] prose-a:font-black prose-a:no-underline border-b-2 border-[#E23744]/20 hover:border-[#E23744] transition-all
+                    prose-img:rounded-[2rem] prose-img:shadow-2xl prose-img:my-16 prose-img:mx-auto prose-img:border-[10px] prose-img:border-white shadow-xl
+                    prose-table:w-full prose-table:text-sm prose-table:my-14 prose-table:rounded-[2rem] prose-table:border-collapse prose-table:shadow-2xl prose-table:shadow-gray-100
+                    prose-thead:bg-[#1a1c1e] prose-th:px-8 prose-th:py-6 prose-th:text-white prose-th:font-black prose-th:text-left prose-th:uppercase prose-th:tracking-[0.15em] prose-th:text-[10px] prose-th:border-none
+                    prose-td:px-8 prose-td:py-6 prose-td:text-gray-600 prose-td:font-bold prose-tr:border-b last:prose-tr:border-none prose-tr:border-gray-50 hover:prose-tr:bg-gray-50 transition-colors"
                   dangerouslySetInnerHTML={{ __html: sections[activeSection].html }}
                 />
               </motion.div>
             )}
 
-            <div className="mt-32 pt-16 border-t-[3px] border-dotted border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-8">
+            <div className="mt-24 pt-16 border-t-[3px] border-dotted border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-8">
               {prevSection && (
                 <button 
                   onClick={() => navigateToSection(prevSection.id)}
-                  className="w-full sm:w-auto flex flex-col items-start gap-2 p-6 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition-all active:scale-95 group border border-transparent hover:border-gray-200"
+                  className="w-full sm:w-auto flex flex-col items-start gap-2 p-7 bg-[#fafafa] text-gray-400 font-bold rounded-3xl hover:bg-white hover:shadow-2xl hover:shadow-gray-200 transition-all active:scale-95 group border border-transparent hover:border-gray-100"
                 >
-                  <span className="text-[10px] uppercase tracking-widest text-[#E23744]">Previous</span>
-                  <div className="flex items-center gap-3 text-gray-900">
-                    <FaChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={12} />
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#E23744]">Previous Section</span>
+                  <div className="flex items-center gap-4 text-gray-900 text-lg">
+                    <FaChevronRight className="rotate-180 group-hover:-translate-x-2 transition-transform" size={12} />
                     {prevSection.label}
                   </div>
                 </button>
@@ -329,37 +328,38 @@ const Documentation = () => {
               {nextSection && (
                 <button 
                   onClick={() => navigateToSection(nextSection.id)}
-                  className="ml-auto w-full sm:w-auto flex flex-col items-end gap-2 p-6 bg-gradient-to-br from-white to-gray-50 text-gray-400 font-bold rounded-2xl shadow-xl shadow-gray-200 hover:shadow-2xl transition-all active:scale-95 group border border-gray-100"
+                  className="ml-auto w-full sm:w-auto flex flex-col items-end gap-2 p-7 bg-gradient-to-br from-[#E23744]/5 to-[#ff4d2d]/5 text-gray-400 font-bold rounded-3xl shadow-xl shadow-gray-100 hover:shadow-2xl hover:bg-white transition-all active:scale-95 group border border-gray-100"
                 >
-                  <span className="text-[10px] uppercase tracking-widest text-[#E23744]">Next</span>
-                  <div className="flex items-center gap-3 text-gray-900">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#E23744]">Next Section</span>
+                  <div className="flex items-center gap-4 text-gray-900 text-lg">
                     {nextSection.label}
-                    <FaChevronRight className="group-hover:translate-x-1 transition-transform" size={12} />
+                    <FaChevronRight className="group-hover:translate-x-2 transition-transform" size={12} />
                   </div>
                 </button>
               )}
             </div>
             
             <div className="mt-20 pt-12 border-t border-gray-50 flex flex-col md:flex-row items-center justify-between gap-6 opacity-60">
-              <p className="text-gray-500 text-xs font-bold uppercase tracking-widest leading-loose text-center md:text-left">
-                © 2025 Vingo Technical Portal. <br className="md:hidden" /> All Rights Reserved.
+              <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.25em] leading-loose text-center md:text-left">
+                © 2025 Vingo Technical Portal. <br className="md:hidden" /> Crafted for Developers.
               </p>
-              <div className="flex gap-8">
-                <a href="#" className="text-xs font-black text-gray-400 hover:text-[#E23744] transition-colors">Twitter</a>
-                <a href="#" className="text-xs font-black text-gray-400 hover:text-[#E23744] transition-colors">Discord</a>
-                <a href="#" className="text-xs font-black text-gray-400 hover:text-[#E23744] transition-colors">Terms</a>
+              <div className="flex gap-10">
+                <a href="#" className="text-[10px] font-black text-gray-400 hover:text-[#E23744] transition-colors tracking-widest uppercase">Twitter</a>
+                <a href="#" className="text-[10px] font-black text-gray-400 hover:text-[#E23744] transition-colors tracking-widest uppercase">Discord</a>
+                <a href="#" className="text-[10px] font-black text-gray-400 hover:text-[#E23744] transition-colors tracking-widest uppercase">Terms</a>
               </div>
             </div>
           </div>
         </main>
 
-        <aside className="hidden xl:block w-80 h-[calc(100vh-140px)] sticky top-28 p-8 overflow-y-auto pl-12 border-l border-gray-100">
-          <div className="space-y-8">
+        <aside className="hidden xl:block w-80 h-[calc(100vh-140px)] sticky top-24 p-8 overflow-y-auto pl-12 border-l border-gray-100">
+          <div className="space-y-10">
             <div>
-              <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                <span className="w-1 h-3 bg-[#E23744] rounded-full"></span> On This Page
+              <h4 className="text-[11px] font-black text-gray-900 uppercase tracking-[0.25em] mb-8 flex items-center gap-3">
+                <span className="w-2 h-4 bg-gradient-to-b from-[#E23744] to-[#ff4d2d] rounded-full"></span> 
+                On This Page
               </h4>
-              <ul className="space-y-5">
+              <ul className="space-y-6">
                 {[
                   { id: "overview", label: "Executive Summary" },
                   { id: "architecture", label: "System Architecture" },
@@ -377,10 +377,10 @@ const Documentation = () => {
                         e.preventDefault();
                         navigateToSection(link.id);
                       }}
-                      className={`text-xs transition-all duration-300 border-l-[3px] py-1 pl-6 block
+                      className={`text-[12px] transition-all duration-500 border-l-[3px] py-1.5 pl-6 block uppercase tracking-wider
                         ${activeSection === link.id 
-                          ? 'text-[#E23744] border-[#E23744] font-black translate-x-2' 
-                          : 'text-gray-400 border-transparent hover:text-gray-900 hover:border-gray-200'}`}
+                          ? 'text-[#E23744] border-[#E23744] font-black translate-x-3 scale-105 shadow-sm' 
+                          : 'text-gray-400 border-transparent hover:text-gray-950 hover:border-gray-300'}`}
                     >
                       {link.label}
                     </a>
@@ -389,10 +389,11 @@ const Documentation = () => {
               </ul>
             </div>
             
-            <div className="p-6 bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl text-white shadow-2xl">
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Pro Tip</p>
-              <p className="text-xs font-bold leading-relaxed">
-                Use <code className="bg-white/10 px-1.5 py-0.5 rounded text-[#E23744]">CMD + K</code> to search documentation instantly.
+            <div className="p-8 bg-gradient-to-br from-gray-900 to-black rounded-[2rem] text-white shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-[#E23744]/10 rounded-full blur-2xl group-hover:bg-[#E23744]/20 transition-all duration-700"></div>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#E23744] mb-4">Pro Tip</p>
+              <p className="text-xs font-bold leading-relaxed text-gray-300">
+                Use <code className="bg-white/10 px-2 py-0.5 rounded text-[#E23744] font-black transition-colors group-hover:bg-white/20">CMD + K</code> to search documentation instantly.
               </p>
             </div>
           </div>
@@ -407,7 +408,7 @@ const Documentation = () => {
             exit={{ opacity: 0, scale: 0, rotate: 45 }}
             onClick={scrollToTop}
             title="Scroll to top"
-            className="fixed bottom-10 right-10 w-16 h-16 bg-white text-[#E23744] rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-[#E23744] hover:text-white hover:-translate-y-2 transition-all duration-500 z-[60] border border-gray-100 group"
+            className="fixed bottom-10 right-10 w-16 h-16 bg-white text-[#E23744] rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] flex items-center justify-center hover:bg-[#E23744] hover:text-white hover:-translate-y-2 transition-all duration-500 z-[60] border border-gray-100 group"
           >
             <FaArrowUp size={20} className="group-hover:scale-125 transition-transform" />
           </motion.button>
@@ -417,19 +418,20 @@ const Documentation = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
         
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #f1f1f1; border-radius: 20px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #eee; border-radius: 20px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #E2374440; }
         
         html { scroll-behavior: smooth; }
         
-        .docs-content pre { overflow-x: auto; tab-size: 2; }
-        .docs-content pre code { color: inherit; background: transparent; padding: 0; font-size: 0.9em; font-weight: normal; }
+        .docs-content pre { overflow-x: auto; tab-size: 2; scrollbar-width: none; }
+        .docs-content pre::-webkit-scrollbar { display: none; }
+        .docs-content pre code { color: inherit; background: transparent; padding: 0; font-size: 0.95em; font-weight: normal; font-family: 'JetBrains Mono', monospace; }
         .docs-content pre::before { 
-          content: 'SOURCE CODE'; position: absolute; right: 2rem; top: 1rem; 
-          font-size: 0.6rem; color: #4b5563; font-weight: 800; letter-spacing: 0.2em;
-          opacity: 0.5;
+          content: 'TERMINAL'; position: absolute; right: 2rem; top: 1.2rem; 
+          font-size: 0.65rem; color: #E23744; font-weight: 900; letter-spacing: 0.4em;
+          opacity: 0.8;
         }
         
         .docs-content a { position: relative; }
@@ -437,10 +439,14 @@ const Documentation = () => {
         .docs-content a::after {
           content: ''; position: absolute; bottom: -2px; left: 0; width: 0; h-0.5 bg-[#E23744] transition-all duration-300;
         }
+        
+        /* Mermaid Diagram Styling Overlay */
+        .docs-content .mermaid { background: white; padding: 2rem; border-radius: 2rem; border: 1px solid #f1f1f1; margin: 3rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
 
         @media (max-width: 768px) {
-          .docs-content h1 { font-size: 3rem; }
+          .docs-content h1 { font-size: 2.5rem; }
           .docs-content p { font-size: 16px; }
+          .docs-content article { padding: 1rem; }
         }
       `}} />
     </div>

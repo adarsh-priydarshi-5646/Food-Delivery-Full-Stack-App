@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { marked } from "marked";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { 
@@ -8,10 +8,10 @@ import {
 } from "react-icons/fa";
 
 const Documentation = () => {
-  const [htmlContent, setHtmlContent] = useState("");
+  const [sections, setSections] = useState({});
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const [activeSection, setActiveSection] = useState("introduction");
   const [searchQuery, setSearchQuery] = useState("");
   const [showScrollTop, setShowScrollTop] = useState(false);
   
@@ -22,44 +22,7 @@ const Documentation = () => {
     restDelta: 0.001
   });
 
-  useEffect(() => {
-    const fetchDocs = async () => {
-      try {
-        const response = await fetch("/docs/technical-documentation.md");
-        const text = await response.text();
-        setHtmlContent(text);
-        setLoading(false);
-      } catch (err) {
-        console.error("Failed to fetch documentation", err);
-        setLoading(false);
-      }
-    };
-
-    fetchDocs();
-
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 400);
-      
-      const sections = document.querySelectorAll("h1, h2, h3");
-      let currentSection = "";
-      sections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= 150) {
-          currentSection = section.id;
-        }
-      });
-      if (currentSection) setActiveSection(currentSection);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const navItems = [
+  const navItems = useMemo(() => [
     {
       title: "Introduction",
       items: [
@@ -72,8 +35,8 @@ const Documentation = () => {
       title: "Core Components",
       items: [
         { id: "core-components", label: "Core Components", icon: <FaCode /> },
-        { id: "frontend-documentation", label: "Frontend Guide", icon: <FaCode />, inset: true },
-        { id: "backend-documentation", label: "Backend Guide", icon: <FaServer />, inset: true },
+        { id: "frontend-guide", label: "Frontend Guide", icon: <FaCode />, inset: true },
+        { id: "backend-guide", label: "Backend Guide", icon: <FaServer />, inset: true },
         { id: "database-models", label: "Database Models", icon: <FaDatabase /> },
       ]
     },
@@ -86,7 +49,75 @@ const Documentation = () => {
         { id: "deployment", label: "Deployment", icon: <FaRocket /> },
       ]
     }
-  ];
+  ], []);
+
+  // Flatten navItems for pagination
+  const flatNavItems = useMemo(() => {
+    return navItems.flatMap(group => group.items);
+  }, [navItems]);
+
+  const currentIndex = flatNavItems.findIndex(item => item.id === activeSection);
+  const prevSection = currentIndex > 0 ? flatNavItems[currentIndex - 1] : null;
+  const nextSection = currentIndex < flatNavItems.length - 1 ? flatNavItems[currentIndex + 1] : null;
+
+  useEffect(() => {
+    marked.setOptions({
+      gfm: true,
+      breaks: true,
+      headerIds: true,
+      mangle: false,
+    });
+
+    const fetchDocs = async () => {
+      try {
+        const response = await fetch("/docs/technical-documentation.md");
+        const text = await response.text();
+        
+        // Split text by H1 headers (# Section Name)
+        const parts = text.split(/^# /m);
+        const sectionMap = {};
+        
+        parts.forEach(part => {
+          if (!part.trim()) return;
+          const lines = part.split("\n");
+          const rawTitle = lines[0].trim();
+          const content = lines.slice(1).join("\n").trim();
+          
+          // Map Title to ID (lowercase, kebab-case)
+          const id = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          sectionMap[id] = {
+            title: rawTitle,
+            html: marked.parse(content)
+          };
+        });
+
+        setSections(sectionMap);
+        setLoading(false);
+      } catch (err) {
+        console.error("Failed to fetch documentation", err);
+        setLoading(false);
+      }
+    };
+
+    fetchDocs();
+
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const navigateToSection = (id) => {
+    setActiveSection(id);
+    setIsSidebarOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (loading) {
     return (
@@ -97,108 +128,122 @@ const Documentation = () => {
             transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
             className="inline-block h-12 w-12 rounded-full border-4 border-solid border-[#E23744] border-r-transparent"
           />
-          <p className="mt-4 text-lg text-gray-700 font-medium font-outfit">Loading Documentation Portal...</p>
+          <p className="mt-4 text-lg text-gray-700 font-medium font-outfit">Preparing Documentation...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-outfit selection:bg-[#E23744]/10 selection:text-[#E23744] overflow-x-hidden">
-      {/* Progress Bar */}
+    <div className="min-h-screen bg-[#fafafa] font-outfit selection:bg-[#E23744]/20 selection:text-[#E23744] overflow-x-hidden">
+      {/* Premium Reading Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-[#E23744] z-[60] origin-left"
+        className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#E23744] to-[#f42f3e] z-[70] origin-left shadow-sm"
         style={{ scaleX }}
       />
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50 flex items-center justify-between px-4 md:px-8">
-        <div className="flex items-center gap-3">
+      {/* Modern Floating Header */}
+      <header className="fixed top-2 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl h-16 bg-white/70 backdrop-blur-xl border border-white/20 rounded-2xl z-50 flex items-center justify-between px-6 shadow-xl shadow-gray-200/50">
+        <div className="flex items-center gap-4">
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
+            className="md:hidden p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all text-gray-600 active:scale-95"
           >
-            {isSidebarOpen ? <FaTimes /> : <FaBars />}
+            {isSidebarOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
           </button>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#E23744] rounded-lg flex items-center justify-center text-white shadow-sm shadow-[#E23744]/20">
-              <FaBook size={16} />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#E23744] to-[#ff4d2d] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[#E23744]/30 transform hover:rotate-12 transition-transform cursor-pointer">
+              <FaBook size={18} />
             </div>
-            <h1 className="text-xl font-bold text-gray-900 tracking-tight hidden sm:block">Vingo Docs</h1>
+            <div>
+              <h1 className="text-lg font-extrabold text-gray-900 tracking-tight leading-none">Vingo Docs</h1>
+              <span className="text-[10px] text-[#E23744] font-bold uppercase tracking-wider">v1.0.0 Stable</span>
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 max-w-md mx-8 hidden lg:block">
+        <div className="flex-1 max-w-lg mx-12 hidden lg:block relative">
           <div className="relative group">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#E23744] transition-colors" size={14} />
+            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#E23744] transition-colors" size={14} />
             <input 
               type="text"
-              placeholder="Search documentation..."
+              placeholder="Search guides, components, or APIs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E23744]/20 focus:bg-white transition-all"
+              className="w-full h-11 pl-11 pr-4 bg-gray-100/50 border border-transparent rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E23744]/20 focus:bg-white focus:border-[#E23744]/20 transition-all placeholder:text-gray-400"
             />
           </div>
+
+          <AnimatePresence>
+            {searchQuery && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute top-full left-0 right-0 mt-3 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 z-[60] max-h-96 overflow-y-auto"
+              >
+                {flatNavItems.filter(item => 
+                  item.label.toLowerCase().includes(searchQuery.toLowerCase())
+                ).map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      navigateToSection(item.id);
+                      setSearchQuery("");
+                    }}
+                    className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-all text-left group"
+                  >
+                    <span className="text-gray-400 group-hover:text-[#E23744]">{item.icon}</span>
+                    <span className="text-sm font-bold text-gray-700">{item.label}</span>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="flex items-center gap-4">
-          <a href="/" className="text-sm font-medium text-gray-600 hover:text-[#E23744] transition-colors hidden md:block">Go to App</a>
+          <a href="/" className="text-sm font-bold text-gray-500 hover:text-[#E23744] transition-colors hidden md:block">App</a>
           <a 
             href="https://github.com/adarsh-priydarshi-5646/Food-Delivery-Full-Stack-App" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-black transition-all shadow-lg shadow-gray-200"
+            className="px-5 py-2.5 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-black transition-all shadow-xl shadow-gray-300 transform active:scale-95"
           >
             GitHub
           </a>
         </div>
       </header>
 
-      <div className="flex pt-16">
-        {/* Sidebar */}
-        <aside className={`fixed md:sticky top-16 left-0 h-[calc(100vh-64px)] w-72 bg-white md:bg-transparent border-r border-gray-100 md:border-none z-40 transition-transform duration-300 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} overflow-y-auto overflow-x-hidden custom-scrollbar`}>
-          <nav className="p-6 md:pr-0">
+      <div className="flex pt-28 px-4 md:px-8 max-w-[1600px] mx-auto">
+        <aside className={`fixed md:sticky top-28 left-0 h-[calc(100vh-120px)] w-72 bg-white/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-gray-100 md:border-none rounded-3xl z-40 transition-all duration-500 shadow-2xl md:shadow-none transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)] md:translate-x-0'} overflow-y-auto custom-scrollbar pr-4`}>
+          <nav className="p-4 space-y-8">
             {navItems.map((group, idx) => (
-              <div key={idx} className="mb-8">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 px-2">{group.title}</h3>
-                <ul className="space-y-1">
+              <div key={idx} className="space-y-3">
+                <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-4">{group.title}</h3>
+                <ul className="space-y-1.5">
                   {group.items.map((item) => (
                     <li key={item.id}>
                       <a 
                         href={`#${item.id}`}
                         onClick={(e) => {
                           e.preventDefault();
-                          const el = document.getElementById(item.id);
-                          if (el) {
-                            const offset = 100;
-                            const bodyRect = document.body.getBoundingClientRect().top;
-                            const elementRect = el.getBoundingClientRect().top;
-                            const elementPosition = elementRect - bodyRect;
-                            const offsetPosition = elementPosition - offset;
-
-                            window.scrollTo({
-                              top: offsetPosition,
-                              behavior: 'smooth'
-                            });
-                          }
-                          setIsSidebarOpen(false);
-                          setActiveSection(item.id);
+                          navigateToSection(item.id);
                         }}
-                        className={`group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200
+                        className={`group flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300 relative overflow-hidden
                           ${activeSection === item.id 
-                            ? 'bg-[#E23744]/5 text-[#E23744]' 
-                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
-                          ${item.inset ? 'ml-4' : ''}`}
+                            ? 'bg-gradient-to-r from-[#E23744]/10 to-transparent text-[#E23744] shadow-sm' 
+                            : 'text-gray-500 hover:bg-gray-200/50 hover:text-gray-900'}
+                          ${item.inset ? 'ml-5 border-l border-gray-100' : ''}`}
                       >
-                        <span className={`transition-colors duration-200 ${activeSection === item.id ? 'text-[#E23744]' : 'text-gray-400 group-hover:text-gray-600'}`}>
+                        <span className={`transition-all duration-300 transform group-hover:scale-110 ${activeSection === item.id ? 'text-[#E23744]' : 'text-gray-400 group-hover:text-gray-600'}`}>
                           {item.icon}
                         </span>
                         {item.label}
                         {activeSection === item.id && (
-                          <motion.span 
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="ml-auto w-1.5 h-1.5 rounded-full bg-[#E23744]"
+                          <motion.div 
+                            layoutId="activeSidePill"
+                            className="absolute left-0 top-0 bottom-0 w-1 bg-[#E23744] rounded-r-full"
                           />
                         )}
                       </a>
@@ -210,7 +255,6 @@ const Documentation = () => {
           </nav>
         </aside>
 
-        {/* Backdrop for mobile */}
         <AnimatePresence>
           {isSidebarOpen && (
             <motion.div 
@@ -218,126 +262,186 @@ const Documentation = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsSidebarOpen(false)}
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden"
+              className="fixed inset-0 bg-gray-900/40 backdrop-blur-md z-30 md:hidden"
             />
           )}
         </AnimatePresence>
 
-        {/* Content Area */}
-        <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-12 md:px-12 bg-white shadow-sm min-h-screen">
-          <article 
-            className="docs-content prose prose-slate max-w-none 
-              prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-gray-900
-              prose-h1:text-5xl prose-h1:mb-12 prose-h1:pb-8 prose-h1:border-b prose-h1:border-gray-100
-              prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-8 prose-h2:pt-8
-              prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4
-              prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-lg
-              prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-8
-              prose-li:text-gray-600 prose-li:mb-3
-              prose-blockquote:border-l-4 prose-blockquote:border-[#E23744] prose-blockquote:bg-[#E23744]/5 prose-blockquote:px-8 prose-blockquote:py-6 prose-blockquote:italic prose-blockquote:rounded-r-2xl prose-blockquote:text-[#E23744] prose-blockquote:my-10
-              prose-code:bg-gray-100 prose-code:text-[#E23744] prose-code:px-2 prose-code:py-0.5 prose-code:rounded-lg prose-code:font-medium
-              prose-pre:bg-[#1a1b1e] prose-pre:text-gray-100 prose-pre:p-8 prose-pre:rounded-2xl prose-pre:shadow-2xl prose-pre:my-10 prose-pre:border prose-pre:border-gray-800
-              prose-a:text-[#E23744] prose-a:font-semibold prose-a:no-underline hover:prose-a:underline decoration-2 underline-offset-4
-              prose-img:rounded-3xl prose-img:shadow-2xl prose-img:my-12 prose-img:mx-auto
-              prose-hr:border-gray-100 prose-hr:my-20
-              prose-table:w-full prose-table:text-sm prose-table:my-10 prose-table:rounded-2xl prose-table:overflow-hidden prose-table:border prose-table:border-gray-100
-              prose-thead:bg-gray-50/80 prose-th:px-6 prose-th:py-4 prose-th:text-gray-900 prose-th:font-bold prose-th:text-left
-              prose-td:px-6 prose-td:py-4 prose-td:text-gray-600 prose-tr:border-b prose-tr:border-gray-50 last:prose-tr:border-none"
-          >
-            {htmlContent}
-          </article>
+        <main className="flex-1 w-full max-w-4xl mx-auto mb-20 bg-white border border-gray-100 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 overflow-hidden min-h-screen relative">
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#E23744] via-[#ff4d2d] to-[#E23744] opacity-50"></div>
+          
+          <div className="p-8 md:p-16 lg:p-20">
+            {sections[activeSection] && (
+              <motion.div
+                key={activeSection}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+              >
+                <div className="mb-12">
+                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#E23744] mb-4">
+                     <span className="opacity-50">Docs</span>
+                     <FaChevronRight size={8} className="opacity-30" />
+                     <span>{flatNavItems.find(n => n.id === activeSection)?.label}</span>
+                   </div>
+                   <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">
+                     {sections[activeSection].title}
+                   </h1>
+                </div>
+                
+                <article 
+                  className="docs-content prose prose-slate max-w-none 
+                    prose-headings:font-black prose-headings:tracking-[-0.03em] prose-headings:text-gray-900
+                    prose-h1:hidden
+                    prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-8 prose-h2:pt-8 prose-h2:border-t prose-h2:border-gray-50
+                    prose-h3:text-xl prose-h3:mt-12 prose-h3:mb-6 prose-h3:font-extrabold
+                    prose-p:text-gray-700 prose-p:leading-[1.8] prose-p:mb-8 prose-p:text-[17px] prose-p:font-medium
+                    prose-ul:list-none prose-ul:ml-0 prose-ul:mb-10
+                    prose-li:text-gray-600 prose-li:mb-4 prose-li:pl-8 prose-li:relative prose-li:font-medium
+                    prose-li:before:content-['→'] prose-li:before:absolute prose-li:before:left-0 prose-li:before:text-[#E23744] prose-li:before:font-black
+                    prose-blockquote:border-l-[6px] prose-blockquote:border-[#E23744] prose-blockquote:bg-gradient-to-r prose-blockquote:from-[#E23744]/5 prose-blockquote:to-transparent prose-blockquote:px-10 prose-blockquote:py-8 prose-blockquote:italic prose-blockquote:rounded-2xl prose-blockquote:text-[#E23744] prose-blockquote:font-bold prose-blockquote:my-14
+                    prose-code:bg-gray-100 prose-code:text-[#E23744] prose-code:px-2.5 prose-code:py-1 prose-code:rounded-lg prose-code:font-bold prose-code:text-[0.9em] prose-code:before:content-none prose-code:after:content-none
+                    prose-pre:bg-[#0d1117] prose-pre:text-gray-300 prose-pre:p-10 prose-pre:rounded-[1.5rem] prose-pre:shadow-2xl prose-pre:my-14 prose-pre:border prose-pre:border-white/10 prose-pre:relative
+                    prose-a:text-[#E23744] prose-a:font-black prose-a:underline decoration-[#E23744]/30 hover:decoration-[#E23744] underline-offset-4 transition-all
+                    prose-img:rounded-[2rem] prose-img:shadow-2xl prose-img:my-16 prose-img:mx-auto prose-img:border-8 prose-img:border-gray-50
+                    prose-hr:border-gray-100 prose-hr:my-24
+                    prose-table:w-full prose-table:text-sm prose-table:my-14 prose-table:rounded-[1.5rem] prose-table:overflow-hidden prose-table:border prose-table:border-gray-100 prose-table:shadow-lg
+                    prose-thead:bg-gray-50/80 prose-th:px-8 prose-th:py-5 prose-th:text-gray-900 prose-th:font-black prose-th:text-left prose-th:uppercase prose-th:tracking-wider prose-th:text-[11px]
+                    prose-td:px-8 prose-td:py-5 prose-td:text-gray-600 prose-td:font-medium prose-tr:border-b prose-tr:border-gray-50 last:prose-tr:border-none hover:prose-tr:bg-gray-50/50 transition-colors"
+                  dangerouslySetInnerHTML={{ __html: sections[activeSection].html }}
+                />
+              </motion.div>
+            )}
 
-          <div className="mt-24 pt-12 border-t border-gray-100 flex justify-between items-center text-sm font-medium">
-            <button className="flex items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors">
-              <FaChevronRight className="rotate-180" size={10} /> Previous
-            </button>
-            <button className="flex items-center gap-2 text-[#E23744] hover:text-[#c12a35] transition-colors">
-              Next <FaChevronRight size={10} />
-            </button>
+            <div className="mt-32 pt-16 border-t-[3px] border-dotted border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-8">
+              {prevSection && (
+                <button 
+                  onClick={() => navigateToSection(prevSection.id)}
+                  className="w-full sm:w-auto flex flex-col items-start gap-2 p-6 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition-all active:scale-95 group border border-transparent hover:border-gray-200"
+                >
+                  <span className="text-[10px] uppercase tracking-widest text-[#E23744]">Previous</span>
+                  <div className="flex items-center gap-3 text-gray-900">
+                    <FaChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={12} />
+                    {prevSection.label}
+                  </div>
+                </button>
+              )}
+              {nextSection && (
+                <button 
+                  onClick={() => navigateToSection(nextSection.id)}
+                  className="ml-auto w-full sm:w-auto flex flex-col items-end gap-2 p-6 bg-gradient-to-br from-white to-gray-50 text-gray-400 font-bold rounded-2xl shadow-xl shadow-gray-200 hover:shadow-2xl transition-all active:scale-95 group border border-gray-100"
+                >
+                  <span className="text-[10px] uppercase tracking-widest text-[#E23744]">Next</span>
+                  <div className="flex items-center gap-3 text-gray-900">
+                    {nextSection.label}
+                    <FaChevronRight className="group-hover:translate-x-1 transition-transform" size={12} />
+                  </div>
+                </button>
+              )}
+            </div>
+            
+            <div className="mt-20 pt-12 border-t border-gray-50 flex flex-col md:flex-row items-center justify-between gap-6 opacity-60">
+              <p className="text-gray-500 text-xs font-bold uppercase tracking-widest leading-loose text-center md:text-left">
+                © 2025 Vingo Technical Portal. <br className="md:hidden" /> All Rights Reserved.
+              </p>
+              <div className="flex gap-8">
+                <a href="#" className="text-xs font-black text-gray-400 hover:text-[#E23744] transition-colors">Twitter</a>
+                <a href="#" className="text-xs font-black text-gray-400 hover:text-[#E23744] transition-colors">Discord</a>
+                <a href="#" className="text-xs font-black text-gray-400 hover:text-[#E23744] transition-colors">Terms</a>
+              </div>
+            </div>
           </div>
-
-          <footer className="mt-12 text-center pb-8">
-            <p className="text-gray-400 text-sm">© 2025 Vingo Technical Documentation Portal. Built with care for developers.</p>
-          </footer>
         </main>
 
-        {/* Right Table of Contents */}
-        <aside className="hidden lg:block w-72 h-[calc(100vh-64px)] sticky top-16 p-8 overflow-y-auto border-l border-gray-50">
-          <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-6 px-2">On this page</h4>
-          <ul className="space-y-4">
-            {[
-              { id: "overview", label: "Overview" },
-              { id: "system-architecture", label: "System Architecture" },
-              { id: "frontend-documentation", label: "Frontend Documentation" },
-              { id: "backend-documentation", label: "Backend Documentation" },
-              { id: "database-schema", label: "Database Schema" },
-              { id: "api-reference", label: "API Reference" },
-              { id: "performance-optimizations", label: "Performance Optimizations" }
-            ].map((link) => (
-              <li key={link.id}>
-                <a 
-                  href={`#${link.id}`} 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const el = document.getElementById(link.id);
-                    if (el) {
-                      const offset = 100;
-                      const bodyRect = document.body.getBoundingClientRect().top;
-                      const elementRect = el.getBoundingClientRect().top;
-                      const elementPosition = elementRect - bodyRect;
-                      const offsetPosition = elementPosition - offset;
-
-                      window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                      });
-                    }
-                  }}
-                  className={`text-sm transition-all duration-200 border-l-2 pl-4 block
-                    ${activeSection === link.id 
-                      ? 'text-[#E23744] border-[#E23744] font-medium' 
-                      : 'text-gray-500 border-transparent hover:text-gray-900 hover:border-gray-200'}`}
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+        <aside className="hidden xl:block w-80 h-[calc(100vh-140px)] sticky top-28 p-8 overflow-y-auto pl-12 border-l border-gray-100">
+          <div className="space-y-8">
+            <div>
+              <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                <span className="w-1 h-3 bg-[#E23744] rounded-full"></span> On This Page
+              </h4>
+              <ul className="space-y-5">
+                {[
+                  { id: "overview", label: "Executive Summary" },
+                  { id: "architecture", label: "System Architecture" },
+                  { id: "core-components", label: "Core Components" },
+                  { id: "frontend-guide", label: "Frontend Documentation" },
+                  { id: "backend-guide", label: "Backend Documentation" },
+                  { id: "database-models", label: "Database Schema" },
+                  { id: "api-reference", label: "API Reference" },
+                  { id: "optimizations", label: "Performance Optimizations" }
+                ].map((link) => (
+                  <li key={link.id}>
+                    <a 
+                      href={`#${link.id}`} 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigateToSection(link.id);
+                      }}
+                      className={`text-xs transition-all duration-300 border-l-[3px] py-1 pl-6 block
+                        ${activeSection === link.id 
+                          ? 'text-[#E23744] border-[#E23744] font-black translate-x-2' 
+                          : 'text-gray-400 border-transparent hover:text-gray-900 hover:border-gray-200'}`}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="p-6 bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl text-white shadow-2xl">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Pro Tip</p>
+              <p className="text-xs font-bold leading-relaxed">
+                Use <code className="bg-white/10 px-1.5 py-0.5 rounded text-[#E23744]">CMD + K</code> to search documentation instantly.
+              </p>
+            </div>
+          </div>
         </aside>
       </div>
 
-      {/* FAB */}
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
+            initial={{ opacity: 0, scale: 0, rotate: -45 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0, scale: 0, rotate: 45 }}
             onClick={scrollToTop}
-            className="fixed bottom-8 right-8 w-14 h-14 bg-white text-[#E23744] rounded-2xl shadow-2xl flex items-center justify-center hover:bg-[#E23744] hover:text-white transition-all duration-300 z-50 border border-gray-100 group"
+            title="Scroll to top"
+            className="fixed bottom-10 right-10 w-16 h-16 bg-white text-[#E23744] rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-[#E23744] hover:text-white hover:-translate-y-2 transition-all duration-500 z-[60] border border-gray-100 group"
           >
-            <FaArrowUp className="group-hover:-translate-y-1 transition-transform" />
+            <FaArrowUp size={20} className="group-hover:scale-125 transition-transform" />
           </motion.button>
         )}
       </AnimatePresence>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #f3f4f6; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #e5e7eb; }
-        html { scroll-behavior: smooth; }
-        h1, h2, h3 { scroll-margin-top: 100px; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
         
-        .docs-content pre { position: relative; margin-top: 2rem; margin-bottom: 2rem; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #f1f1f1; border-radius: 20px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #E2374440; }
+        
+        html { scroll-behavior: smooth; }
+        
+        .docs-content pre { overflow-x: auto; tab-size: 2; }
+        .docs-content pre code { color: inherit; background: transparent; padding: 0; font-size: 0.9em; font-weight: normal; }
         .docs-content pre::before { 
-          content: 'SOURCE'; position: absolute; right: 1.5rem; top: 0.8rem; 
-          font-size: 0.6rem; color: #6b7280; font-weight: 800; letter-spacing: 0.1em;
+          content: 'SOURCE CODE'; position: absolute; right: 2rem; top: 1rem; 
+          font-size: 0.6rem; color: #4b5563; font-weight: 800; letter-spacing: 0.2em;
+          opacity: 0.5;
         }
         
-        /* Premium Typography Finishes */
-        .docs-content h1 { letter-spacing: -0.025em; }
-        .docs-content h2 { letter-spacing: -0.015em; }
+        .docs-content a { position: relative; }
+        .docs-content a:hover::after { width: 100%; }
+        .docs-content a::after {
+          content: ''; position: absolute; bottom: -2px; left: 0; width: 0; h-0.5 bg-[#E23744] transition-all duration-300;
+        }
+
+        @media (max-width: 768px) {
+          .docs-content h1 { font-size: 3rem; }
+          .docs-content p { font-size: 16px; }
+        }
       `}} />
     </div>
   );

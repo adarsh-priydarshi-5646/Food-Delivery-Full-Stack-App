@@ -8,40 +8,28 @@
 
 ---
 
-## Table of Contents
+# Introduction
 
-1. [Executive Summary](#executive-summary)
-2. [System Architecture](#system-architecture)
-3. [Frontend Documentation](#frontend-documentation)
-4. [Backend Documentation](#backend-documentation)
-5. [Database Schema](#database-schema)
-6. [API Reference](#api-reference)
-7. [State Management](#state-management)
-8. [Authentication & Authorization](#authentication--authorization)
-9. [Real-Time Features](#real-time-features)
-10. [Performance Optimizations](#performance-optimizations)
-11. [Deployment Guide](#deployment-guide)
+Welcome to the technical portal for the **Vingo Food Delivery Platform**. This documentation is designed to provide developers, architects, and stakeholders with a deep understanding of the system's internals.
 
----
-
-## Introduction
-
-Welcome to the official technical documentation for the Vingo Food Delivery Platform. This guide is designed to provide developers and stakeholders with a deep understanding of the system's architecture, components, and implementation details.
+### What is Vingo?
+Vingo is a hyper-local food delivery ecosystem that bridges the gap between artisanal restaurants and hungry customers. Built with a focus on speed, reliability, and modularity, Vingo leverages the full power of the MERN stack to deliver a 60FPS mobile-first experience.
 
 ---
 
 # Overview
 
-**Vingo** is a full-stack food delivery platform built with the MERN stack (MongoDB, Express, React, Node.js) that connects customers, restaurant owners, and delivery partners in a seamless ecosystem.
+**Vingo** is a full-stack platform integrated with real-time tracking, secure payments, and a three-way marketplace (User, Owner, Delivery).
 
 ### Key Features
 
-- **Multi-Role System**: Users, Restaurant Owners, Delivery Partners
-- **Real-Time Updates**: Socket.IO for live order tracking
-- **Payment Integration**: Stripe & Cash on Delivery
-- **Location Services**: Geoapify API integration
-- **Admin Dashboard**: Revenue tracking, order management
-- **Mobile Optimized**: 60FPS performance, lazy loading
+| Feature | Description | Technology |
+|---------|-------------|------------|
+| **Multi-Role** | Distinct dashboards for Users, Owners, and Riders | React 19 + Redux |
+| **Live Tracking** | Real-time map movement with < 1s latency | Socket.IO + Leaflet |
+| **Secure Pay** | PCI-compliant Stripe & COD support | Stripe API |
+| **Auto-Locate** | Zero-input city detection & address suggestions | Geoapify API |
+| **Analytics** | Revenue & order heatmaps for restauranteurs | Recharts |
 
 ### Technology Stack
 
@@ -67,6 +55,8 @@ graph TB
 
 ### High-Level Architecture
 
+The platform follows a **decoupled MERN architecture** with real-time bidirectional communication via Socket.IO.
+
 ```mermaid
 graph LR
     A[Client Browser] --> B[Vercel CDN]
@@ -82,7 +72,29 @@ graph LR
     C --> K[Geoapify API]
 ```
 
-### Application Flow
+#### 1. Frontend Layer (Client-Side)
+- **Framework**: React 19 (using `create-vite`)
+- **State Management**: Redux Toolkit with `redux-persist` for session stability
+- **Styling**: TailwindCSS 4.0 for utility-first responsive design
+- **Animations**: Framer Motion for premium UI transitions
+- **Routing**: React Router 7 with route-based code splitting (`React.lazy`)
+
+#### 2. Backend Layer (Server-Side)
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Real-Time**: Socket.IO for live event broadcasting
+- **Auth**: JWT stored in HTTP-only, secure, SameSite cookies
+- **Validation**: Mongoose schemas with built-in and custom validators
+
+#### 3. Infrastructure & Services
+- **Database**: MongoDB Atlas (Cloud)
+- **Image Hosting**: Cloudinary (Automatic optimization)
+- **Payments**: Stripe (Elements & Webhooks)
+- **Location**: Geoapify (Reverse geocoding & Autocomplete)
+
+### Application Flow (Deep Dive)
+
+The system orchestrates complex interactions between three primary user roles:
 
 ```mermaid
 sequenceDiagram
@@ -92,55 +104,50 @@ sequenceDiagram
     participant DB as Database
     participant S as Socket.IO
     
-    U->>F: Visit Website
-    F->>B: Check Authentication
-    B->>DB: Verify Session
-    DB-->>B: User Data
-    B-->>F: Auth Response
-    F->>S: Connect Socket
-    S-->>F: Connection Established
-    F->>U: Display Dashboard
+    U->>F: Visit Website (Landing)
+    F->>B: Check Auth Status (GET /current-user)
+    B-->>F: User Object (Role: User/Owner/Delivery)
+    F->>S: Establish Socket Connection
+    S-->>F: Identity Registered (socket.id linked to user._id)
+    U->>F: Select Category (e.g., Pizza)
+    F->>B: GET /api/item/city/:city?category=Pizza
+    B->>DB: Query Items with filter
+    DB-->>B: Item List
+    B-->>F: Response (JSON)
+    F->>U: Render Grid
 ```
 
 ---
 
 # Core Components
 
-## Frontend Documentation
+# Frontend Guide
 
-### Frontend Guide
+### Repository Structure
 
 ```
 frontend/
-├── public/              # Static assets
 ├── src/
-│   ├── components/      # Reusable components
-│   │   ├── Nav.jsx
-│   │   ├── Footer.jsx
-│   │   ├── FoodCard.jsx
-│   │   ├── UserDashboard.jsx
-│   │   ├── OwnerDashboard.jsx
-│   │   └── DeliveryBoy.jsx
-│   ├── pages/          # Route pages (lazy loaded)
-│   │   ├── LandingPage.jsx
-│   │   ├── SignIn.jsx
-│   │   ├── SignUp.jsx
-│   │   ├── Home.jsx
-│   │   ├── CheckOut.jsx
-│   │   ├── MyOrders.jsx
-│   │   ├── Profile.jsx
-│   │   └── TrackOrderPage.jsx
-│   ├── redux/          # State management
-│   │   ├── store.js
-│   │   ├── userSlice.js
-│   │   ├── ownerSlice.js
-│   │   └── mapSlice.js
-│   ├── hooks/          # Custom React hooks
-│   │   ├── useGetCity.jsx
-│   │   ├── useGetCurrentUser.jsx
-│   │   └── useUpdateLocation.jsx
-│   └── App.jsx         # Main app with routing
+│   ├── components/      # Stateless & Stateful UI units
+│   │   ├── Nav.jsx            # Dynamic navbar with role-based links
+│   │   ├── UserDashboard.jsx  # Customer view with advanced filters
+│   │   ├── OwnerDashboard.jsx # Business analytics & order manager
+│   │   └── DeliveryBoy.jsx    # Real-time task tracker for partners
+│   ├── pages/          # Full-page components (Route targets)
+│   │   ├── CheckOut.jsx       # Stripe & Leaflet integration
+│   │   └── TrackOrderPage.jsx # Real-time OSM tracking
+│   ├── redux/          # Global slice definitions
+│   │   ├── userSlice.js       # Customer & Auth state
+│   │   └── ownerSlice.js      # Business-specific data
+│   ├── hooks/          # Domain-specific logic reuse
+│   │   └── useUpdateLocation.jsx # Geolocation tracking (Background)
+│   └── App.jsx         # Router & Suspense root
 ```
+
+#### Core Design Principles
+- **Separation of Concerns**: Hooks handle side-effects and data fetching; Components handle rendering.
+- **Role-Based Access Control (RBAC)**: Protected routes redirect users based on `userData.role`.
+- **Performance First**: All major pages are `React.lazy` loaded to maintain a small initial bundle.
 
 ---
 
@@ -173,19 +180,27 @@ const { getCity } = useGetCity(true); // Auto-fetch on mount
 GET /api/item/all-items  // Fetch trending items
 ```
 
-#### User Flow
+#### User Flow (Deep Dive)
+Users land on the platform and are immediately greeted with a personalized experience based on their location.
+
 ```mermaid
 graph TD
     A[User Visits] --> B{Has Geolocation?}
-    B -->|Yes| C[Auto-detect City]
-    B -->|No| D[Show Delhi NCR Default]
-    C --> E[Display Trending Items]
+    B -->|Yes| C[Auto-detect City via Geoapify]
+    B -->|No| D[Show Default City (Delhi NCR)]
+    C --> E[Fetch Trending Items (GET /api/item/all-items)]
     D --> E
-    E --> F{User Action}
-    F -->|Sign In| G[Navigate to /signin]
-    F -->|Sign Up| H[Navigate to /signup]
-    F -->|Browse| I[Show Collections]
+    E --> F{Authentication State}
+    F -->|Logged In| G[Role-Based Dashboard]
+    F -->|Logged Out| H[Browse Collections]
+    G --> I[User / Owner / Delivery View]
+    H --> J[Call to Action: Sign In/Up]
 ```
+
+#### Implementation Details
+- **Dynamic Headers**: The Landing Page uses a transparent-to-opaque header transition on scroll.
+- **Image Optimization**: Hero images are loaded with high priority, while collection cards use lazy loading.
+- **Role Detection**: Redux `userSlice` is checked on mount to redirect active sessions away from the landing page.
 
 ---
 
@@ -231,10 +246,16 @@ navigate('/');
 ```
 
 #### Security Features
-- HTTP-only cookies for session
-- CSRF protection
-- Password hashing (bcrypt)
-- Rate limiting on backend
+- **Stateless Session**: JWT stored in `HttpOnly` cookies to prevent XSS-based token theft.
+- **CSRF Protection**: SameSite: 'None' (Production) and Strict (Local) cookie settings.
+- **Credential Hashing**: Argon2/Bcrypt hashing with individual salts.
+- **Login Rate Limiting**: Prevents brute-force attacks on common email patterns.
+
+#### Google OAuth Flow
+1. User clicks "Sign In with Google".
+2. Firebase Authentication handles the OAuth handshake.
+3. Frontend receives the Firebase token and sends it to `POST /api/auth/google`.
+4. Backend verifies the token, creates/updates the user, and sets the secure session cookie.
 
 ---
 
@@ -353,20 +374,13 @@ Display cart items, allow quantity updates, and proceed to checkout.
 - **Shop Grouping**: Items grouped by restaurant
 - **Proceed to Checkout**: Navigate with cart data
 
-#### Redux Actions
-```javascript
-// Add item
-dispatch(addToCart({ id, name, price, quantity, ... }));
-
-// Update quantity
-dispatch(updateQuantity({ id, quantity }));
-
-// Remove item
-dispatch(removeCartItem(id));
-
-// Clear cart
-dispatch(clearCart());
-```
+#### Cart Logic
+- **Persistance**: Cart state is saved to `localStorage` via Redux Persist.
+- **Shop Consistency**: Users can only add items from one shop at a time to prevent logistical conflicts. If a new shop is selected, the cart is cleared with a confirmation prompt.
+- **Taxes & Fees**:
+    - **GST**: 5% of subtotal
+    - **Platform Fee**: Fixed ₹20
+    - **Delivery Fee**: Dynamic based on distance (calculated at checkout)
 
 ---
 
@@ -490,17 +504,16 @@ stateDiagram-v2
     Cancelled --> [*]
 ```
 
-#### Real-Time Integration
-```javascript
-useEffect(() => {
-  socket.on('orderStatusUpdated', (data) => {
-    dispatch(updateRealtimeOrderStatus(data));
-    toast.success(`Order ${data.status}!`);
-  });
-  
-  return () => socket.off('orderStatusUpdated');
-}, [socket]);
-```
+#### Real-Time Status Mapping
+The UI updates instantly when a status change is broadcast:
+
+| Status | Visual Indicator | User Notification |
+|--------|------------------|-------------------|
+| `pending` | Pulsing Yellow | "Waiting for restaurant..." |
+| `preparing` | Solid Blue | "Order is being prepared!" |
+| `out for delivery` | Animated Scooter | "Rider is heading your way!" |
+| `delivered` | Green Checkmark | "Order delivered. Enjoy your meal!" |
+| `cancelled` | Red Cross | "Order cancelled. Refund initiated." |
 
 ---
 
@@ -762,52 +775,34 @@ Response: { totalOrders, totalSpent, points, ... }
 
 ---
 
-## Backend Documentation
+# Backend Guide
 
-### Backend Guide
+The backend is built as a **Stateless RESTful API** with an integrated Socket.IO server for real-time events.
 
-```
-backend/
-├── controllers/         # Business logic
-│   ├── auth.controllers.js
-│   ├── user.controllers.js
-│   ├── shop.controllers.js
-│   ├── item.controllers.js
-│   └── order.controllers.js
-├── models/             # MongoDB schemas
-│   ├── user.model.js
-│   ├── shop.model.js
-│   ├── item.model.js
-│   ├── order.model.js
-│   └── deliveryAssignment.model.js
-├── routes/             # API routes
-│   ├── auth.routes.js
-│   ├── user.routes.js
-│   ├── shop.routes.js
-│   ├── item.routes.js
-│   └── order.routes.js
-├── middleware/         # Custom middleware
-│   ├── isAuth.js
-│   └── upload.js
-├── utils/              # Utility functions
-│   ├── cloudinary.js
-│   └── sendEmail.js
-├── socket.js           # Socket.IO handlers
-└── index.js            # Server entry point
-```
+#### Core Directories
+- **`controllers/`**: House the core business logic. Each file corresponds to a domain (e.g., `auth.controllers.js` handle signin/signup).
+- **`models/`**: Define MongoDB schemas with Mongoose. Includes complex relations like Order → Shop → User.
+- **`routes/`**: Map HTTP methods and paths to controller functions, wrapping them in authentication middleware where necessary.
+- **`middleware/`**: Logic executed before controllers (e.g., `isAuth` for JWT verification, `upload` for Multer image handling).
+- **`socket.js`**: Centralized event hub for real-time notifications (New Order, Status Update, Location Update).
+
+#### Implementation Highlights
+- **Stateless Auth**: No server-side sessions; JWTs are verified on every protected request.
+- **Webhook Processing**: Dedicated routes for Stripe webhooks to ensure payment finality without client-side risk.
+- **Atomic Operations**: Using Mongoose transactions where critical (e.g., order sub-order creation) to maintain data integrity.
 
 ---
 
 # Database Models
 
-## Database Schema
+The platform uses **MongoDB** with Mongoose for schema enforcement and automated validations.
 
+### 1. User Model
 ```javascript
 {
   fullName: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  email: { type: String, unique: true, required: true },
   mobile: { type: String, required: true },
-  password: { type: String, required: true },
   role: { 
     type: String, 
     enum: ['user', 'owner', 'deliveryBoy'],
@@ -979,7 +974,27 @@ user.index({ location: '2dsphere' });
 
 # Guides
 
-## API Reference
+### 1. Project Setup
+To run Vingo locally, follow these steps:
+
+1. **Clone the Repo**: `git clone vingo-repo-url`
+2. **Install Deps**: Run `npm install` in both `frontend` and `backend` directories.
+3. **Env Config**: Copy `.env.template` to `.env` and fill in keys for MongoDB, Stripe, Cloudinary, and Geoapify.
+4. **Dev Start**: `npm run dev` in both folders.
+
+### 2. Restaurant Onboarding Flow
+1. **SignUp**: Register as an "Owner".
+2. **Shop Profile**: Navigate to "/create-edit-shop" and upload your restaurant image and details.
+3. **Menu Items**: Use "/add-item" to populate your digital menu.
+4. **Activation**: Your shop is instantly live for the city you selected.
+
+### 3. Real-Time Order Processing
+Vingo uses a state-machine driven order flow:
+`Pending` -> `Accepted/Preparing` -> `Out for Delivery` -> `Delivered/Verified`.
+
+---
+
+# API Reference
 
 #### POST /api/auth/signup
 **Purpose**: Register new user

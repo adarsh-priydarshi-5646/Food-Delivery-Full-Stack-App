@@ -38,27 +38,46 @@ function useUpdateLocation() {
 
     let watchId;
     const startWatching = () => {
-      watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          updateLocation(pos.coords.latitude, pos.coords.longitude);
-        },
-        null, // Silent fail for background watch
-        { enableHighAccuracy: false, maximumAge: 300000, timeout: 10000 }
-      );
+      // Permission check to avoid redundant prompts or violations
+      if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(
+          (pos) => {
+            updateLocation(pos.coords.latitude, pos.coords.longitude);
+          },
+          (err) => {
+            // Silently handle location errors in background
+          },
+          { enableHighAccuracy: false, maximumAge: 300000, timeout: 10000 }
+        );
+      }
+    };
+
+    // Fix: Only request geolocation after a user gesture if permission not already granted
+    const handleFirstInteraction = () => {
+      startWatching();
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
     };
 
     if (navigator.permissions && navigator.permissions.query) {
       navigator.permissions.query({ name: 'geolocation' }).then(result => {
         if (result.state === 'granted') {
           startWatching();
+        } else {
+          window.addEventListener('click', handleFirstInteraction);
+          window.addEventListener('touchstart', handleFirstInteraction);
         }
       });
     } else {
-      startWatching();
+      // Fallback: wait for interaction to be safe
+      window.addEventListener('click', handleFirstInteraction);
+      window.addEventListener('touchstart', handleFirstInteraction);
     }
 
     return () => {
       if (watchId) navigator.geolocation.clearWatch(watchId);
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
     };
   }, [userData?._id]);
 }

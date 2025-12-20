@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { serverUrl } from "../App";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaMapMarkerAlt, FaCaretDown, FaChevronRight, FaChevronDown, FaMobileAlt, FaEnvelope } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +17,25 @@ const LandingPage = () => {
   const [locating, setLocating] = useState(false);
   const [activeExplore, setActiveExplore] = useState(null);
   const [contactType, setContactType] = useState("email");
+  const [trendingItems, setTrendingItems] = useState([]);
+  const [itemsLoading, setItemsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTrendingItems = async () => {
+      try {
+        const { data } = await axios.get(`${serverUrl}/api/item/all-items`);
+        // Filter for high rated items (simulating trending)
+        const items = data.data || data; // Handle likely response structure
+        const highRated = Array.isArray(items) ? items.filter(item => (item.rating?.average || item.rating || 0) >= 4.0) : [];
+        setTrendingItems(highRated.length > 0 ? highRated : (Array.isArray(items) ? items : []));
+      } catch (error) {
+        console.error("Error fetching trending items:", error);
+      } finally {
+        setItemsLoading(false);
+      }
+    };
+    fetchTrendingItems();
+  }, []);
 
   const cities = ['Delhi NCR', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata', 'Ahmedabad'];
 
@@ -214,49 +235,80 @@ const LandingPage = () => {
             </motion.div>
           ))}
         </motion.div>
+      </div> {/* Closing Feature Cards Container */}
 
-        {/* Collections */}
-        <div className="mt-20">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-[36px] font-[500] text-[#1c1c1c]">Collections</h2>
-              <p className="text-[#4f4f4f] text-[18px] font-[300]">
-                Explore curated lists of top restaurants, cafes, pubs, and bars in {currentCity || "Delhi NCR"}, based on trends
-              </p>
-            </div>
-            <button className="text-[#d9263a] text-[16px] flex items-center gap-1 hover:opacity-80">
-              All collections in {currentCity || "Delhi NCR"} <FaCaretDown className="-rotate-90" />
-            </button>
+      {/* Trending Collections (Dynamic) */}
+      <div className="max-w-[1100px] mx-auto w-full px-4 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+             <motion.span 
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  className="text-[#d9263a] font-bold tracking-[0.1em] text-[13px] uppercase mb-1 block"
+              >
+                  Discover Best Food
+              </motion.span>
+            <h2 className="text-[36px] font-[500] text-[#1c1c1c]">Trending This Week</h2>
+            <p className="text-[#4f4f4f] text-[18px] font-[300]">
+              Most loved items by our customers in {currentCity || "your city"}
+            </p>
           </div>
+        </div>
 
+        {itemsLoading ? (
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[1,2,3,4].map(i => (
+                  <div key={i} className="h-[280px] bg-gray-100 rounded-[12px] animate-pulse"></div>
+              ))}
+           </div>
+        ) : (
           <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {[
-              { title: "Top Trending Spots", places: "32 Places", img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=500" },
-              { title: "Best Insta-worthy Cafes", places: "18 Places", img: "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80&w=500" },
-              { title: "Winners of 2024", places: "25 Places", img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=500" },
-              { title: "The Legends of City", places: "21 Places", img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=500" }
-            ].map((col, i) => (
+            {trendingItems.slice(0, 4).map((item, i) => (
               <motion.div 
-                key={i}
+                key={item._id || i}
                 variants={fadeInUp}
-                className="relative h-[320px] rounded-[6px] overflow-hidden cursor-pointer group"
+                className="group relative h-[320px] rounded-[15px] overflow-hidden cursor-pointer shadow-lg hover:shadow-xl transition-all"
+                onClick={() => navigate("/signup")}
               >
-                <img src={col.img} alt={col.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" width="260" height="320" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="text-[18px] font-[500]">{col.title}</h3>
-                  <p className="text-[14px] flex items-center gap-1 font-[300]">{col.places} <FaCaretDown className="-rotate-90" /></p>
+                <img 
+                  src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"} 
+                  alt={item.name} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-90 transition-opacity" />
+                
+                <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold border border-white/30">
+                   ₹{item.price}
+                </div>
+
+                <div className="absolute bottom-0 left-0 w-full p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                  <h3 className="text-[20px] font-bold text-white mb-1 leading-tight">{item.name}</h3>
+                  <div className="flex items-center justify-between text-gray-300 text-sm">
+                     <span className="flex items-center gap-1"><FaMapMarkerAlt className="text-[#d9263a] text-xs"/> {item.category}</span>
+                     <span className="bg-green-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                        {item.rating?.average?.toFixed(1) || "4.2"} <FaSearch className="text-[8px]" />
+                     </span>
+                  </div>
+                  <button className="mt-4 w-full py-2.5 bg-[#d9263a] text-white rounded-lg font-medium text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                    Order Now
+                  </button>
                 </div>
               </motion.div>
             ))}
+            
+            {trendingItems.length === 0 && (
+                 <div className="col-span-full py-10 text-center text-gray-500">
+                    No trending items found right now. Check back later!
+                 </div>
+            )}
           </motion.div>
-        </div>
+        )}
       </div>
 
       {/* Enhanced 3D Food & Character Section */}
@@ -458,76 +510,89 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* App Download Section */}
-      <div className="bg-[#fffbf7] py-20 px-4 mt-20 border-t border-b border-[#e8e8e8]">
-        <div className="max-w-[850px] mx-auto flex flex-col md:flex-row items-center gap-12">
-          <div className="hidden md:block w-[280px]">
-            <img src="https://b.zmtcdn.com/data/o2_assets/f773629053b24263e69f601925790f301680693809.png" alt="App Mockup" className="w-full" width="280" height="500" />
+      {/* Enhanced App Download Section */}
+      <div className="bg-gradient-to-b from-[#fffbf7] to-white py-24 px-4 mt-12 relative overflow-hidden">
+        <div className="max-w-[900px] mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10">
+          <div className="hidden md:block w-[300px] transform hover:-rotate-2 transition-transform duration-500 hover:scale-105">
+            <img src="https://b.zmtcdn.com/data/o2_assets/f773629053b24263e69f601925790f301680693809.png" alt="App Mockup" className="w-full drop-shadow-2xl" />
           </div>
-          <div className="flex-1">
-            <h2 className="text-[44px] font-[500] text-[#1c1c1c] mb-4">Get the Vingo app</h2>
-            <p className="text-[#4f4f4f] text-[16px] font-[300] mb-8">We will send you a link, open it on your phone to download the app</p>
+          <div className="flex-1 text-center md:text-left">
+            <h2 className="text-[44px] md:text-[52px] font-[800] text-[#1c1c1c] mb-4 leading-tight">Get the <span className="text-[#d9263a]">Vingo</span> app</h2>
+            <p className="text-[#4f4f4f] text-[18px] font-[300] mb-8 leading-relaxed">
+               We will send you a link, open it on your phone to download the app and unlock exclusive discounts.
+            </p>
             
-            <div className="flex gap-10 mb-6">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="flex gap-8 mb-8 justify-center md:justify-start">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${contactType === "email" ? "border-[#d9263a]" : "border-gray-300"}`}>
+                    {contactType === "email" && <div className="w-2.5 h-2.5 bg-[#d9263a] rounded-full" />}
+                </div>
                 <input 
                   type="radio" 
                   name="contact" 
                   checked={contactType === "email"} 
                   onChange={() => setContactType("email")}
-                  className="w-5 h-5 accent-[#d9263a]" 
+                  className="hidden" 
                 />
-                <span className="text-[16px] text-[#1c1c1c]">Email</span>
+                <span className={`text-[17px] transition-colors ${contactType === "email" ? "text-gray-900 font-medium" : "text-gray-500"}`}>Email</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${contactType === "phone" ? "border-[#d9263a]" : "border-gray-300"}`}>
+                    {contactType === "phone" && <div className="w-2.5 h-2.5 bg-[#d9263a] rounded-full" />}
+                </div>
                 <input 
                   type="radio" 
                   name="contact" 
                   checked={contactType === "phone"} 
                   onChange={() => setContactType("phone")}
-                  className="w-5 h-5 accent-[#d9263a]" 
+                  className="hidden" 
                 />
-                <span className="text-[16px] text-[#1c1c1c]">Phone</span>
+                <span className={`text-[17px] transition-colors ${contactType === "phone" ? "text-gray-900 font-medium" : "text-gray-500"}`}>Phone</span>
               </label>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 mb-10 max-w-[500px] mx-auto md:mx-0">
               <input 
                 type="text" 
-                placeholder={contactType === "email" ? "Email" : "Phone"} 
-                className="flex-1 p-3 border border-[#cfcfcf] rounded-[6px] outline-none text-[16px] focus:border-[#d9263a] transition-all" 
+                placeholder={contactType === "email" ? "Email address" : "Phone number"} 
+                className="flex-1 p-4 border border-[#e0e0e0] rounded-[8px] outline-none text-[16px] focus:border-[#d9263a] focus:ring-1 focus:ring-[#d9263a] transition-all bg-white shadow-sm" 
               />
-              <button className="bg-[#d9263a] text-white px-6 py-3 rounded-[6px] text-[16px] font-[400] hover:bg-[#c02a35] transition-all whitespace-nowrap">
+              <button className="bg-[#d9263a] text-white px-8 py-4 rounded-[8px] text-[16px] font-bold hover:bg-[#c02a35] transition-all whitespace-nowrap shadow-lg shadow-red-200">
                 Share App Link
               </button>
             </div>
             
-            <p className="text-[#5a5a5a] text-[14px] mb-4">Download app from</p>
-            <div className="flex gap-4">
-              <img src="https://b.zmtcdn.com/data/webuikit/23e930757c3df49840c482a8638bf5c31556001144.png" alt="App Store" className="h-10 cursor-pointer" width="137" height="40" />
-              <img src="https://b.zmtcdn.com/data/webuikit/9f0c85a5e33adb783fa0aef667075f9e1556003622.png" alt="Google Play" className="h-10 cursor-pointer" width="137" height="40" />
+            <p className="text-[#8e8e8e] text-[14px] mb-4 uppercase tracking-wider font-semibold">Download app from</p>
+            <div className="flex gap-4 justify-center md:justify-start">
+              <img src="https://b.zmtcdn.com/data/webuikit/23e930757c3df49840c482a8638bf5c31556001144.png" alt="App Store" className="h-[45px] hover:opacity-80 transition-opacity cursor-pointer" />
+              <img src="https://b.zmtcdn.com/data/webuikit/9f0c85a5e33adb783fa0aef667075f9e1556003622.png" alt="Google Play" className="h-[45px] hover:opacity-80 transition-opacity cursor-pointer" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Explore Options Accordions */}
-      <div className="max-w-[1100px] mx-auto w-full px-4 py-20 bg-white">
+       {/* Explore Options Accordions */}
+       <div className="max-w-[1100px] mx-auto w-full px-4 py-20 bg-white">
         <h2 className="text-[30px] font-[500] text-[#1c1c1c] mb-8">Explore options near me</h2>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           {[
             { id: 1, title: "Popular cuisines near me", content: "Bakery, Beverages, Biryani, Burger, Chinese, Desserts, Ice Cream, Italian, Mithai, Momos, Mugali, North Indian, Pizza, Rolls, Sandwich, Shake, South Indian, Street Food." },
             { id: 2, title: "Popular restaurant types near me", content: "Bakeries, Bars, Beverage Shops, Cafes, Casual Dining, Dessert Parlors, Dhabas, Fine Dining, Food Courts, Kiosks, Lounges, Meat Shops, Microbreweries, Quick Bites, Sweet Shops." },
             { id: 3, title: "Top Restaurant Chains", content: "Bikanervala, Burger King, Burger Singh, Dominos, KFC, Krispy Kreme, McDonald's, Pizza Hut, Subway, Starbucks, WOW! Momo." },
             { id: 4, title: "Cities We Deliver To", content: "Delhi NCR, Mumbai, Pune, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Chandigarh, Jaipur, Kochi, Coimbatore, Lucknow, Nagpur, Vadodara, Indore, Guwahati." }
           ].map((item) => (
-            <div key={item.id} className="border border-[#e8e8e8] rounded-[9px] overflow-hidden">
+            <div key={item.id} className="border border-[#e8e8e8] rounded-[12px] overflow-hidden hover:border-gray-300 transition-colors bg-white shadow-sm hover:shadow-md">
               <button 
                 onClick={() => setActiveExplore(activeExplore === item.id ? null : item.id)}
-                className="w-full flex justify-between items-center p-6 text-left text-[20px] text-[#1c1c1c] font-[400] bg-white"
+                className="w-full flex justify-between items-center p-6 text-left text-[20px] text-[#1c1c1c] font-[400]"
               >
                 {item.title}
-                {activeExplore === item.id ? <FaChevronDown className="text-[12px]" /> : <FaChevronRight className="text-[12px]" />}
+                <motion.div
+                    animate={{ rotate: activeExplore === item.id ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                >
+                    <FaChevronDown className="text-[#666] text-[16px]" />
+                </motion.div>
               </button>
               <AnimatePresence>
                 {activeExplore === item.id && (
@@ -535,9 +600,9 @@ const LandingPage = () => {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden bg-white px-6 pb-6 text-[#5a5a5a] text-[16px] font-[300] leading-relaxed"
+                    className="overflow-hidden bg-[#fafafa] px-6 pb-6 text-[#5a5a5a] text-[16px] font-[300] leading-relaxed border-t border-[#f0f0f0]"
                   >
-                    {item.content}
+                    <div className="pt-4">{item.content}</div>
                   </motion.div>
                 )}
               </AnimatePresence>

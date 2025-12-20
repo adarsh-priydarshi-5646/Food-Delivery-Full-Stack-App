@@ -245,35 +245,102 @@ const LandingPage = () => {
           </motion.div>
         </div>
 
-        {/* Localities */}
-        <div className="mt-20">
-          <h2 className="text-[36px] font-[400] text-[#363636] mb-10">
-            Popular localities in and around <span className="font-[500]">Delhi NCR</span>
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {['Connaught Place', 'Sector 29, Gurgaon', 'Sector 18, Noida', 'Rajouri Garden', 'Saket', 'DLF Cyber City', 'Golf Course Road', 'Indirapuram'].map((loc, i) => (
-              <motion.div 
-                key={loc}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="p-5 border border-[#e8e8e8] rounded-[9px] hover:shadow-md transition-all cursor-pointer flex justify-between items-center group bg-white"
+
+      {/* 3D Floating Food Animation Section */}
+      <div className="relative py-28 overflow-hidden bg-white">
+        <div className="max-w-[1100px] mx-auto px-4 relative z-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="mb-16"
+          >
+            <h2 className="text-[40px] md:text-[50px] font-[600] text-[#1c1c1c] tracking-tight">
+              A Symphony of Flavors
+            </h2>
+            <p className="text-[#4f4f4f] text-[18px] font-[300] mt-4 max-w-[600px] mx-auto">
+              Savor the art of culinary excellence with our curated selections, delivered right to your doorstep.
+            </p>
+          </motion.div>
+          
+          <div className="relative h-[500px] flex items-center justify-center">
+            {/* Main Center Image - 3D Perspective */}
+            <motion.div
+              style={{ perspective: 1000 }}
+              animate={{ 
+                y: [0, -20, 0],
+                rotateX: [5, -5, 5],
+                rotateY: [5, -5, 5],
+              }}
+              transition={{ 
+                duration: 6, 
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="relative z-20"
+            >
+              <img 
+                src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=400" 
+                alt="Delicious Pizza" 
+                className="w-[320px] h-[320px] object-cover rounded-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] border-[10px] border-white"
+                width="320"
+                height="320"
+              />
+            </motion.div>
+
+            {/* Floating Orbiting Elements */}
+            {[
+              { img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=150", left: "10%", top: "20%", rotate: -15, scale: 1.1 },
+              { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=150", right: "10%", top: "15%", rotate: 12, scale: 0.9 },
+              { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=150", left: "15%", bottom: "20%", rotate: 8, scale: 1.2 },
+              { img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&q=80&w=150", right: "15%", bottom: "15%", rotate: -10, scale: 1.0 }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: item.scale }}
+                animate={{ 
+                  y: [0, -40, 0],
+                  rotate: [item.rotate, item.rotate + 10, item.rotate],
+                  rotateX: [0, 15, 0],
+                  rotateY: [0, 15, 0]
+                }}
+                transition={{ 
+                  y: { duration: 5 + idx, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 7 + idx, repeat: Infinity, ease: "easeInOut" },
+                  rotateX: { duration: 4 + idx, repeat: Infinity, ease: "easeInOut" },
+                  rotateY: { duration: 6 + idx, repeat: Infinity, ease: "easeInOut" },
+                  opacity: { duration: 1 }
+                }}
+                className="absolute hidden md:block"
+                style={{ 
+                  left: item.left, 
+                  right: item.right, 
+                  top: item.top, 
+                  bottom: item.bottom,
+                  perspective: 800
+                }}
               >
-                <div className="overflow-hidden">
-                  <h3 className="text-[18px] text-[#1c1c1c] font-[400] truncate">{loc}</h3>
-                  <p className="text-[#5a5a5a] text-[14px] font-[300]">200+ places</p>
-                </div>
-                <FaChevronRight className="text-[#1c1c1c] text-[12px] opacity-70" />
+                <img 
+                  src={item.img} 
+                  alt="Floating Food" 
+                  className="w-[140px] h-[140px] object-cover rounded-3xl shadow-2xl border-4 border-white transform-gpu hover:scale-110 transition-transform duration-300"
+                  width="140"
+                  height="140"
+                />
               </motion.div>
             ))}
-            <div className="p-5 border border-[#e8e8e8] rounded-[9px] hover:shadow-md transition-all cursor-pointer flex justify-center items-center group bg-white">
-              <span className="text-[18px] text-[#1c1c1c] font-[400]">See more</span>
-              <FaChevronDown className="ml-2 text-[12px] opacity-70" />
-            </div>
           </div>
         </div>
+        
+        {/* Background Gradients */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#ef4f5f] rounded-full blur-[120px] opacity-[0.03]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#ff7e8b] rounded-full blur-[150px] opacity-[0.05]" />
+        </div>
       </div>
+    </div>
 
       {/* App Download Section */}
       <div className="bg-[#fffbf7] py-20 px-4 mt-20 border-t border-b border-[#e8e8e8]">

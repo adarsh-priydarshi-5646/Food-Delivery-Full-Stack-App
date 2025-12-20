@@ -24,7 +24,13 @@
 
 ---
 
-## Executive Summary
+## Introduction
+
+Welcome to the official technical documentation for the Vingo Food Delivery Platform. This guide is designed to provide developers and stakeholders with a deep understanding of the system's architecture, components, and implementation details.
+
+---
+
+# Overview
 
 **Vingo** is a full-stack food delivery platform built with the MERN stack (MongoDB, Express, React, Node.js) that connects customers, restaurant owners, and delivery partners in a seamless ecosystem.
 
@@ -54,6 +60,8 @@ graph TB
 ```
 
 ---
+
+# Architecture
 
 ## System Architecture
 
@@ -96,9 +104,11 @@ sequenceDiagram
 
 ---
 
+# Core Components
+
 ## Frontend Documentation
 
-### Project Structure
+### Frontend Guide
 
 ```
 frontend/
@@ -754,7 +764,7 @@ Response: { totalOrders, totalSpent, points, ... }
 
 ## Backend Documentation
 
-### Project Structure
+### Backend Guide
 
 ```
 backend/
@@ -788,9 +798,9 @@ backend/
 
 ---
 
-## Database Schema
+# Database Models
 
-### User Model
+## Database Schema
 
 ```javascript
 {
@@ -967,9 +977,9 @@ user.index({ location: '2dsphere' });
 
 ---
 
-## API Reference
+# Guides
 
-### Authentication APIs
+## API Reference
 
 #### POST /api/auth/signup
 **Purpose**: Register new user
@@ -1566,9 +1576,9 @@ setSocket(socket)
 
 ---
 
-## Performance Optimizations
+# Optimizations
 
-### 1. Code Splitting
+## Performance Optimizations
 ```javascript
 // React.lazy for all routes
 const Home = React.lazy(() => import('./pages/Home'));
@@ -1628,9 +1638,9 @@ build: {
 
 ---
 
-## Deployment Guide
+# Deployment
 
-### Frontend (Vercel)
+## Deployment Guide
 
 **Configuration**: [vercel.json](file:///Users/adarshpriydarshi/Desktop/Food-Delivery-Full-Stack-App/frontend/vercel.json)
 

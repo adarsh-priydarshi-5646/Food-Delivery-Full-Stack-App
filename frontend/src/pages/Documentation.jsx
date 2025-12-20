@@ -90,23 +90,26 @@ const Documentation = () => {
             <div className="mb-8">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Introduction</h3>
               <ul className="space-y-2">
-                <li><a href="#executive-summary" className="flex items-center gap-2 text-sm text-[#E23744] font-medium"><FaChevronRight size={10} /> Overview</a></li>
-                <li><a href="#system-architecture" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Architecture</a></li>
+                <li><a href="#introduction" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Introduction</a></li>
+                <li><a href="#overview" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Overview</a></li>
+                <li><a href="#architecture" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Architecture</a></li>
               </ul>
             </div>
             <div className="mb-8">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Core Components</h3>
               <ul className="space-y-2">
-                <li><a href="#frontend-documentation" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Frontend Guide</a></li>
-                <li><a href="#backend-documentation" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Backend Guide</a></li>
-                <li><a href="#database-schema" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Database Models</a></li>
+                <li><a href="#core-components" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Core Components</a></li>
+                <li><a href="#frontend-documentation" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors ml-4"><FaChevronRight size={10} /> Frontend Guide</a></li>
+                <li><a href="#backend-documentation" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors ml-4"><FaChevronRight size={10} /> Backend Guide</a></li>
+                <li><a href="#database-models" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Database Models</a></li>
               </ul>
             </div>
             <div className="mb-8">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Guides</h3>
               <ul className="space-y-2">
-                <li><a href="#performance-optimizations" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Optimizations</a></li>
-                <li><a href="#deployment-guide" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Deployment</a></li>
+                <li><a href="#guides" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors"><FaChevronRight size={10} /> Guides</a></li>
+                <li><a href="#optimizations" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors ml-4"><FaChevronRight size={10} /> Optimizations</a></li>
+                <li><a href="#deployment" className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#E23744] transition-colors ml-4"><FaChevronRight size={10} /> Deployment</a></li>
               </ul>
             </div>
           </nav>
@@ -143,7 +146,7 @@ const Documentation = () => {
         <aside className="hidden xl:block w-64 h-[calc(100vh-64px)] sticky top-16 p-8 overflow-y-auto">
           <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4">On this page</h4>
           <ul className="space-y-3">
-            <li><a href="#executive-summary" className="text-xs text-gray-500 hover:text-[#E23744] transition-colors">Executive Summary</a></li>
+            <li><a href="#overview" className="text-xs text-gray-500 hover:text-[#E23744] transition-colors">Executive Summary</a></li>
             <li><a href="#system-architecture" className="text-xs text-gray-500 hover:text-[#E23744] transition-colors">System Architecture</a></li>
             <li><a href="#frontend-documentation" className="text-xs text-gray-500 hover:text-[#E23744] transition-colors">Frontend Documentation</a></li>
             <li><a href="#backend-documentation" className="text-xs text-gray-500 hover:text-[#E23744] transition-colors">Backend Documentation</a></li>

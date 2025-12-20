@@ -246,98 +246,186 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* 3D Floating Food Animation Section */}
-      <div className="relative py-28 overflow-hidden bg-white">
-        <div className="max-w-[1100px] mx-auto px-4 relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="mb-16"
-          >
-            <h2 className="text-[40px] md:text-[50px] font-[600] text-[#1c1c1c] tracking-tight">
-              A Symphony of Flavors
-            </h2>
-            <p className="text-[#4f4f4f] text-[18px] font-[300] mt-4 max-w-[600px] mx-auto">
-              Savor the art of culinary excellence with our curated selections, delivered right to your doorstep.
-            </p>
-          </motion.div>
-          
-          <div className="relative h-[500px] flex items-center justify-center">
-            {/* Main Center Image - 3D Perspective */}
-            <motion.div
-              style={{ perspective: 1000 }}
-              animate={{ 
-                y: [0, -20, 0],
-                rotateX: [5, -5, 5],
-                rotateY: [5, -5, 5],
-              }}
-              transition={{ 
-                duration: 6, 
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="relative z-20"
+      {/* Enhanced 3D Food & Character Section */}
+      <div className="relative py-32 overflow-hidden bg-white border-b border-[#f3f3f3]">
+        <div className="max-w-[1200px] mx-auto px-4 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            
+            {/* Left Content Area */}
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="lg:w-1/2 text-left"
             >
-              <img 
-                src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=400" 
-                alt="Delicious Pizza" 
-                className="w-[320px] h-[320px] object-cover rounded-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] border-[10px] border-white"
-                width="320"
-                height="320"
-              />
+              <motion.span 
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="text-[#d9263a] font-bold tracking-[0.2em] text-[14px] uppercase mb-4 block"
+              >
+                Beyond Just Delivery
+              </motion.span>
+              <h2 className="text-[48px] md:text-[64px] font-[800] text-[#1c1c1c] leading-[1.1] mb-6">
+                A Symphony of <br/> 
+                <span className="text-[#d9263a]">Taste & Tech</span>
+              </h2>
+              <p className="text-[#5a5a5a] text-[20px] font-[300] leading-relaxed mb-8">
+                Experience the future of dining. Our intelligent routing and curated restaurant partnerships ensure that every meal is a celebration of flavor, delivered with surgical precision to your doorstep.
+              </p>
+              
+              <div className="flex flex-wrap gap-12 mb-10">
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-[32px] font-[800] text-[#1c1c1c]">2.5k+</h3>
+                  <p className="text-[#828282] text-[14px] uppercase tracking-wider font-semibold">Active Partners</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-[32px] font-[800] text-[#1c1c1c]">18 Mins</h3>
+                  <p className="text-[#828282] text-[14px] uppercase tracking-wider font-semibold">Fastest Drop</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-[32px] font-[800] text-[#1c1c1c]">4.9/5</h3>
+                  <p className="text-[#828282] text-[14px] uppercase tracking-wider font-semibold">User Rating</p>
+                </div>
+              </div>
+              
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/signup")} 
+                className="bg-[#d9263a] text-white px-12 py-5 rounded-full text-[18px] font-bold hover:bg-[#c02a35] transition-all shadow-[0_20px_40px_-10px_rgba(217,38,58,0.3)]"
+              >
+                Join the Foodie Club
+              </motion.button>
             </motion.div>
 
-            {/* Floating Orbiting Elements */}
-            {[
-              { img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=150", left: "10%", top: "20%", rotate: -15, scale: 1.1 },
-              { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=150", right: "10%", top: "15%", rotate: 12, scale: 0.9 },
-              { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=150", left: "15%", bottom: "20%", rotate: 8, scale: 1.2 },
-              { img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&q=80&w=150", right: "15%", bottom: "15%", rotate: -10, scale: 1.0 }
-            ].map((item, idx) => (
+            {/* Right Animation Area */}
+            <div className="lg:w-1/2 relative h-[550px] w-full flex items-center justify-center">
+              
+              {/* Floating Baby Boy Character - Following Food */}
               <motion.div
-                key={idx}
-                initial={{ opacity: 0, scale: 0 }}
-                whileInView={{ opacity: 1, scale: item.scale }}
                 animate={{ 
-                  y: [0, -40, 0],
-                  rotate: [item.rotate, item.rotate + 10, item.rotate],
-                  rotateX: [0, 15, 0],
-                  rotateY: [0, 15, 0]
+                  x: [0, 150, -150, 0],
+                  y: [0, -50, 50, 0],
+                  rotate: [0, 5, -5, 0],
+                  scale: [1, 1.05, 0.95, 1]
                 }}
                 transition={{ 
-                  y: { duration: 5 + idx, repeat: Infinity, ease: "easeInOut" },
-                  rotate: { duration: 7 + idx, repeat: Infinity, ease: "easeInOut" },
-                  rotateX: { duration: 4 + idx, repeat: Infinity, ease: "easeInOut" },
-                  rotateY: { duration: 6 + idx, repeat: Infinity, ease: "easeInOut" },
-                  opacity: { duration: 1 }
+                  duration: 15, 
+                  repeat: Infinity,
+                  ease: "easeInOut"
                 }}
-                className="absolute hidden md:block"
-                style={{ 
-                  left: item.left, 
-                  right: item.right, 
-                  top: item.top, 
-                  bottom: item.bottom,
-                  perspective: 800
-                }}
+                className="absolute z-40 pointer-events-none"
               >
-                <img 
-                  src={item.img} 
-                  alt="Floating Food" 
-                  className="w-[140px] h-[140px] object-cover rounded-3xl shadow-2xl border-4 border-white transform-gpu hover:scale-110 transition-transform duration-300"
-                  width="140"
-                  height="140"
-                />
+                <div className="relative">
+                  <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <img 
+                      src="/assets/baby-boy.png" 
+                      alt="Playful Baby Eating" 
+                      className="w-[220px] md:w-[280px] drop-shadow-[0_45px_45px_rgba(0,0,0,0.3)] filter contrast-110"
+                    />
+                  </motion.div>
+                  {/* Floating Heart/Sparkles bubbles to show he's "playing" */}
+                  <motion.div 
+                    animate={{ y: -50, opacity: [0, 1, 0], scale: [0, 1.5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                    className="absolute top-0 right-0 text-red-500 text-3xl"
+                  >
+                    ❤️
+                  </motion.div>
+                </div>
               </motion.div>
-            ))}
+
+              {/* Main Center Dish - 3D Perspective */}
+              <motion.div
+                animate={{ 
+                  rotate: 360,
+                  y: [0, -25, 0]
+                }}
+                transition={{ 
+                  rotate: { duration: 25, repeat: Infinity, ease: "linear" },
+                  y: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="relative z-20"
+              >
+                <div className="relative group">
+                  <div className="absolute inset-[-20px] bg-gradient-to-br from-red-100 to-orange-50 rounded-full blur-[80px] opacity-40 group-hover:opacity-60 transition-opacity duration-1000" />
+                  <img 
+                    src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=450" 
+                    alt="Signature Pizza" 
+                    className="w-[300px] h-[300px] object-cover rounded-full border-[12px] border-white shadow-[0_60px_100px_-20px_rgba(0,0,0,0.4)] relative z-10"
+                  />
+                </div>
+              </motion.div>
+
+              {/* Orbiting Food Items - More Variety */}
+              {[
+                { img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150", r: 240, speed: 18, delay: 0 },
+                { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150", r: 200, speed: 22, delay: 1.5 },
+                { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=150", r: 280, speed: 28, delay: 3 },
+                { img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=150", r: 220, speed: 20, delay: 4.5 },
+                { img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=150", r: 260, speed: 24, delay: 6 },
+                { img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=150", r: 210, speed: 19, delay: 7.5 },
+                { img: "https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=150", r: 250, speed: 26, delay: 2 },
+                { img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=150", r: 190, speed: 21, delay: 5.5 }
+              ].map((item, idx) => {
+                const angle = (idx / 8) * Math.PI * 2;
+                return (
+                  <motion.div
+                    key={idx}
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ 
+                      duration: item.speed, 
+                      repeat: Infinity, 
+                      ease: "linear",
+                      delay: item.delay
+                    }}
+                    className="absolute w-full h-full flex items-center justify-center pointer-events-none"
+                    style={{ zIndex: 15 }}
+                  >
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.15, 1],
+                        rotate: [-15, 15, -15],
+                        y: [0, -20, 0]
+                      }}
+                      transition={{ 
+                        duration: 4, 
+                        repeat: Infinity,
+                        delay: idx * 0.5 
+                      }}
+                      style={{ 
+                        transform: `translate(${Math.cos(angle) * item.r}px, ${Math.sin(angle) * item.r}px)` 
+                      }}
+                    >
+                      <img 
+                        src={item.img} 
+                        alt="Delicious Item" 
+                        className="w-[100px] h-[100px] object-cover rounded-[20px] border-4 border-white shadow-xl transform rotate-12 backdrop-blur-sm"
+                      />
+                    </motion.div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </div>
         
-        {/* Background Gradients */}
+        {/* Abstract Background Elements */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#ef4f5f] rounded-full blur-[120px] opacity-[0.03]" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#ff7e8b] rounded-full blur-[150px] opacity-[0.05]" />
+          <div className="absolute top-[10%] left-[-5%] w-[500px] h-[500px] bg-red-50 rounded-full blur-[150px] opacity-[0.4]" />
+          <div className="absolute bottom-[10%] right-[-5%] w-[600px] h-[600px] bg-orange-50 rounded-full blur-[180px] opacity-[0.5]" />
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.2, 0.1]
+            }}
+            transition={{ duration: 10, repeat: Infinity }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-red-50 rounded-full"
+          />
         </div>
       </div>
 

@@ -46,8 +46,16 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  }
+  next();
+});
+
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
 
 
 if (process.env.NODE_ENV === 'production') {

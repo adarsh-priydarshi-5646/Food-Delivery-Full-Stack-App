@@ -48,7 +48,7 @@ function UserOrderCard({ data, allOrders }) {
       setSelectedRating((prev) => ({ ...prev, [itemId]: rating }));
       alert(`Thanks for rating! You gave ${rating} stars ⭐`);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Failed to submit rating");
     }
   };
@@ -65,7 +65,7 @@ function UserOrderCard({ data, allOrders }) {
       dispatch(setMyOrders(updatedOrders));
       alert(result.data.message);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert(error.response?.data?.message || "Failed to delete order");
     } finally {
       setDeleting(false);
@@ -89,7 +89,7 @@ function UserOrderCard({ data, allOrders }) {
       setShowRatingModal(false);
       alert("Thank you for your feedback! ⭐");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert(error.response?.data?.message || "Failed to submit rating");
     } finally {
       setSubmittingRating(false);

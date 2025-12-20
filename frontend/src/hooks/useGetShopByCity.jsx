@@ -16,9 +16,8 @@ function useGetShopByCity() {
           { withCredentials: true }
         );
         dispatch(setShopsInMyCity(result.data));
-        console.log(result.data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
     fetchShops();

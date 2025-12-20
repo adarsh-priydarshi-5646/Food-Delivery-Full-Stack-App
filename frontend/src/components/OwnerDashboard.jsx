@@ -100,7 +100,7 @@ function OwnerDashboard() {
   }) || [];
 
   return (
-    <div className="w-full min-h-screen bg-gray-50/50 flex flex-col items-center pb-12">
+    <main className="w-full min-h-screen bg-gray-50/50 flex flex-col items-center pb-12">
       <Nav />
       
       {!myShopData ? (
@@ -216,68 +216,92 @@ function OwnerDashboard() {
               </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
-             {/* Menu Section */}
-             <div className="lg:col-span-1 flex flex-col h-full">
-                <div className="flex items-center justify-between mb-5">
-                   <h2 className="text-xl font-bold text-gray-800 flex items-center gap-3">
-                      <div className="p-2 bg-orange-100 rounded-lg text-[#ff4d2d]">
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+             
+             {/* Menu Section - Fixed Height Panel */}
+             <div className="lg:col-span-1 bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col h-[600px] overflow-hidden">
+                <div className="p-5 border-b border-gray-100 bg-white sticky top-0 z-10 flex items-center justify-between">
+                   <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                      <div className="p-2 bg-orange-50 rounded-lg text-[#ff4d2d]">
                         <MdRestaurantMenu /> 
                       </div>
                       Menu Items
                    </h2>
                    <button
-                     className="text-sm font-bold text-white bg-[#ff4d2d] hover:bg-orange-600 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-sm"
+                     className="text-xs font-bold text-white bg-gray-900 hover:bg-gray-800 px-3 py-2 rounded-lg transition-colors flex items-center gap-1 shadow-sm"
                      onClick={() => navigate("/add-item")}
                    >
-                     <FaPlus size={12} /> Add New
+                     <FaPlus size={10} /> Add
                    </button>
                 </div>
                 
-                <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 space-y-4 min-h-[400px] max-h-[800px] overflow-y-auto custom-scrollbar">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
                    {myShopData.items.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center p-6 text-gray-400">
-                         <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                            <FaUtensils size={24} />
+                         <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                            <FaUtensils size={20} />
                          </div>
-                         <p className="font-medium text-gray-600 mb-1">Your menu is empty</p>
-                         <p className="text-sm">Add items to start selling!</p>
+                         <p className="font-medium text-gray-600 mb-1 text-sm">Your menu is empty</p>
                       </div>
                    ) : (
                       myShopData.items.map((item, index) => (
-                         <OwnerItemCard data={item} key={index} />
+                         <div key={index} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-orange-50/50 border border-transparent hover:border-orange-100 transition-all group cursor-pointer">
+                            <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 relative shadow-sm group-hover:shadow transition-all">
+                               <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                               {item.foodType === 'veg' ? (
+                                  <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-green-500 border border-white shadow-sm"></div>
+                               ) : (
+                                  <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-red-500 border border-white shadow-sm"></div>
+                               )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                               <h4 className="font-bold text-gray-800 text-sm truncate group-hover:text-[#ff4d2d] transition-colors">{item.name}</h4>
+                               <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider truncate">{item.category}</p>
+                            </div>
+                            <div className="text-right">
+                               <span className="block text-sm font-extrabold text-gray-900">₹{item.price}</span>
+                               <button 
+                                  onClick={(e) => { e.stopPropagation(); navigate(`/edit-item/${item._id}`); }}
+                                  className="text-[10px] text-gray-400 hover:text-[#ff4d2d] font-semibold mt-1"
+                               >
+                                  EDIT
+                               </button>
+                            </div>
+                         </div>
                       ))
                    )}
                 </div>
              </div>
 
-             {/* Live Orders Section */}
-             <div className="lg:col-span-2 flex flex-col h-full">
-                <div className="flex items-center justify-between mb-5">
-                   <h2 className="text-xl font-bold text-gray-800 flex items-center gap-3">
-                      <div className="p-2 bg-green-100 rounded-lg text-green-600">
+             {/* Live Orders Section - Fixed Height Panel */}
+             <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col h-[600px] overflow-hidden">
+                <div className="p-5 border-b border-gray-100 bg-white sticky top-0 z-10 flex items-center justify-between">
+                   <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                      <div className="p-2 bg-green-50 rounded-lg text-green-600">
                         <MdDeliveryDining />
                       </div>
                       Live Orders
                    </h2>
                    {activeOrders.length > 0 && (
-                      <span className="bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold animate-pulse shadow-red-200 shadow-lg">
+                      <span className="bg-red-500 text-white text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold animate-pulse shadow-red-200 shadow-lg">
                         {activeOrders.length} Active
                       </span>
                    )}
                 </div>
 
-                <div className="flex-1 pb-4">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-4 bg-gray-50/30">
                    {myOrders && myOrders.length > 0 ? (
                       <div className="space-y-4">
                         {[...myOrders]
                           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                           .filter(order => {
+                              // Ensure object structure handling for shopOrders
                               if (order.shopOrders && typeof order.shopOrders === 'object' && !Array.isArray(order.shopOrders)) {
-                                  // Simplified check for object structure
                                   const orderShopId = order.shopOrders.shop?._id || order.shopOrders.shop;
                                   return orderShopId === myShopData?._id;
                               }
+                              // Ensure array structure handling
                               if (order.shopOrders && Array.isArray(order.shopOrders)) {
                                   return order.shopOrders.some(so => (so.shop?._id || so.shop) === myShopData?._id);
                               }
@@ -288,13 +312,13 @@ function OwnerDashboard() {
                           ))}
                       </div>
                    ) : (
-                      <div className="bg-white h-[400px] rounded-2xl border border-dashed border-gray-200 flex flex-col items-center justify-center text-center p-8">
-                         <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6 text-blue-200">
-                            <FaBoxOpen size={40} />
+                      <div className="h-full flex flex-col items-center justify-center text-center p-8">
+                         <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-200">
+                            <FaBoxOpen size={30} />
                          </div>
-                         <h3 className="text-xl font-bold text-gray-800 mb-2">No Active Orders</h3>
-                         <p className="text-gray-500 max-w-xs mx-auto">
-                            Waiting for customers to place orders. They will appear here in real-time.
+                         <h3 className="text-lg font-bold text-gray-800 mb-1">No Active Orders</h3>
+                         <p className="text-gray-400 text-sm max-w-xs mx-auto">
+                            Waiting for customers to place new orders.
                          </p>
                       </div>
                    )}
@@ -303,7 +327,7 @@ function OwnerDashboard() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }
 

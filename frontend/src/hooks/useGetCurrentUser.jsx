@@ -21,11 +21,12 @@ function useGetCurrentUser() {
         clearTimeout(timeoutId);
       } catch (error) {
         if (error.name === 'CanceledError' || error.code === 'ECONNABORTED') {
-          console.log('Authentication request timed out - backend may be unavailable');
+          console.warn('Authentication request timed out - backend may be unavailable');
         } else if (error.response?.status === 401) {
-          console.log('User not authenticated');
+          // User not authenticated
+
         } else {
-          console.log('Error fetching current user:', error.message);
+          console.error('Error fetching current user:', error.message);
         }
       } finally {
         clearTimeout(timeoutId);

@@ -39,6 +39,7 @@ const userSlice = createSlice({
     myOrders: [],
     searchItems: null,
     socket: null,
+    selectedAddressId: null,
     
     selectedCategories: [],
     priceRange: { min: 0, max: 1000 },
@@ -183,6 +184,9 @@ const userSlice = createSlice({
       state.sortBy = 'popularity';
       state.quickFilters = { veg: false, fastDelivery: false, topRated: false };
     },
+    setSelectedAddressId: (state, action) => {
+      state.selectedAddressId = action.payload;
+    },
   },
 });
 
@@ -212,5 +216,6 @@ export const {
   setSortBy,
   toggleQuickFilter,
   clearFilters,
+  setSelectedAddressId,
 } = userSlice.actions;
 export default userSlice.reducer;

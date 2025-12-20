@@ -139,7 +139,7 @@ function UserDashboard() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center bg-[#F8F8F8] min-h-screen pt-5">
+    <main className="w-full flex flex-col items-center bg-[#F8F8F8] min-h-screen pt-5">
       <Nav />
       
       <div className="w-full max-w-7xl px-4 mt-6">
@@ -290,7 +290,7 @@ function UserDashboard() {
           </>
         )}
       </div>
-    </div>
+    </main>
   );
 }
 

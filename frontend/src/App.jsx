@@ -29,6 +29,7 @@ const Shop = React.lazy(() => import("./pages/Shop"));
 const BankDetails = React.lazy(() => import("./pages/BankDetails"));
 const CategoryPage = React.lazy(() => import("./pages/CategoryPage"));
 const Profile = React.lazy(() => import("./pages/Profile"));
+const Documentation = React.lazy(() => import("./pages/Documentation"));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -146,6 +147,8 @@ function App() {
           path="/profile"
           element={userData ? <Profile /> : <Navigate to={"/signin"} />}
         />
+        <Route path="/docs" element={<Documentation />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Suspense>
   );

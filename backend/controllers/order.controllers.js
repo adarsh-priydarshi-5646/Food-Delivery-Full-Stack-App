@@ -911,6 +911,9 @@ export const createStripePaymentIntent = async (req, res) => {
       },
     });
 
+    // Update order with stripeSessionId
+    await Order.findByIdAndUpdate(orderId, { stripeSessionId: session.id });
+
     return res.status(200).json({
       sessionId: session.id,
       url: session.url,
@@ -943,7 +946,8 @@ export const verifyStripePayment = async (req, res) => {
 
     
     order.payment = true;
-    order.razorpayPaymentId = session.payment_intent; 
+    order.stripePaymentIntentId = session.payment_intent; 
+    order.stripeSessionId = session.id;
     await order.save();
 
     await order.populate("shopOrders.shopOrderItems.item", "name image price");

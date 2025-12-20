@@ -42,6 +42,10 @@ vi.mock('react-icons/fa', () => {
     FaChevronDown: Icon,
     FaMobileAlt: Icon,
     FaEnvelope: Icon,
+    FaUtensils: Icon,
+    FaStore: Icon,
+    FaLink: Icon,
+    FaCity: Icon,
   };
 });
 

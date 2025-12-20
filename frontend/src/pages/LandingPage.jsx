@@ -345,7 +345,7 @@ const LandingPage = () => {
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                 />
                 
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent group-hover:from-black/90 group-hover:via-black/70 transition-all duration-500 z-10" />
+                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/60 to-transparent group-hover:via-black/80 transition-all duration-500 z-10" />
                 
                 <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
                    <motion.div 
@@ -363,11 +363,11 @@ const LandingPage = () => {
                    </div>
                 </div>
 
-                <div className="absolute bottom-0 left-0 w-full p-6 z-20 transform group-hover:-translate-y-1 transition-transform duration-500">
+                <div className="absolute bottom-0 left-0 w-full p-6 z-20 transform group-hover:-translate-y-2 transition-transform duration-500">
                   <span className="text-red-400 font-bold text-[11px] uppercase tracking-[0.2em] mb-2 block opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
                     {item.category || "Best Seller"}
                   </span>
-                  <h3 className="text-[24px] font-[800] text-white mb-2 leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-colors">{item.name}</h3>
+                  <h3 className="text-[24px] font-[800] text-white mb-2 leading-tight group-hover:text-red-50 transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{item.name}</h3>
                   <p className="text-white text-[14px] font-[500] line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75 leading-snug drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                     {item.description || "Freshly prepared with premium ingredients and authentic spices."}
                   </p>

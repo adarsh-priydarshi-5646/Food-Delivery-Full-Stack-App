@@ -66,8 +66,8 @@ const LandingPage = () => {
         <div className="flex items-center gap-6 md:gap-10 text-[17px]">
           <button className="hover:opacity-80 text-sm hidden lg:block">Investor Relations</button>
           <button className="hover:opacity-80 text-sm hidden lg:block">Add restaurant</button>
-          <button onClick={() => navigate("/signin")} className="hover:opacity-80 font-semibold drop-shadow-md">Log in</button>
-          <button onClick={() => navigate("/signup")} className="hover:opacity-80 font-semibold drop-shadow-md">Sign up</button>
+          <button onClick={() => navigate("/signin")} className="px-4 py-2 border border-white rounded-md hover:bg-white hover:text-[#1c1c1c] transition-all font-medium">Log in</button>
+          <button onClick={() => navigate("/signup")} className="px-4 py-2 bg-white text-[#1c1c1c] rounded-md hover:bg-opacity-90 transition-all font-semibold">Sign up</button>
         </div>
       </nav>
 
@@ -224,10 +224,10 @@ const LandingPage = () => {
             viewport={{ once: true }}
           >
             {[
-              { title: "Top Trending Spots", places: "32 Places", img: "https://b.zmtcdn.com/data/collections/2da2c7495d51440d47ad9ad888806f04_1686744021.jpg" },
-              { title: "Best Insta-worthy Cafes", places: "18 Places", img: "https://b.zmtcdn.com/data/collections/072ec5cf5b3003f882485ccdb9716ad2_1675247064.jpg" },
-              { title: "Winners of 2024", places: "25 Places", img: "https://b.zmtcdn.com/data/collections/77717499694575c34533969018d0af97_1675245313.jpg" },
-              { title: "The Legends of City", places: "21 Places", img: "https://b.zmtcdn.com/data/collections/fbd23741e1276067b36f1b1c607ec8c2_1707203649.png" }
+              { title: "Top Trending Spots", places: "32 Places", img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=500" },
+              { title: "Best Insta-worthy Cafes", places: "18 Places", img: "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80&w=500" },
+              { title: "Winners of 2024", places: "25 Places", img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=500" },
+              { title: "The Legends of City", places: "21 Places", img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=500" }
             ].map((col, i) => (
               <motion.div 
                 key={i}

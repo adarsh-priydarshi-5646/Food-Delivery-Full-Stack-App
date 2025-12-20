@@ -20,10 +20,10 @@ const LandingPage = () => {
   const [trendingItems, setTrendingItems] = useState([]);
   const [itemsLoading, setItemsLoading] = useState(true);
   const [collections, setCollections] = useState([
-    { id: 1, title: "Trending this Week", count: "30 Places", img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=600" },
-    { id: 2, title: "Best of Pune", count: "25 Places", img: "https://images.unsplash.com/photo-1567620905732-2d1ec7bb7445?auto=format&fit=crop&q=80&w=600" },
-    { id: 3, title: "Newly Opened", count: "15 Places", img: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&q=80&w=600" },
-    { id: 4, title: "Pocket Friendly", count: "20 Places", img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=600" }
+    { id: 1, title: "Trending this Week", count: "30 Places", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=600" },
+    { id: 2, title: "Best of Pune", count: "25 Places", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&q=80&w=600" },
+    { id: 3, title: "Newly Opened", count: "15 Places", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=600" },
+    { id: 4, title: "Pocket Friendly", count: "20 Places", img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=600" }
   ]);
 
   useEffect(() => {
@@ -338,28 +338,35 @@ const LandingPage = () => {
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                 />
                 
-                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/60 to-transparent group-hover:via-black/80 transition-all duration-500" />
                 
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                   <div className="bg-white/90 backdrop-blur-sm text-[#1c1c1c] px-3 py-1 rounded-full text-[13px] font-[800] shadow-lg">
+                <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
+                   <motion.div 
+                      whileHover={{ scale: 1.1 }}
+                      className="bg-white/95 backdrop-blur-sm text-[#1c1c1c] px-3 py-1 rounded-full text-[13px] font-[800] shadow-xl border border-white/20"
+                   >
                       ₹{item.price}
-                   </div>
+                   </motion.div>
                 </div>
 
-                <div className="absolute top-4 right-4">
-                   <div className="bg-black/40 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg flex items-center gap-1 text-[13px] font-bold border border-white/10 group-hover:bg-[#d9263a] transition-colors">
+                <div className="absolute top-4 right-4 z-20">
+                   <div className="bg-black/60 backdrop-blur-md text-white px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[13px] font-bold border border-white/20 group-hover:bg-[#d9263a] group-hover:border-[#d9263a] transition-all duration-300 shadow-lg">
+                      <span className="text-yellow-400">★</span>
                       <span>{item.rating?.average?.toFixed(1) || "4.2"}</span>
-                      <FaSearch className="text-[9px] text-yellow-400 group-hover:text-white" />
                    </div>
                 </div>
 
-                <div className="absolute bottom-0 left-0 w-full p-6">
-                  <span className="text-red-400 font-bold text-[10px] uppercase tracking-widest mb-1 block opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <div className="absolute bottom-0 left-0 w-full p-6 z-20 transform group-hover:-translate-y-2 transition-transform duration-500">
+                  <span className="text-red-400 font-bold text-[11px] uppercase tracking-[0.2em] mb-2 block opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
                     {item.category || "Best Seller"}
                   </span>
-                  <h3 className="text-[22px] font-[800] text-white mb-1.5 leading-tight">{item.name}</h3>
-                  <button className="w-full mt-4 py-3 bg-[#d9263a] text-white rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all duration-500 active:scale-95 group-hover:bg-[#ff4d61]">
+                  <h3 className="text-[24px] font-[800] text-white mb-2 leading-tight group-hover:text-red-50 transition-colors">{item.name}</h3>
+                  <p className="text-white/70 text-[14px] line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
+                    {item.description || "Freshly prepared with premium ingredients and authentic spices."}
+                  </p>
+                  <button className="w-full py-3.5 bg-[#d9263a] text-white rounded-xl font-[800] text-sm flex items-center justify-center gap-2 transition-all duration-500 active:scale-95 group-hover:bg-[#ff4d61] shadow-lg group-hover:shadow-red-500/40">
                     <span>Order Now</span>
+                    <FaChevronRight className="text-[10px] group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
               </motion.div>
@@ -367,23 +374,52 @@ const LandingPage = () => {
             
             {trendingItems.length === 0 && (
                 [1, 2, 3, 4].map(i => (
-                  <div key={i} className="h-[360px] bg-gray-50 rounded-[20px] overflow-hidden flex items-center justify-center relative group">
+                  <motion.div 
+                    key={i} 
+                    variants={fadeInUp}
+                    whileHover={{ y: -8 }}
+                    className="h-[360px] bg-gray-100 rounded-[20px] overflow-hidden cursor-pointer relative group shadow-lg"
+                    onClick={() => navigate("/signup")}
+                  >
                      <img 
                         src={`https://images.unsplash.com/photo-${[
                           '1546069901-ba9599a7e63c',
                           '1565299624946-b28f40a0ae38',
                           '1565958011703-44f9829ba187',
                           '1512621776951-a57141f2eefd'
-                        ][i-1]}?auto=format&fit=crop&q=80&w=400`}
+                        ][i-1]}?auto=format&fit=crop&q=80&w=600`}
                         alt="Delicious food"
-                        className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700"
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                      />
-                     <div className="absolute inset-0 bg-black/20" />
-                     <div className="absolute bottom-6 left-6">
-                        <p className="text-white font-bold text-lg">Delicious Item {i}</p>
-                        <p className="text-white/80 text-sm">Pune Favorite</p>
+                     <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/60 to-transparent group-hover:via-black/80 transition-all duration-500" />
+                     
+                     <div className="absolute top-4 left-4 z-20">
+                        <div className="bg-white/95 backdrop-blur-sm text-[#1c1c1c] px-3 py-1 rounded-full text-[13px] font-[800] border border-white/20">
+                           ₹{(299 + i * 50)}
+                        </div>
                      </div>
-                  </div>
+
+                     <div className="absolute bottom-0 left-0 w-full p-6 z-20 transform group-hover:-translate-y-2 transition-transform duration-500">
+                        <span className="text-red-400 font-bold text-[11px] uppercase tracking-[0.2em] mb-2 block opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                          Pune Special
+                        </span>
+                        <h3 className="text-[24px] font-[800] text-white mb-2 leading-tight group-hover:text-red-50 transition-colors">
+                          {[
+                            'Signature Pizza',
+                            'Classic Burger',
+                            'Gourmet Pasta',
+                            'Healthy Buddha Bowl'
+                          ][i-1]}
+                        </h3>
+                        <p className="text-white/70 text-[14px] line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
+                          A local favorite in {currentCity || "Pune"}, prepared fresh daily with the finest local ingredients.
+                        </p>
+                        <button className="w-full py-3.5 bg-[#d9263a] text-white rounded-xl font-[800] text-sm flex items-center justify-center gap-2 transition-all duration-500 active:scale-95 group-hover:bg-[#ff4d61] shadow-lg group-hover:shadow-red-500/40">
+                          <span>Order Now</span>
+                          <FaChevronRight className="text-[10px] group-hover:translate-x-1 transition-transform" />
+                        </button>
+                     </div>
+                  </motion.div>
                 ))
             )}
           </motion.div>

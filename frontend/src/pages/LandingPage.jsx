@@ -72,32 +72,38 @@ const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <div className="relative h-[420px] md:h-[500px] w-full flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative h-[500px] md:h-[600px] w-full flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
           <img
             src="https://b.zmtcdn.com/web_assets/81f3ff974d82520780078ba1cfbd453a1583259680.png"
             alt="Hero Background"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover scale-105"
             width="1920"
-            height="500"
+            height="600"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70" />
         </div>
         
-        <div className="relative z-10 flex flex-col items-center text-center px-4 w-full max-w-[800px]">
+        <div className="relative z-10 flex flex-col items-center text-center px-4 w-full max-w-[900px]">
           <motion.h1 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-[60px] md:text-[80px] font-[900] text-white italic tracking-tight leading-none mb-4"
+            initial={{ scale: 0.8, opacity: 0, y: 30 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, type: "spring" }}
+            className="text-[75px] md:text-[110px] font-[900] text-transparent bg-clip-text bg-gradient-to-r from-white via-red-50 to-white italic tracking-tighter leading-none mb-6 drop-shadow-2xl"
+            style={{ 
+              textShadow: "0 10px 30px rgba(0,0,0,0.5)",
+              WebkitTextStroke: "1px rgba(255,255,255,0.2)"
+            }}
           >
             Vingo
           </motion.h1>
           <motion.p 
-            initial={{ y: 10, opacity: 0 }}
+            initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-[24px] md:text-[36px] text-white font-[400] mb-8 leading-tight"
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="text-[22px] md:text-[40px] text-white font-[300] mb-10 leading-tight tracking-wide drop-shadow-md"
           >
-            Find the best restaurants, cafés and bars in <span className="font-bold">{currentCity || "India"}</span>
+            Find the best restaurants, cafés and bars in <span className="font-bold border-b-2 border-red-500 pb-1">{currentCity || "India"}</span>
           </motion.p>
           
           {/* Dual Input Search Bar */}
@@ -105,63 +111,70 @@ const LandingPage = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="w-full bg-white rounded-[8px] flex flex-col md:flex-row items-center p-1 md:h-[54px] shadow-sm overflow-visible"
+            className="w-full bg-white rounded-[12px] flex flex-col md:flex-row items-center p-2 md:h-[60px] shadow-[0_15px_40px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.4)] transition-all duration-300 overflow-visible relative z-50 transform hover:-translate-y-1"
           >
             <div 
-              className="relative flex items-center flex-[0.4] px-3 gap-2 h-full md:border-r border-[#cfcfcf] cursor-pointer w-full"
+              className="relative flex items-center flex-[0.35] px-4 gap-3 h-full md:border-r-2 border-[#f3f3f3] cursor-pointer w-full hover:bg-gray-50 rounded-lg transition-colors"
               onClick={() => setShowCityDropdown(!showCityDropdown)}
             >
-              <FaMapMarkerAlt className="text-[#d9263a] text-[18px]" />
+              <motion.div
+                animate={{ scale: locating ? [1, 1.2, 1] : 1 }}
+                transition={{ repeat: locating ? Infinity : 0, duration: 1 }}
+              >
+                <FaMapMarkerAlt className="text-[#ff7e8b] text-[22px]" />
+              </motion.div>
               <input 
                 type="text" 
                 readOnly 
                 value={currentCity || "Select City"} 
-                className="w-full outline-none text-[#5a5a5a] text-[15px] bg-transparent cursor-pointer"
+                className="w-full outline-none text-[#363636] text-[16px] bg-transparent cursor-pointer font-medium"
                 aria-label="Select City"
               />
-              <FaCaretDown className={`text-[#4f4f4f] transition-transform ${showCityDropdown ? 'rotate-180' : ''}`} />
+              <FaCaretDown className={`text-[#4f4f4f] transition-transform duration-300 ${showCityDropdown ? 'rotate-180' : ''}`} />
               
               <AnimatePresence>
                 {showCityDropdown && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-[calc(100%+10px)] left-0 w-full bg-white border border-[#e8e8e8] rounded-[6px] shadow-lg py-1 z-[100] text-left"
+                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                    className="absolute top-[calc(100%+15px)] left-0 w-[240px] bg-white border border-[#e8e8e8] rounded-[10px] shadow-2xl py-2 z-[100] text-left overflow-hidden"
                   >
                     <div 
-                      className="px-4 py-3 hover:bg-[#f8f8f8] cursor-pointer text-[#d9263a] text-[14px] font-medium border-b border-[#f3f3f3] flex items-center gap-2"
+                      className="px-5 py-3.5 hover:bg-[#fff5f6] cursor-pointer text-[#d9263a] text-[15px] font-medium border-b border-[#f3f3f3] flex items-center gap-3 transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDetectLocation();
                       }}
                     >
-                      <FaMapMarkerAlt className="text-[12px]" />
+                      <FaMapMarkerAlt className="text-[14px]" />
                       {locating ? "Detecting..." : "Detect current location"}
                     </div>
-                    {cities.map((city) => (
-                      <div 
-                        key={city} 
-                        className="px-4 py-3 hover:bg-[#f8f8f8] cursor-pointer text-[#4f4f4f] text-[14px]"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCitySelect(city);
-                        }}
-                      >
-                        {city}
-                      </div>
-                    ))}
+                    <div className="max-h-[300px] overflow-y-auto">
+                      {cities.map((city) => (
+                        <div 
+                          key={city} 
+                          className="px-5 py-3 hover:bg-[#f8f8f8] cursor-pointer text-[#363636] text-[15px] font-light transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCitySelect(city);
+                          }}
+                        >
+                          {city}
+                        </div>
+                      ))}
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
             
-            <div className="flex items-center flex-[0.6] px-4 gap-3 h-full w-full py-3 md:py-0">
-              <FaSearch className="text-[#5a5a5a] text-[18px]" />
+            <div className="flex items-center flex-[0.65] px-4 gap-4 h-full w-full py-3 md:py-0">
+              <FaSearch className="text-[#828282] text-[20px]" />
               <input 
                 type="text" 
                 placeholder="Search for restaurant, cuisine or a dish" 
-                className="w-full outline-none text-[#1c1c1c] text-[15px] placeholder-[#5a5a5a]"
+                className="w-full outline-none text-[#1c1c1c] text-[16px] placeholder-[#828282] font-light"
                 onClick={() => navigate("/signin")}
                 aria-label="Search for restaurant, cuisine or a dish"
               />

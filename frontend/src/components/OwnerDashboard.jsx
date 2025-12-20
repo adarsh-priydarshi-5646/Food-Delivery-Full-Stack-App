@@ -100,7 +100,7 @@ function OwnerDashboard() {
   }) || [];
 
   return (
-    <div className="w-full min-h-screen bg-gray-50/50 flex flex-col items-center pb-12">
+    <main className="w-full min-h-screen bg-gray-50/50 flex flex-col items-center pb-12">
       <Nav />
       
       {!myShopData ? (
@@ -327,7 +327,7 @@ function OwnerDashboard() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }
 

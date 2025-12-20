@@ -288,7 +288,7 @@ function DeliveryBoy() {
     }
   }, [resendTimer]);
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center pb-32 font-sans">
+    <main className="w-full min-h-screen bg-gray-50 flex flex-col items-center pb-32 font-sans">
       <Nav />
       
       <div className="w-full max-w-[800px] flex flex-col gap-6 items-center px-4 mt-8">
@@ -615,7 +615,7 @@ function DeliveryBoy() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }
 

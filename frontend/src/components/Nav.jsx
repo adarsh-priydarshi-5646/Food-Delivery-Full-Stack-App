@@ -52,7 +52,7 @@ function Nav() {
   }, [query]);
 
   return (
-    <div className="w-full h-20 flex items-center justify-between md:justify-center gap-8 px-6 fixed top-0 z-50 bg-[#F8F8F8] shadow-sm">
+    <nav className="w-full h-20 flex items-center justify-between md:justify-center gap-8 px-6 fixed top-0 z-50 bg-[#F8F8F8] shadow-sm">
       {}
       {showSearch && userData.role == "user" && (
         <div className="w-[90%] h-16 bg-[#F8F8F8] shadow-xl rounded-xl items-center gap-4 flex fixed top-20 left-[5%] md:hidden px-4 border border-gray-200">
@@ -70,6 +70,7 @@ function Nav() {
               className="outline-none w-full text-gray-700 placeholder-gray-400"
               onChange={(e) => setQuery(e.target.value)}
               value={query}
+              aria-label="Search delicious food"
             />
           </div>
         </div>
@@ -97,6 +98,7 @@ function Nav() {
               className="outline-none w-full text-gray-700 placeholder-gray-400"
               onChange={(e) => setQuery(e.target.value)}
               value={query}
+              aria-label="Search delicious food"
             />
           </div>
         </div>
@@ -215,7 +217,7 @@ function Nav() {
           </div>
         )}
       </div>
-    </div>
+    </nav>
   );
 }
 

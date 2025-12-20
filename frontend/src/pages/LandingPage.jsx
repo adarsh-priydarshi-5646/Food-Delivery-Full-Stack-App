@@ -244,7 +244,7 @@ const LandingPage = () => {
             ))}
           </motion.div>
         </div>
-
+      </div>
 
       {/* 3D Floating Food Animation Section */}
       <div className="relative py-28 overflow-hidden bg-white">
@@ -340,7 +340,6 @@ const LandingPage = () => {
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#ff7e8b] rounded-full blur-[150px] opacity-[0.05]" />
         </div>
       </div>
-    </div>
 
       {/* App Download Section */}
       <div className="bg-[#fffbf7] py-20 px-4 mt-20 border-t border-b border-[#e8e8e8]">

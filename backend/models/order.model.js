@@ -88,6 +88,14 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    stripeSessionId: {
+      type: String,
+      default: "",
+    },
+    stripePaymentIntentId: {
+      type: String,
+      default: "",
+    },
     orderRating: {
       rating: {
         type: Number,

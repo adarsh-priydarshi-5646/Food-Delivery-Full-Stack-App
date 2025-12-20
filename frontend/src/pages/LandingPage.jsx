@@ -339,32 +339,54 @@ const LandingPage = () => {
 
               {/* Orbiting & Floating Food Symphony - Massive Collection */}
               {[
-                // Inner Orbit (Fast)
-                { img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150", r: 160, speed: 15, delay: 0, scale: 0.8 },
-                { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150", r: 160, speed: 15, delay: 2, scale: 0.8 },
-                { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=150", r: 160, speed: 15, delay: 4, scale: 0.8 },
-                
-                // Middle Orbit (Medium)
-                { img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=150", r: 240, speed: 25, delay: 1, scale: 1 },
-                { img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=150", r: 240, speed: 25, delay: 3, scale: 1 },
-                { img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=150", r: 240, speed: 25, delay: 5, scale: 1 },
-                { img: "https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=150", r: 240, speed: 25, delay: 7, scale: 1 },
+                { 
+                  orbit: "inner", 
+                  radius: 160, 
+                  items: [
+                    { img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150", speed: 15, scale: 0.8 },
+                    { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150", speed: 15, scale: 0.8 },
+                    { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=150", speed: 15, scale: 0.8 }
+                  ]
+                },
+                { 
+                  orbit: "middle", 
+                  radius: 240, 
+                  items: [
+                    { img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=150", speed: 25, scale: 1 },
+                    { img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=150", speed: 25, scale: 1 },
+                    { img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=150", speed: 25, scale: 1 },
+                    { img: "https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=150", speed: 25, scale: 1 }
+                  ]
+                },
+                { 
+                  orbit: "outer", 
+                  radius: 320, 
+                  items: [
+                    { img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=150", speed: 35, scale: 1.1 },
+                    { img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=150", speed: 35, scale: 1.1 },
+                    { img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150", speed: 35, scale: 1.1 },
+                    { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=150", speed: 35, scale: 1.1 },
+                    { img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=150", speed: 35, scale: 1.1 }
+                  ]
+                }
+              ].flatMap((orbitGroup, groupIdx) => 
+                orbitGroup.items.map((item, itemIdx) => {
+                  // Calculate perfect spacing based on number of items in this orbit
+                  const totalInOrbit = orbitGroup.items.length;
+                  const angleStep = (Math.PI * 2) / totalInOrbit;
+                  // Add offset to stagger orbits so items don't line up radially
+                  const orbitOffset = groupIdx * (Math.PI / 4); 
+                  const angle = (itemIdx * angleStep) + orbitOffset;
+                  
+                  return { ...item, r: orbitGroup.radius, angle, delay: itemIdx * 0.5 };
+                })
+              ).map((item, idx) => {
+                // Alternating direction for adjacent orbits can be nice, 
+                // but let's stick to user request for "orbit-like" movement.
+                // We'll keep one consistent direction or alternate by ring.
+                // Let's alternate direction based on radius for visual interest.
+                const isClockwise = item.r === 240 ? -1 : 1; 
 
-                // Outer Orbit (Slow & Large)
-                { img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=150", r: 320, speed: 35, delay: 0, scale: 1.1 },
-                { img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=150", r: 320, speed: 35, delay: 2.5, scale: 1.1 },
-                { img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=150", r: 320, speed: 35, delay: 5, scale: 1.1 },
-                { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=150", r: 320, speed: 35, delay: 7.5, scale: 1.1 },
-                { img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=150", r: 320, speed: 35, delay: 10, scale: 1.1 },
-
-                // Random Floating Elements (Bubbles/Ingredients)
-                { img: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?q=80&w=100", r: 120, speed: 10, delay: 1, scale: 0.6 }, // Pizza slice
-                { img: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=100", r: 280, speed: 30, delay: 4, scale: 0.7 }, // Pizza whole
-                { img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=100", r: 200, speed: 20, delay: 6, scale: 0.6 }  // Dessert
-              ].map((item, idx) => {
-                const angle = (idx / 15) * Math.PI * 2; // Distribute vaguely evenly
-                const isClockwise = idx % 2 === 0 ? 1 : -1;
-                
                 return (
                   <motion.div
                     key={idx}
@@ -381,7 +403,7 @@ const LandingPage = () => {
                     <div
                       className="absolute flex items-center justify-center"
                       style={{ 
-                        transform: `translate(${Math.cos(angle) * item.r}px, ${Math.sin(angle) * item.r}px)` 
+                        transform: `translate(${Math.cos(item.angle) * item.r}px, ${Math.sin(item.angle) * item.r}px)` 
                       }}
                     >
                       <motion.div
@@ -394,6 +416,9 @@ const LandingPage = () => {
                           duration: 3 + (idx % 3), 
                           repeat: Infinity,
                           delay: idx * 0.3 
+                        }}
+                        style={{
+                           // Ensure no overlap by adding a bit of randomness or just relying on the spacing
                         }}
                       >
                         <img 

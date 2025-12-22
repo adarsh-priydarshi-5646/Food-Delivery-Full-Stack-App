@@ -11,6 +11,17 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon-circular.png" />
   <link rel="shortcut icon" href="/favicon-circular.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#E23744" />
+
+  <!-- Performance: Preconnect to critical domains -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://food-delivery-full-stack-app-3.onrender.com" />
+
+  <!-- DNS Prefetch for third-party resources -->
+  <link rel="dns-prefetch" href="https://api.geoapify.com" />
+  <link rel="dns-prefetch" href="https://js.stripe.com" />
+  <link rel="dns-prefetch" href="https://accounts.google.com" />
 
   <!-- SEO Meta Tags -->
   <title>Vingo - Premium Food Delivery & Developer Portal</title>
@@ -72,6 +83,51 @@
         "target": "https://food-delivery-full-stack-app-me1o.vercel.app/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Vingo",
+      "image": "https://food-delivery-full-stack-app-me1o.vercel.app/branding-logo.png",
+      "@id": "https://food-delivery-full-stack-app-me1o.vercel.app/",
+      "url": "https://food-delivery-full-stack-app-me1o.vercel.app/",
+      "telephone": "+91-1234567890",
+      "priceRange": "₹₹",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "IN"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "00:00",
+        "closes": "23:59"
+      },
+      "sameAs": [
+        "https://food-delivery-full-stack-app-me1o.vercel.app/"
+      ]
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://food-delivery-full-stack-app-me1o.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Documentation",
+          "item": "https://food-delivery-full-stack-app-me1o.vercel.app/docs"
+        }
+      ]
     }
   </script>
 </head>

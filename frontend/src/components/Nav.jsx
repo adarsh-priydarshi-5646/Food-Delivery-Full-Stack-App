@@ -83,7 +83,7 @@ function Nav() {
         <img
           src="/branding-logo.png"
           alt="Vingo Logo"
-          className="w-14 h-14 md:w-16 md:h-16 object-contain rounded-full"
+          className="w-16 h-16 md:w-18 md:h-18 object-contain rounded-full"
         />
         <h1 className="text-3xl font-bold text-[#E23744]">
           Vingo

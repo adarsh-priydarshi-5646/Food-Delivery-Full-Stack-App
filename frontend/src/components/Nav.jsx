@@ -79,9 +79,16 @@ function Nav() {
       )}
 
       {}
-      <h1 className="text-3xl font-bold text-[#E23744] cursor-pointer" onClick={() => navigate("/")}>
-        Vingo
-      </h1>
+      <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
+        <img
+          src="/branding-logo.png"
+          alt="Vingo Logo"
+          className="w-10 h-10 object-contain"
+        />
+        <h1 className="text-3xl font-bold text-[#E23744]">
+          Vingo
+        </h1>
+      </div>
 
       {}
       {userData.role == "user" && (

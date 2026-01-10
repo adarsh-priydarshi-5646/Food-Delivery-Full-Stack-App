@@ -51,17 +51,12 @@ function CheckOut() {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  if (authLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-[#F8F8F8]">
-      <div className="w-12 h-12 border-4 border-[#E23744] border-t-transparent rounded-full animate-spin"></div>
-    </div>;
-  }
-  const deliveryFee = totalAmount > 500 ? 0 : 40;
-  const AmountWithDeliveryFee = totalAmount + deliveryFee;
-
   const { getCity } = useGetCity();
   const [isDetecting, setIsDetecting] = useState(false);
+
+  const deliveryFee = totalAmount > 500 ? 0 : 40;
+  const AmountWithDeliveryFee = totalAmount + deliveryFee;
+  const selectedAddress = userData?.addresses?.find(a => a._id === selectedAddressId);
 
   useEffect(() => {
     // If user has addresses and none selected, select default or first one
@@ -71,14 +66,18 @@ function CheckOut() {
     }
   }, [userData, selectedAddressId, dispatch]);
 
-  const selectedAddress = userData?.addresses?.find(a => a._id === selectedAddressId);
-
   useEffect(() => {
     if (selectedAddress) {
       dispatch(setLocation({ lat: selectedAddress.lat, lon: selectedAddress.lon }));
       dispatch(setAddress(`${selectedAddress.flatNo}, ${selectedAddress.area}, ${selectedAddress.city}`));
     }
   }, [selectedAddress, dispatch]);
+
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-[#F8F8F8]">
+      <div className="w-12 h-12 border-4 border-[#E23744] border-t-transparent rounded-full animate-spin"></div>
+    </div>;
+  }
 
   const handleDetectCurrentLocation = async () => {
     setIsDetecting(true);
@@ -88,7 +87,7 @@ function CheckOut() {
       dispatch(setLocation({ lat: data.lat, lon: data.lon }));
       dispatch(setAddress(data.address));
       toast.success("Location detected!");
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to detect location");
     } finally {
       setIsDetecting(false);

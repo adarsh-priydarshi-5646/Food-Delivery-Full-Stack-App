@@ -1,0 +1,14 @@
+# Default owners for everything in the repo
+* @adarsh-priyadarshi
+
+# Frontend specific
+/frontend/ @adarsh-priyadarshi
+
+# Backend specific
+/backend/ @adarsh-priyadarshi
+
+# CI/CD and GitHub configurations
+/.github/ @adarsh-priyadarshi
+
+# Documentation
+*.md @adarsh-priyadarshi

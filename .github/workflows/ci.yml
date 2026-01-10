@@ -14,34 +14,34 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  # Detect changes to optimize workflow runs
-  changes:
+  # ============================================
+  # FRONTEND - Complete CI
+  # ============================================
+  
+  frontend-dependencies:
     runs-on: ubuntu-latest
-    outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      backend: ${{ steps.filter.outputs.backend }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: filter
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          filters: |
-            frontend:
-              - 'frontend/**'
-            backend:
-              - 'backend/**'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
-  # Frontend CI
-  frontend-lint:
-    needs: changes
-    if: ${{ needs.changes.outputs.frontend == 'true' || github.event_name == 'push' }}
-    runs-on: ubuntu-latest
-    defaults:
-      run:
+      - name: Install and verify dependencies
         working-directory: frontend
+        run: |
+          npm ci
+          echo "✅ Dependencies installed successfully"
+
+  frontend-lint:
+    needs: frontend-dependencies
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -50,21 +50,19 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: Run ESLint
+        working-directory: frontend
         run: npm run lint
 
   frontend-test:
-    needs: changes
-    if: ${{ needs.changes.outputs.frontend == 'true' || github.event_name == 'push' }}
+    needs: frontend-dependencies
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -73,21 +71,19 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: Run tests
+        working-directory: frontend
         run: npm test
 
   frontend-build:
-    needs: [changes, frontend-lint, frontend-test]
-    if: ${{ always() && (needs.frontend-lint.result == 'success' || needs.frontend-lint.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') }}
+    needs: [frontend-lint, frontend-test]
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -96,13 +92,25 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: Build
+        working-directory: frontend
         run: npm run build
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_STRIPE_PUBLIC_KEY: ${{ secrets.VITE_STRIPE_PUBLIC_KEY }}
+
+      - name: Verify build
+        working-directory: frontend
+        run: |
+          if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
+            echo "❌ Build failed!"
+            exit 1
+          fi
+          echo "✅ Build successful"
+          ls -la dist/
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -111,17 +119,55 @@ jobs:
           path: frontend/dist
           retention-days: 7
 
-  # Backend CI
-  backend-lint:
-    needs: changes
-    if: ${{ needs.changes.outputs.backend == 'true' || github.event_name == 'push' }}
+  frontend-security:
+    needs: frontend-dependencies
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run security audit
+        working-directory: frontend
+        run: npm audit --audit-level=critical
+
+  # ============================================
+  # BACKEND - Complete CI
+  # ============================================
+  
+  backend-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install and verify dependencies
+        working-directory: backend
+        run: |
+          npm ci
+          echo "✅ Dependencies installed successfully"
+
+  backend-lint:
+    needs: backend-dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -130,21 +176,29 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
+        working-directory: backend
         run: npm ci
 
-      - name: Check for syntax errors
+      - name: Check main entry point
+        working-directory: backend
         run: node --check index.js
 
-  backend-security:
-    needs: changes
-    if: ${{ needs.changes.outputs.backend == 'true' || github.event_name == 'push' }}
-    runs-on: ubuntu-latest
-    defaults:
-      run:
+      - name: Check all JavaScript files
         working-directory: backend
+        run: |
+          echo "Checking all JS files..."
+          find . -name "*.js" -not -path "./node_modules/*" | while read file; do
+            node --check "$file" || exit 1
+            echo "✓ $file"
+          done
+          echo "✅ All files have valid syntax"
+
+  backend-security:
+    needs: backend-dependencies
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -153,8 +207,100 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
+        working-directory: backend
         run: npm ci
 
-      - name: Run npm audit
-        run: npm audit --audit-level=high
-        continue-on-error: true
+      - name: Run security audit
+        working-directory: backend
+        run: npm audit --audit-level=critical
+
+  # ============================================
+  # CODE QUALITY
+  # ============================================
+  
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for merge conflicts
+        run: |
+          if grep -rn "<<<<<<< \|>>>>>>> \|=======" --include="*.js" --include="*.jsx" --include="*.json" --include="*.css" --include="*.md" . 2>/dev/null | grep -v node_modules; then
+            echo "❌ Merge conflict markers found!"
+            exit 1
+          fi
+          echo "✅ No merge conflicts"
+
+      - name: Check for debug statements
+        run: |
+          DEBUG_COUNT=$(grep -rn "debugger" frontend/src backend --include="*.js" --include="*.jsx" 2>/dev/null | grep -v node_modules | wc -l || echo "0")
+          if [ "$DEBUG_COUNT" -gt 0 ]; then
+            echo "❌ Found debugger statements!"
+            grep -rn "debugger" frontend/src backend --include="*.js" --include="*.jsx" 2>/dev/null | grep -v node_modules
+            exit 1
+          fi
+          echo "✅ No debugger statements"
+
+  # ============================================
+  # FINAL STATUS - Must pass for merge
+  # ============================================
+  
+  ci-status:
+    needs: [
+      frontend-dependencies,
+      frontend-lint,
+      frontend-test,
+      frontend-build,
+      frontend-security,
+      backend-dependencies,
+      backend-lint,
+      backend-security,
+      code-quality
+    ]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: CI Status Check
+        run: |
+          echo "========== CI PIPELINE RESULTS =========="
+          echo "Frontend Dependencies: ${{ needs.frontend-dependencies.result }}"
+          echo "Frontend Lint: ${{ needs.frontend-lint.result }}"
+          echo "Frontend Test: ${{ needs.frontend-test.result }}"
+          echo "Frontend Build: ${{ needs.frontend-build.result }}"
+          echo "Frontend Security: ${{ needs.frontend-security.result }}"
+          echo "Backend Dependencies: ${{ needs.backend-dependencies.result }}"
+          echo "Backend Lint: ${{ needs.backend-lint.result }}"
+          echo "Backend Security: ${{ needs.backend-security.result }}"
+          echo "Code Quality: ${{ needs.code-quality.result }}"
+          echo "=========================================="
+          
+          FAILED=false
+          
+          for job in frontend-dependencies frontend-lint frontend-test frontend-build backend-dependencies backend-lint code-quality; do
+            result="${{ needs.frontend-dependencies.result }}"
+            case $job in
+              frontend-dependencies) result="${{ needs.frontend-dependencies.result }}" ;;
+              frontend-lint) result="${{ needs.frontend-lint.result }}" ;;
+              frontend-test) result="${{ needs.frontend-test.result }}" ;;
+              frontend-build) result="${{ needs.frontend-build.result }}" ;;
+              backend-dependencies) result="${{ needs.backend-dependencies.result }}" ;;
+              backend-lint) result="${{ needs.backend-lint.result }}" ;;
+              code-quality) result="${{ needs.code-quality.result }}" ;;
+            esac
+            
+            if [ "$result" != "success" ]; then
+              echo "❌ $job failed with result: $result"
+              FAILED=true
+            fi
+          done
+          
+          if [ "$FAILED" = true ]; then
+            echo ""
+            echo "❌ CI PIPELINE FAILED"
+            exit 1
+          fi
+          
+          echo ""
+          echo "✅ CI PIPELINE PASSED - All checks successful!"

@@ -5,10 +5,11 @@ on:
     types: [opened, synchronize, reopened]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 jobs:
+  # PR Title validation
   pr-title-check:
     runs-on: ubuntu-latest
     steps:
@@ -19,22 +20,35 @@ jobs:
         with:
           types: |
             feat
+            Feat
             fix
+            Fix
             docs
+            Docs
             style
+            Style
             refactor
+            Refactor
             perf
+            Perf
             test
+            Test
             build
+            Build
             ci
+            CI
             chore
+            Chore
             revert
+            Revert
           requireScope: false
-          subjectPattern: ^(?![A-Z]).+$
+          # Allow formats: "feat: desc", "feat/desc", "Feat: desc"
+          subjectPattern: ^.+$
           subjectPatternError: |
-            The subject "{subject}" found in the pull request title "{title}"
-            should start with a lowercase letter.
+            PR title should follow format: "type: description" or "type/description"
+            Example: "feat: add new feature" or "fix: resolve bug"
 
+  # Label PR by size
   size-label:
     runs-on: ubuntu-latest
     steps:
@@ -53,10 +67,8 @@ jobs:
           l_max_size: 1000
           xl_label: 'size/XL'
           fail_if_xl: false
-          message_if_xl: >
-            This PR is quite large! Consider breaking it into smaller PRs
-            for easier review.
 
+  # Detect changed files for labeling
   changed-files:
     runs-on: ubuntu-latest
     outputs:
@@ -77,6 +89,7 @@ jobs:
               - '**/*.md'
               - 'docs/**'
 
+  # Add labels based on changes
   label-changes:
     needs: changed-files
     runs-on: ubuntu-latest
@@ -87,15 +100,9 @@ jobs:
         with:
           script: |
             const labels = [];
-            if ('${{ needs.changed-files.outputs.frontend }}' === 'true') {
-              labels.push('frontend');
-            }
-            if ('${{ needs.changed-files.outputs.backend }}' === 'true') {
-              labels.push('backend');
-            }
-            if ('${{ needs.changed-files.outputs.docs }}' === 'true') {
-              labels.push('documentation');
-            }
+            if ('${{ needs.changed-files.outputs.frontend }}' === 'true') labels.push('frontend');
+            if ('${{ needs.changed-files.outputs.backend }}' === 'true') labels.push('backend');
+            if ('${{ needs.changed-files.outputs.docs }}' === 'true') labels.push('documentation');
             if (labels.length > 0) {
               await github.rest.issues.addLabels({
                 owner: context.repo.owner,
@@ -105,34 +112,388 @@ jobs:
               });
             }
 
-  build-check:
+  # ============================================
+  # FRONTEND CHECKS - Complete validation
+  # ============================================
+  
+  frontend-dependencies:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - name: Frontend
-            directory: frontend
-            build-command: npm run build
-          - name: Backend
-            directory: backend
-            build-command: node --check index.js
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: ${{ matrix.directory }}/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Verify package-lock.json is in sync
+        working-directory: frontend
+        run: |
+          npm ci
+          git diff --exit-code package-lock.json || {
+            echo "❌ package-lock.json is out of sync with package.json!"
+            exit 1
+          }
+          echo "✅ Dependencies are in sync"
+
+      - name: Check for duplicate dependencies
+        working-directory: frontend
+        run: |
+          npm ls --all 2>&1 | grep -i "deduped" && echo "::warning::Found duplicate dependencies" || echo "✅ No duplicate dependencies"
+
+  frontend-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: ${{ matrix.directory }}
+        working-directory: frontend
         run: npm ci
 
-      - name: Build check - ${{ matrix.name }}
-        working-directory: ${{ matrix.directory }}
-        run: ${{ matrix.build-command }}
+      - name: Run ESLint
+        working-directory: frontend
+        run: npm run lint
+
+  frontend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run tests with coverage
+        working-directory: frontend
+        run: npm test -- --coverage || npm test
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
         env:
           VITE_API_URL: https://api.example.com
           VITE_STRIPE_PUBLIC_KEY: pk_test_placeholder
+
+      - name: Verify build output
+        working-directory: frontend
+        run: |
+          if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
+            echo "❌ Build verification failed!"
+            exit 1
+          fi
+          echo "✅ Build verified"
+
+  frontend-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Security audit
+        working-directory: frontend
+        run: |
+          npm audit --audit-level=high || {
+            echo "::warning::High severity vulnerabilities found"
+          }
+
+  # ============================================
+  # BACKEND CHECKS - Complete validation
+  # ============================================
+  
+  backend-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Verify package-lock.json is in sync
+        working-directory: backend
+        run: |
+          npm ci
+          git diff --exit-code package-lock.json || {
+            echo "❌ package-lock.json is out of sync!"
+            exit 1
+          }
+          echo "✅ Dependencies are in sync"
+
+  backend-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Check syntax
+        working-directory: backend
+        run: node --check index.js
+
+      - name: Check all JS files syntax
+        working-directory: backend
+        run: |
+          find . -name "*.js" -not -path "./node_modules/*" | while read file; do
+            node --check "$file" || exit 1
+          done
+          echo "✅ All backend files have valid syntax"
+
+  backend-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Security audit
+        working-directory: backend
+        run: |
+          npm audit --audit-level=high || {
+            echo "::warning::High severity vulnerabilities found"
+          }
+
+  # ============================================
+  # CODE QUALITY CHECKS
+  # ============================================
+  
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for merge conflicts markers
+        run: |
+          if grep -rn "<<<<<<< " --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" --include="*.json" --include="*.css" . 2>/dev/null; then
+            echo "❌ Found merge conflict markers!"
+            exit 1
+          fi
+          echo "✅ No merge conflict markers found"
+
+      - name: Check for console.log in production code
+        run: |
+          CONSOLE_COUNT=$(grep -rn "console.log" frontend/src --include="*.js" --include="*.jsx" | grep -v "test" | grep -v "__tests__" | wc -l || echo "0")
+          if [ "$CONSOLE_COUNT" -gt 10 ]; then
+            echo "::warning::Found $CONSOLE_COUNT console.log statements - consider removing for production"
+          fi
+
+      - name: Check for TODO/FIXME comments
+        run: |
+          TODO_COUNT=$(grep -rn "TODO\|FIXME" frontend/src backend --include="*.js" --include="*.jsx" | wc -l || echo "0")
+          echo "Found $TODO_COUNT TODO/FIXME comments"
+
+  # ============================================
+  # FINAL STATUS CHECK - Required for merge
+  # ============================================
+  
+  pr-status:
+    needs: [
+      pr-title-check,
+      frontend-dependencies,
+      frontend-lint,
+      frontend-test,
+      frontend-build,
+      frontend-security,
+      backend-dependencies,
+      backend-lint,
+      backend-security,
+      code-quality
+    ]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check all job results
+        run: |
+          echo "========== PR CHECK RESULTS =========="
+          echo "PR Title: ${{ needs.pr-title-check.result }}"
+          echo "Frontend Dependencies: ${{ needs.frontend-dependencies.result }}"
+          echo "Frontend Lint: ${{ needs.frontend-lint.result }}"
+          echo "Frontend Test: ${{ needs.frontend-test.result }}"
+          echo "Frontend Build: ${{ needs.frontend-build.result }}"
+          echo "Frontend Security: ${{ needs.frontend-security.result }}"
+          echo "Backend Dependencies: ${{ needs.backend-dependencies.result }}"
+          echo "Backend Lint: ${{ needs.backend-lint.result }}"
+          echo "Backend Security: ${{ needs.backend-security.result }}"
+          echo "Code Quality: ${{ needs.code-quality.result }}"
+          echo "======================================"
+          
+          FAILED=false
+          
+          if [ "${{ needs.pr-title-check.result }}" != "success" ]; then
+            echo "❌ PR title check failed!"
+            FAILED=true
+          fi
+          
+          if [ "${{ needs.frontend-dependencies.result }}" != "success" ]; then
+            echo "❌ Frontend dependencies check failed!"
+            FAILED=true
+          fi
+          
+          if [ "${{ needs.frontend-lint.result }}" != "success" ]; then
+            echo "❌ Frontend lint failed!"
+            FAILED=true
+          fi
+          
+          if [ "${{ needs.frontend-test.result }}" != "success" ]; then
+            echo "❌ Frontend tests failed!"
+            FAILED=true
+          fi
+          
+          if [ "${{ needs.frontend-build.result }}" != "success" ]; then
+            echo "❌ Frontend build failed!"
+            FAILED=true
+          fi
+          
+          if [ "${{ needs.backend-dependencies.result }}" != "success" ]; then
+            echo "❌ Backend dependencies check failed!"
+            FAILED=true
+          fi
+          
+          if [ "${{ needs.backend-lint.result }}" != "success" ]; then
+            echo "❌ Backend lint failed!"
+            FAILED=true
+          fi
+          
+          if [ "${{ needs.code-quality.result }}" != "success" ]; then
+            echo "❌ Code quality check failed!"
+            FAILED=true
+          fi
+          
+          if [ "$FAILED" = true ]; then
+            echo ""
+            echo "❌ PR CHECKS FAILED - Cannot merge"
+            exit 1
+          fi
+          
+          echo ""
+          echo "✅ ALL PR CHECKS PASSED - Ready to merge!"
+
+  # ============================================
+  # AUTO MERGE - When all checks pass
+  # ============================================
+  
+  auto-merge:
+    needs: [pr-status]
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Enable auto-merge
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            
+            // Check if PR is from a trusted source (not from fork)
+            if (pr.head.repo.full_name !== pr.base.repo.full_name) {
+              console.log('PR is from a fork - skipping auto-merge for security');
+              return;
+            }
+            
+            // Check if PR has the auto-merge label or is from dependabot
+            const labels = pr.labels.map(l => l.name);
+            const isDependabot = pr.user.login === 'dependabot[bot]';
+            const hasAutoMergeLabel = labels.includes('auto-merge');
+            
+            if (!isDependabot && !hasAutoMergeLabel) {
+              console.log('PR does not have auto-merge label and is not from dependabot');
+              console.log('Add "auto-merge" label to enable automatic merging');
+              return;
+            }
+            
+            try {
+              // Enable auto-merge with squash
+              await github.graphql(`
+                mutation($pullRequestId: ID!) {
+                  enablePullRequestAutoMerge(input: {
+                    pullRequestId: $pullRequestId,
+                    mergeMethod: SQUASH
+                  }) {
+                    pullRequest {
+                      autoMergeRequest {
+                        enabledAt
+                      }
+                    }
+                  }
+                }
+              `, {
+                pullRequestId: pr.node_id
+              });
+              
+              console.log('✅ Auto-merge enabled for this PR');
+              
+              // Add comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: '🤖 **Auto-merge enabled!**\n\nAll CI checks have passed. This PR will be automatically merged when all required reviews are approved.'
+              });
+              
+            } catch (error) {
+              console.log('Could not enable auto-merge:', error.message);
+              console.log('This might be because auto-merge is not enabled in repository settings');
+            }

@@ -105,17 +105,9 @@ jobs:
               });
             }
 
-  build-check:
+  # Build checks - MUST pass for PR merge
+  frontend-build-check:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - name: Frontend
-            directory: frontend
-            build-command: npm run build
-          - name: Backend
-            directory: backend
-            build-command: node --check index.js
     steps:
       - uses: actions/checkout@v4
 
@@ -124,15 +116,72 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: ${{ matrix.directory }}/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: ${{ matrix.directory }}
+        working-directory: frontend
         run: npm ci
 
-      - name: Build check - ${{ matrix.name }}
-        working-directory: ${{ matrix.directory }}
-        run: ${{ matrix.build-command }}
+      - name: Lint check
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Test check
+        working-directory: frontend
+        run: npm test
+
+      - name: Build check
+        working-directory: frontend
+        run: npm run build
         env:
           VITE_API_URL: https://api.example.com
           VITE_STRIPE_PUBLIC_KEY: pk_test_placeholder
+
+  backend-build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Syntax check
+        working-directory: backend
+        run: node --check index.js
+
+  # Final PR status - required for merge
+  pr-status:
+    needs: [pr-title-check, frontend-build-check, backend-build-check]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check PR status
+        run: |
+          echo "PR Title Check: ${{ needs.pr-title-check.result }}"
+          echo "Frontend Build: ${{ needs.frontend-build-check.result }}"
+          echo "Backend Build: ${{ needs.backend-build-check.result }}"
+          
+          if [ "${{ needs.pr-title-check.result }}" != "success" ]; then
+            echo "❌ PR title check failed!"
+            exit 1
+          fi
+          
+          if [ "${{ needs.frontend-build-check.result }}" != "success" ]; then
+            echo "❌ Frontend build check failed!"
+            exit 1
+          fi
+          
+          if [ "${{ needs.backend-build-check.result }}" != "success" ]; then
+            echo "❌ Backend build check failed!"
+            exit 1
+          fi
+          
+          echo "✅ All PR checks passed!"

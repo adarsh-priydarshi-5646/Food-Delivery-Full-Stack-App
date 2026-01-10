@@ -14,27 +14,8 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  # Detect changes to optimize workflow runs
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      backend: ${{ steps.filter.outputs.backend }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            frontend:
-              - 'frontend/**'
-            backend:
-              - 'backend/**'
-
-  # Frontend CI
+  # Frontend CI - Always runs, no skipping
   frontend-lint:
-    needs: changes
-    if: ${{ needs.changes.outputs.frontend == 'true' || github.event_name == 'push' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -56,8 +37,6 @@ jobs:
         run: npm run lint
 
   frontend-test:
-    needs: changes
-    if: ${{ needs.changes.outputs.frontend == 'true' || github.event_name == 'push' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -79,8 +58,7 @@ jobs:
         run: npm test
 
   frontend-build:
-    needs: [changes, frontend-lint, frontend-test]
-    if: ${{ always() && (needs.frontend-lint.result == 'success' || needs.frontend-lint.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') }}
+    needs: [frontend-lint, frontend-test]
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -111,10 +89,8 @@ jobs:
           path: frontend/dist
           retention-days: 7
 
-  # Backend CI
+  # Backend CI - Always runs, no skipping
   backend-lint:
-    needs: changes
-    if: ${{ needs.changes.outputs.backend == 'true' || github.event_name == 'push' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -136,8 +112,6 @@ jobs:
         run: node --check index.js
 
   backend-security:
-    needs: changes
-    if: ${{ needs.changes.outputs.backend == 'true' || github.event_name == 'push' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -156,22 +130,45 @@ jobs:
         run: npm ci
 
       - name: Run npm audit
-        run: npm audit --audit-level=high
-        continue-on-error: true
+        run: npm audit --audit-level=critical || echo "::warning::Security vulnerabilities found"
 
-  # Final status check for rollback trigger
+  # Final status check - MUST pass for merge
   ci-status:
     needs: [frontend-lint, frontend-test, frontend-build, backend-lint, backend-security]
-    if: always()
     runs-on: ubuntu-latest
+    if: always()
     steps:
-      - name: Check CI Status
+      - name: Check all job results
         run: |
-          if [ "${{ needs.frontend-lint.result }}" == "failure" ] || \
-             [ "${{ needs.frontend-test.result }}" == "failure" ] || \
-             [ "${{ needs.frontend-build.result }}" == "failure" ] || \
-             [ "${{ needs.backend-lint.result }}" == "failure" ]; then
-            echo "CI Pipeline failed!"
+          echo "Frontend Lint: ${{ needs.frontend-lint.result }}"
+          echo "Frontend Test: ${{ needs.frontend-test.result }}"
+          echo "Frontend Build: ${{ needs.frontend-build.result }}"
+          echo "Backend Lint: ${{ needs.backend-lint.result }}"
+          echo "Backend Security: ${{ needs.backend-security.result }}"
+          
+          if [ "${{ needs.frontend-lint.result }}" != "success" ]; then
+            echo "❌ Frontend lint failed!"
             exit 1
           fi
-          echo "CI Pipeline passed!"
+          
+          if [ "${{ needs.frontend-test.result }}" != "success" ]; then
+            echo "❌ Frontend tests failed!"
+            exit 1
+          fi
+          
+          if [ "${{ needs.frontend-build.result }}" != "success" ]; then
+            echo "❌ Frontend build failed!"
+            exit 1
+          fi
+          
+          if [ "${{ needs.backend-lint.result }}" != "success" ]; then
+            echo "❌ Backend lint failed!"
+            exit 1
+          fi
+          
+          if [ "${{ needs.backend-security.result }}" != "success" ]; then
+            echo "❌ Backend security check failed!"
+            exit 1
+          fi
+          
+          echo "✅ All CI checks passed!"

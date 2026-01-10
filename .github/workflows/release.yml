@@ -22,10 +22,11 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  # Run full test suite before release
+  # Run full test suite before release - MUST pass
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: true
       matrix:
         include:
           - name: Frontend Tests
@@ -52,7 +53,7 @@ jobs:
         working-directory: ${{ matrix.directory }}
         run: ${{ matrix.test-command }}
 
-  # Build frontend for production
+  # Build frontend for production - MUST pass
   build-frontend:
     needs: test
     runs-on: ubuntu-latest
@@ -79,6 +80,19 @@ jobs:
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
           VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
           VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+
+      - name: Verify build output
+        working-directory: frontend
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "❌ Build failed - dist folder not found!"
+            exit 1
+          fi
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ Build failed - index.html not found!"
+            exit 1
+          fi
+          echo "✅ Build verified successfully"
 
       - name: Upload production build
         uses: actions/upload-artifact@v4
@@ -113,7 +127,12 @@ jobs:
           vercel-args: '--prod'
           working-directory: ./frontend
           scope: ${{ secrets.VERCEL_ORG_ID }}
-        continue-on-error: true
+
+      - name: Verify deployment
+        if: steps.deploy.outputs.url
+        run: |
+          echo "Deployment URL: ${{ steps.deploy.outputs.url }}"
+          echo "✅ Deployment successful!"
 
   # Create GitHub release on successful deploy
   create-release:
@@ -170,3 +189,28 @@ jobs:
             } catch (error) {
               console.log('Release may already exist:', error.message);
             }
+
+  # Final release status check
+  release-status:
+    needs: [test, build-frontend, deploy-frontend, create-release]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check release status
+        run: |
+          echo "Test: ${{ needs.test.result }}"
+          echo "Build: ${{ needs.build-frontend.result }}"
+          echo "Deploy: ${{ needs.deploy-frontend.result }}"
+          echo "Release: ${{ needs.create-release.result }}"
+          
+          if [ "${{ needs.test.result }}" != "success" ]; then
+            echo "❌ Tests failed!"
+            exit 1
+          fi
+          
+          if [ "${{ needs.build-frontend.result }}" != "success" ]; then
+            echo "❌ Build failed!"
+            exit 1
+          fi
+          
+          echo "✅ Release pipeline completed!"

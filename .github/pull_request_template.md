@@ -1,17 +1,38 @@
-## What does this PR do?
-<!-- Brief description of changes -->
+## 📝 Description
+<!-- What changes does this PR introduce? -->
 
-## Type
+
+## 🔄 Type of Change
+<!-- Check one -->
 - [ ] 🐛 Bug fix
-- [ ] ✨ Feature
-- [ ] 📝 Docs
+- [ ] ✨ New feature  
+- [ ] 💥 Breaking change
+- [ ] 📝 Documentation
 - [ ] ♻️ Refactor
-- [ ] 🧪 Test
+- [ ] 🎨 Style/UI
+- [ ] ⚡ Performance
+- [ ] 🧪 Tests
 
-## Checklist
-- [ ] Code works locally
-- [ ] Tests pass
-- [ ] No console.log/debugger left
+## 🔗 Related Issue
+<!-- Link issue: Closes #123 -->
 
-## Related Issue
-Closes #
+
+## 📸 Screenshots
+<!-- If UI changes, add screenshots -->
+
+
+## ✅ Checklist
+- [ ] Code tested locally
+- [ ] All tests passing
+- [ ] No console.log or debugger
+- [ ] Self-reviewed the code
+
+---
+
+> **Note:** All CI checks must pass before merge. PR will auto-merge if `auto-merge` label is added.
+> 
+> **Guidelines:**
+> - Keep PRs small and focused
+> - Write clear commit messages
+> - Update docs if needed
+> - Add tests for new features

@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    # Run weekly on Sundays at midnight
     - cron: '0 0 * * 0'
 
 permissions:
@@ -16,6 +15,7 @@ permissions:
 jobs:
   dependency-review:
     runs-on: ubuntu-latest
+    # Only run on PRs - this is expected behavior
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
@@ -68,13 +68,7 @@ jobs:
 
       - name: Run security audit
         working-directory: ${{ matrix.directory }}
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
-
-      - name: Check for known vulnerabilities
-        working-directory: ${{ matrix.directory }}
-        run: npx audit-ci --moderate
-        continue-on-error: true
+        run: npm audit --audit-level=high
 
   secrets-scan:
     runs-on: ubuntu-latest
@@ -87,3 +81,26 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           extra_args: --only-verified
+
+  security-status:
+    needs: [codeql-analysis, npm-audit, secrets-scan]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Security Check Status
+        run: |
+          echo "CodeQL: ${{ needs.codeql-analysis.result }}"
+          echo "NPM Audit: ${{ needs.npm-audit.result }}"
+          echo "Secrets Scan: ${{ needs.secrets-scan.result }}"
+          
+          if [ "${{ needs.codeql-analysis.result }}" == "failure" ]; then
+            echo "❌ CodeQL analysis failed!"
+            exit 1
+          fi
+          
+          if [ "${{ needs.npm-audit.result }}" == "failure" ]; then
+            echo "❌ NPM audit failed!"
+            exit 1
+          fi
+          
+          echo "✅ Security checks passed!"

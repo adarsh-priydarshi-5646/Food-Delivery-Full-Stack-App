@@ -20,21 +20,33 @@ jobs:
         with:
           types: |
             feat
+            Feat
             fix
+            Fix
             docs
+            Docs
             style
+            Style
             refactor
+            Refactor
             perf
+            Perf
             test
+            Test
             build
+            Build
             ci
+            CI
             chore
+            Chore
             revert
+            Revert
           requireScope: false
-          subjectPattern: ^(?![A-Z]).+$
+          # Allow formats: "feat: desc", "feat/desc", "Feat: desc"
+          subjectPattern: ^.+$
           subjectPatternError: |
-            The subject "{subject}" found in the pull request title "{title}"
-            should start with a lowercase letter.
+            PR title should follow format: "type: description" or "type/description"
+            Example: "feat: add new feature" or "fix: resolve bug"
 
   # Label PR by size
   size-label:

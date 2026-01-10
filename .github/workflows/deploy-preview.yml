@@ -51,7 +51,7 @@ jobs:
 
       - name: Comment PR with preview URL
         if: steps.deploy.outputs.preview-url
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const previewUrl = '${{ steps.deploy.outputs.preview-url }}';

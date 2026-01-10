@@ -152,7 +152,7 @@ jobs:
 
       - name: Generate changelog
         id: changelog
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { data: commits } = await github.rest.repos.listCommits({
@@ -170,7 +170,7 @@ jobs:
           result-encoding: string
 
       - name: Create Release
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const date = new Date().toISOString().split('T')[0];

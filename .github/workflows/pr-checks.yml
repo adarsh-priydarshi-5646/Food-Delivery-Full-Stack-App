@@ -96,7 +96,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Add labels based on changes
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const labels = [];
@@ -442,7 +442,7 @@ jobs:
     if: success()
     steps:
       - name: Enable auto-merge
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const pr = context.payload.pull_request;

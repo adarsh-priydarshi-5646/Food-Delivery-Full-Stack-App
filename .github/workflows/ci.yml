@@ -158,3 +158,20 @@ jobs:
       - name: Run npm audit
         run: npm audit --audit-level=high
         continue-on-error: true
+
+  # Final status check for rollback trigger
+  ci-status:
+    needs: [frontend-lint, frontend-test, frontend-build, backend-lint, backend-security]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check CI Status
+        run: |
+          if [ "${{ needs.frontend-lint.result }}" == "failure" ] || \
+             [ "${{ needs.frontend-test.result }}" == "failure" ] || \
+             [ "${{ needs.frontend-build.result }}" == "failure" ] || \
+             [ "${{ needs.backend-lint.result }}" == "failure" ]; then
+            echo "CI Pipeline failed!"
+            exit 1
+          fi
+          echo "CI Pipeline passed!"
